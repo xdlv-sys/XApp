@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 @Controller
 public class PracticeAction extends BaseAction{
-    static ArrayList<Question> questionList = new ArrayList<>();
+    static ArrayList<Question> questionList = new ArrayList<Question>();
 
     List<Question> questions;
 
