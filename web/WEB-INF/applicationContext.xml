@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+                     http://www.springframework.org/schema/beans/spring-beans.xsd 
+                     http://www.springframework.org/schema/tx 
+                     http://www.springframework.org/schema/tx/spring-tx.xsd 
+                     http://www.springframework.org/schema/aop 
+                     http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:jdbc.properties" />
+	</bean>
+
+	<bean id="MyDataSource" destroy-method="close"
+		  class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="validationQuery" value="${jdbc.validate}"></property>
+		<property name="maxActive" value="20"></property>
+	</bean>
+	<bean id="vendorProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="SQL Server">sqlserver</prop>
+				<prop key="Oracle">oracle</prop>
+				<prop key="MySQL">mysql</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">
+		<property name="properties" ref="vendorProperties"/>
+	</bean>
+
+	<!-- SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="MyDataSource"/>
+		<property name="databaseIdProvider" ref="databaseIdProvider"/>
+	</bean>
+    <!-- ScanMapperFiles -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="xd.fw.bean.mapper" />
+    </bean>
+
+    <bean name="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="MyDataSource"></property>
+    </bean>
+
+	<tx:advice id="userTxAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="delete*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" no-rollback-for="java.lang.RuntimeException" />
+			<tx:method name="save*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.RuntimeException" />
+			<tx:method name="update*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="insert*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="find*" propagation="SUPPORTS" />
+			<tx:method name="get*" propagation="SUPPORTS" />
+			<tx:method name="select*" propagation="SUPPORTS" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="pc"
+			expression="execution(public * *.service.*.*(..))" />
+		<aop:advisor pointcut-ref="pc" advice-ref="userTxAdvice" />
+	</aop:config>
+
+	<context:component-scan base-package="xd.fw">
+		<context:include-filter type="regex" expression=".service.impl.*"/>
+		<context:include-filter type="regex" expression=".job.*"/>
+	</context:component-scan>
+
+	<!--quartz jobs-->
+    <bean id = "baseJobDetail" abstract="true" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="baseJob"/>
+        </property>
+        <property name="targetMethod">
+            <value>execute</value>
+        </property>
+        <property name="concurrent">
+            <value>false</value>
+        </property>
+    </bean>
+
+	<bean id="memoryCheckJobDetail" parent="baseJobDetail">
+		<property name="targetObject">
+			<ref bean="memoryJob"/>
+		</property>
+	</bean>
+
+	<bean id="memoryCheckDoTime"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="memoryCheckJobDetail"/>
+		</property>
+		<property name="cronExpression">
+			<value>0/30 * * * * ?</value>
+		</property>
+	</bean>
+
+    <import resource="spring-quartx-jobs.xml"/>
+
+</beans>
