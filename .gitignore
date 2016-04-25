@@ -3,9 +3,10 @@
 /web/wwt/.sencha
 /web/wwt/resources/loading
 /web/wwt/resources/icons
-/web/wwt/resources/sass
+/.gitignore
 /web/wwt/resources/sass/stylesheets
 /web/wwt/resources/sass/.sass-cache
+
 /web/wwt/resources/css
 /web/wwt/sass/example
 /web/wwt/touch
