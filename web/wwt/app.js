@@ -14,12 +14,26 @@ Ext.application({
     name: 'XApp',
 
     requires: [
-        'Ext.MessageBox'
+        'Ext.MessageBox',
+        'Ext.field.Checkbox',
+        'Ext.Audio',
+        'Ext.TitleBar',
+        'Ext.form.FieldSet',
+        'Ext.field.DatePicker',
+        'Ext.Toast',
+        'Ext.chart.CartesianChart',
+        'Ext.chart.axis.Numeric',
+        'Ext.chart.axis.Category',
+        'Ext.chart.series.Line',
+        'Ext.chart.series.Bar',
+        'Ext.chart.interactions.ItemHighlight',
+        'Ext.chart.interactions.PanZoom'
     ],
-
+    controllers: ['Practice'],
     views: [
-        'Main'
+        'Practice','PracticeResult','Login','Answer','Report'
     ],
+    stores: ['Report'],
 
     icon: {
         '57': 'resources/icons/Icon.png',
@@ -54,7 +68,14 @@ Ext.application({
         Ext.fly('appLoadingIndicator').destroy();
 
         // Initialize the main view
-        Ext.Viewport.add(Ext.create('XApp.view.Main'));
+
+        var href = window.location.href;
+
+        if (href.indexOf('report') > -1) {
+            Ext.Viewport.add(Ext.create('XApp.view.Report'));
+        } else {
+            Ext.Viewport.add(Ext.create('XApp.view.Login'));
+        }
     },
 
     onUpdated: function() {

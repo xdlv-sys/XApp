@@ -1,50 +1,51 @@
 Ext.define('XApp.view.Main', {
-    extend: 'Ext.tab.Panel',
-    xtype: 'main',
-    requires: [
-        'Ext.TitleBar',
-        'Ext.Video'
-    ],
-    config: {
-        tabBarPosition: 'bottom',
-
-        items: [
-            {
-                title: 'Welcome',
-                iconCls: 'home',
-
-                styleHtmlContent: true,
-                scrollable: true,
-
-                items: {
-                    docked: 'top',
-                    xtype: 'titlebar',
-                    title: 'Welcome to Sencha Touch 2'
-                },
-
-                html: [
-                    "You've just generated a new Sencha Touch 2 project. What you're looking at right now is the ",
-                    "contents of <a target='_blank' href=\"app/view/Main.js\">app/view/Main.js</a> - edit that file ",
-                    "and refresh to change what's rendered here."
-                ].join("")
-            },
-            {
-                title: 'Get Started',
-                iconCls: 'action',
-
-                items: [
-                    {
-                        docked: 'top',
-                        xtype: 'titlebar',
-                        title: 'Getting Started'
-                    },
-                    {
-                        xtype: 'video',
-                        url: 'http://av.vimeo.com/64284/137/87347327.mp4?token=1330978144_f9b698fea38cd408d52a2393240c896c',
-                        posterUrl: 'http://b.vimeocdn.com/ts/261/062/261062119_640.jpg'
-                    }
-                ]
-            }
-        ]
-    }
+	extend : 'Ext.form.Panel',
+	xtype : 'main',
+	config : {
+		fullscreen : true,
+		items : [ {
+			docked : 'top',
+			height : 20,
+			xtype : 'titlebar',
+			title : '用户绑定'
+		}, {
+			docked : 'bottom',
+			xtype : 'component',
+            name: 'version',
+			tpl: '<p align="center">version: {version}</p>',
+            padding: '0 0 5 0',
+            style: 'color:#888;font-size:9px;'
+		},{
+			xtype : 'fieldset',
+            margin: '10 2 20 2',
+			title : '',
+			instructions : '(*请妥善保存你的帐号，一个手机号只能绑定一次，若需解除绑定，取消关注即可。)',
+			items : [ {
+				xtype: 'container',
+				layout: 'hbox',
+				items:[{
+					xtype : 'textfield',
+					label : '手机号',
+					name : 'phone',
+					labelWidth: 70,
+					flex : 1
+				}, {
+					xtype: 'button',
+					text : '验证码',
+					ui: 'decline-small',
+					margin: '0 2 0 0'
+				}]
+			}, {
+				xtype : 'textfield',
+				label : '验证码',
+				name : 'validateCode',
+				labelWidth: 70
+			} ]
+		}, {
+			xtype : 'button',
+			text : '绑定',
+			ui : 'confirm',
+			margin: '10'
+		} ]
+	}
 });
