@@ -91,7 +91,7 @@ Ext.define('XApp.controller.Practice', {
     },
     fillCurrentQuestion: function () {
         var currentQuestion = this.currentQuestion();
-        this.getQuestion().setHtml(currentQuestion.question);
+        this.getQuestion().setHtml(currentQuestion.question + '&nbsp;&nbsp;&nbsp;&nbsp;(<b>' +(currentQuestion.single ? '单选': '多选') + '</b>)');
         this.getAnswerA().setValue(currentQuestion.answerA);
         this.getAnswerB().setValue(currentQuestion.answerB);
         this.getAnswerC().setValue(currentQuestion.answerC);
