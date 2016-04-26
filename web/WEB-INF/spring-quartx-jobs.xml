@@ -9,12 +9,87 @@
                      http://www.springframework.org/schema/aop
                      http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="startQuertz" lazy-init="false" autowire="no"
-          class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="triggers">
-            <list>
-                <ref bean="memoryCheckDoTime"/>
-            </list>
-        </property>
-    </bean>
+    <bean id="refreshAccessTokenJobDetail" parent="baseJobDetail">
+		<property name="targetObject">
+			<ref bean="refreshAccessToken"/>
+		</property>
+	</bean>
+
+	<bean id="refreshAccessTokenDoTime"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="refreshAccessTokenJobDetail"/>
+		</property>
+
+		<property name="cronExpression">
+			<value>0 0/110 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="sendSmsMessageJobDetail"
+		  parent="baseJobDetail">
+		<property name="targetObject">
+			<ref bean="sendSmsMessage"/>
+		</property>
+	</bean>
+
+	<bean id="sendSmsMessageDoTime"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="sendSmsMessageJobDetail"/>
+		</property>
+
+		<property name="cronExpression">
+			<value>0/5 * * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="notifyMessageJobDetail" parent="baseJobDetail">
+		<property name="targetObject">
+			<ref bean="notifyMessage"/>
+		</property>
+	</bean>
+
+	<bean id="notifyMessageDoTime"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="notifyMessageJobDetail"/>
+		</property>
+
+		<property name="cronExpression">
+			<value>0/30 * * * * ?</value>
+		</property>
+	</bean>
+
+
+	<bean id="autoConfirmDzStatusJobDetail" parent="baseJobDetail">
+		<property name="targetObject">
+			<ref bean="autoConfirmDzStatus"/>
+		</property>
+	</bean>
+
+	<bean id="autoConfirmDzStatusDoTime"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="autoConfirmDzStatusJobDetail"/>
+		</property>
+
+		<property name="cronExpression">
+			<value>0 0/30 * * * ?</value>
+		</property>
+	</bean>
+
+	<bean id="startQuertz" lazy-init="false" autowire="no"
+		  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<!--ref bean="memoryCheckDoTime"/-->
+				<ref bean="sendSmsMessageDoTime"/>
+				<ref bean="notifyMessageDoTime"/>
+				<ref bean="refreshAccessTokenDoTime"/>
+				<ref bean="autoConfirmDzStatusDoTime"/>
+			</list>
+		</property>
+	</bean>
+	
 </beans>
