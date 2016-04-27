@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HttpClientTpl {
+    public static final String UTF8 = "UTF-8";
     public static interface Processor {
         Object process(HttpEntity entity) throws Exception;
     }
@@ -57,6 +58,7 @@ public class HttpClientTpl {
             HttpUriRequest request;
             if (post){
                 request = new HttpPost(url);
+                request.addHeader("Content-Type","text/html;charset=" + UTF8);
                 if (params != null){
                     List <NameValuePair> nvps = new ArrayList <NameValuePair>();
                     for (String[] param : params){
@@ -66,9 +68,10 @@ public class HttpClientTpl {
                     ((HttpPost)request).setEntity(new UrlEncodedFormEntity(nvps));
                 }
                 if (json != null){
-                    StringEntity jsonEntity = new StringEntity(json, "UTF-8");   // 中文乱码在此解决
+                    StringEntity jsonEntity = new StringEntity(json, UTF8);   // 中文乱码在此解决
                     jsonEntity.setContentType("application/json");
                     ((HttpPost)request).setEntity(jsonEntity);
+                } else {
                 }
             } else {
                 request = new HttpGet(url);
