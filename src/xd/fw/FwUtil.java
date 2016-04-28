@@ -3,6 +3,8 @@ package xd.fw;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Random;
@@ -39,6 +41,18 @@ public class FwUtil {
         calendar.add(Calendar.MONTH, -1);
         return new int[]{calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH) + 1};
     }
+
+    public static String md5(String plainText) throws Exception{
+        byte[] secretBytes = MessageDigest.getInstance("md5").digest(
+                plainText.getBytes(HttpClientTpl.UTF8));
+        String md5code = new BigInteger(1, secretBytes).toString(16);
+        for (int i = 0; i < 32 - md5code.length(); i++) {
+            md5code = "0" + md5code;
+        }
+        return md5code;
+    }
+
+
     public static void main(String[] args){
         for (int i=1; i< 13;i++)
         System.out.println(i + " = " + getLastDayInMonth(2015,i));
