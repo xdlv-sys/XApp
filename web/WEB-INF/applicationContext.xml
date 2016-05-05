@@ -54,12 +54,17 @@
         <property name="dataSource" ref="MyDataSource"></property>
     </bean>
 
-	<tx:advice id="userTxAdvice" transaction-manager="transactionManager">
+	<context:component-scan base-package="xd.fw">
+	</context:component-scan>
+
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<!--<tx:advice id="userTxAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="delete*" propagation="REQUIRED" read-only="false"
-				rollback-for="java.lang.Exception" no-rollback-for="java.lang.RuntimeException" />
+				rollback-for="java.lang.Exception" no-rollback-for="java.lang.Exception" />
 			<tx:method name="save*" propagation="REQUIRED" read-only="false"
-				rollback-for="java.lang.RuntimeException" />
+				rollback-for="java.lang.Exception" />
 			<tx:method name="update*" propagation="REQUIRED" read-only="false"
 				rollback-for="java.lang.Exception" />
 			<tx:method name="insert*" propagation="REQUIRED" read-only="false"
@@ -79,7 +84,7 @@
 	<context:component-scan base-package="xd.fw">
 		<context:include-filter type="regex" expression=".service.impl.*"/>
 		<context:include-filter type="regex" expression=".job.*"/>
-	</context:component-scan>
+	</context:component-scan>-->
 
 	<!--quartz jobs-->
     <bean id = "baseJobDetail" abstract="true" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

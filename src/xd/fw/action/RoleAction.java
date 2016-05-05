@@ -9,7 +9,6 @@ import xd.fw.service.FwService;
 
 import java.util.List;
 
-@Controller
 public class RoleAction extends BaseAction {
     @Autowired
     FwService fwService;

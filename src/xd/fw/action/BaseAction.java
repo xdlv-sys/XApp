@@ -2,13 +2,15 @@ package xd.fw.action;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.*;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.springframework.stereotype.Controller;
 import xd.fw.FwUtil;
 import xd.fw.bean.User;
 
@@ -16,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Pattern;
 
-@ParentPackage("json-default")
+@ParentPackage("xapp-default")
 @Namespace("")
 @Results({
         @Result(type = "json", params = {"ignoreHierarchy", "false", "excludeNullProperties", "true"}),
@@ -30,8 +32,7 @@ import java.util.regex.Pattern;
                         "contentDisposition", "attachment;filename=\"${fileName}\"",
                         "bufferSize", "1024"})
 })
-@ExceptionMappings({@ExceptionMapping(exception = "java.lang.RuntimeException", result = "error")})
-
+@ExceptionMappings({@ExceptionMapping(exception = "java.lang.Exception", result = "error")})
 public abstract class BaseAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
 

@@ -7,24 +7,23 @@ Ext.define('XApp.Util', {
             method: objs.method ? objs.method : 'POST',
             params: objs.params,
             scope: objs.scope,
-            success: function (response) {
+            callback: function(options,success,response){
                 var jsonObj = Ext.decode(response.responseText, true);
                 var blockTips = false;
+                if (!success || Ext.isEmpty(jsonObj) || !jsonObj.msg.success){
+                    if (objs.failure) {
+                        blockTips = objs.failure(jsonObj);
+                    }
+                    if (!blockTips) {
+                        Ext.MessageBox.alert('错误', '操作失败:' + jsonObj == null ? "" : jsonObj.msg);
+                    }
+                    return;
+                }
                 if (objs.success) {
                     blockTips = objs.success(jsonObj);
                 }
                 if (!blockTips) {
                     Ext.MessageBox.alert('提示', '操作成功');
-                }
-            },
-            failure: function (response) {
-                var jsonObj = Ext.decode(response.responseText, true);
-                var blockTips = false;
-                if (objs.failure) {
-                    blockTips = objs.failure(jsonObj);
-                }
-                if (!blockTips) {
-                    Ext.MessageBox.alert('错误', '操作失败:' + jsonObj == null ? "" : jsonObj.msg);
                 }
             }
         });
