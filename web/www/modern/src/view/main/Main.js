@@ -11,14 +11,8 @@ Ext.define('XApp.view.main.Main', {
 
     requires: [
         'Ext.MessageBox',
-
-        'XApp.view.main.MainController',
-        'XApp.view.main.MainModel',
         'XApp.view.main.List'
     ],
-
-    controller: 'main',
-    viewModel: 'main',
 
     defaults: {
         tab: {

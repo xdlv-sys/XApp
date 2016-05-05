@@ -10,6 +10,7 @@ import xd.fw.service.FwService;
 import java.util.List;
 
 @Service
+@Transactional(readOnly=true)
 public class FwServiceImpl extends BaseServiceImpl implements FwService {
     @Autowired
     UserMapper userMapper;
@@ -61,6 +62,7 @@ public class FwServiceImpl extends BaseServiceImpl implements FwService {
 
 
     @Override
+    @Transactional
     public void deleteUserById(Integer id) {
         userMapper.deleteByPrimaryKey(id);
     }
@@ -81,11 +83,13 @@ public class FwServiceImpl extends BaseServiceImpl implements FwService {
     }
 
     @Override
+    @Transactional
     public void deleteRoleById(Integer id) {
         roleMapper.deleteByPrimaryKey(id);
     }
 
     @Override
+    @Transactional
     public void saveOrUpdateRole(Role role) {
         if (role.getId() != null) {
             roleMapper.updateByPrimaryKey(role);
@@ -107,6 +111,7 @@ public class FwServiceImpl extends BaseServiceImpl implements FwService {
     }
 
     @Override
+    @Transactional
     public void saveOrUpdateMod(Mod mod) {
         if (mod.getId() != null) {
             modMapper.updateByPrimaryKey(mod);
@@ -117,6 +122,7 @@ public class FwServiceImpl extends BaseServiceImpl implements FwService {
     }
 
     @Override
+    @Transactional
     public void deleteMods(List<Mod> mods) {
         for (Mod mod : mods){
             modMapper.deleteByPrimaryKey(mod.getId());
