@@ -2,6 +2,7 @@ package xd.fw.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xd.fw.bean.*;
 import xd.fw.bean.mapper.*;
 import xd.fw.service.FwService;
@@ -27,6 +28,7 @@ public class FwServiceImpl extends BaseServiceImpl implements FwService {
     }
 
     @Override
+    @Transactional
     public void saveOrUpdateUser(User user) {
         if (user.getId() != null) {
             userMapper.updateByPrimaryKey(user);

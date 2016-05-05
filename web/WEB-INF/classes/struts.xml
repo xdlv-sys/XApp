@@ -21,31 +21,9 @@
     <constant name="struts.convention.action.name.lowercase" value="true"/>
 	<constant name="struts.multipart.maxSize" value="9000000"/>
 
-	<package name="default" namespace="/" extends="json-default">
-		<global-results>
-			<result type="json">
-				<param name="ignoreHierarchy">false</param>
-				<param name="excludeNullProperties">true</param>
-			</result>
-			<result name="error" type="chain">resultAction</result>
-			<result name="finish" type="chain">resultAction</result>
-			<result name="input" type="chain">resultAction</result>
-
-			<result name="login">www/index.html</result>
-			<result name="xml">xml.jsp</result>
-
-			<result name="excel" type="stream">
-				<param name="contentType">application/octet-stream</param>
-				<param name="inputName">excelFile</param>
-				<param name="contentDisposition">attachment;filename="${fileName}"</param>
-				<param name="bufferSize">1024</param>
-			</result>
-		</global-results>
+	<package name="xapp-default" namespace="" extends="json-default">
 		<global-exception-mappings>
 			<exception-mapping exception="java.lang.Exception" result="error"/>
 		</global-exception-mappings>
-
-		<action name="resultAction" class="xd.fw.action.ResultAction" method="result"/>
-
 	</package>
 </struts>

@@ -9,7 +9,6 @@ import xd.fw.service.FwService;
 
 import java.util.List;
 
-@Controller
 public class ModAction extends BaseAction{
     final static int ADMIN_ID = -10;
     @Autowired

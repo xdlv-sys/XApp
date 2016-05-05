@@ -1,12 +1,12 @@
 package xd.fw.action;
 
 import com.opensymphony.xwork2.ActionSupport;
+import org.springframework.stereotype.Controller;
 import xd.fw.FwException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import javax.servlet.http.HttpServletRequest;
-
 
 public class ResultAction extends BaseAction{
 
@@ -14,7 +14,7 @@ public class ResultAction extends BaseAction{
     String msg = "操作成功";
     boolean success = true;
 
-    public String result(){
+    public String execute(){
         HttpServletRequest request = ServletActionContext.getRequest();
         Throwable exception = (Throwable) request.getAttribute("exception");
         Throwable temp = exception;

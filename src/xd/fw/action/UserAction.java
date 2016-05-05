@@ -2,6 +2,8 @@ package xd.fw.action;
 
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.ExceptionMapping;
+import org.apache.struts2.convention.annotation.ExceptionMappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import xd.fw.FwException;
@@ -11,7 +13,7 @@ import xd.fw.service.FwService;
 
 import java.util.ArrayList;
 import java.util.List;
-@Controller
+
 public class UserAction extends BaseAction {
     @Autowired
     FwService fwService;
