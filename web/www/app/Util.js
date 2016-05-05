@@ -10,7 +10,7 @@ Ext.define('XApp.Util', {
             callback: function(options,success,response){
                 var jsonObj = Ext.decode(response.responseText, true);
                 var blockTips = false;
-                if (!success || Ext.isEmpty(jsonObj) || !jsonObj.msg.success){
+                if (!success || Ext.isEmpty(jsonObj) || !jsonObj.success){
                     if (objs.failure) {
                         blockTips = objs.failure(jsonObj);
                     }
