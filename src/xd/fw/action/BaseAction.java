@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
                         "contentDisposition", "attachment;filename=\"${fileName}\"",
                         "bufferSize", "1024"})
 })
-@ExceptionMappings({@ExceptionMapping(exception = "java.lang.Exception", result = "error")})
 public abstract class BaseAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
 

@@ -61,5 +61,10 @@ insert into t_rolemod values(-2,-1,-100);
 insert into t_rolemod values(-1,-1,-99);
 
 
+drop table IF EXISTS h_test;
+create table h_test(
+    id int not null primary key,
+    name VARCHAR(20)
+)ENGINE = INNODB;
 
 
