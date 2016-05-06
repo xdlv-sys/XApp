@@ -1,8 +1,9 @@
 package xd.fw.job;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
-@Controller
+@Service
 public class MemoryJob extends BaseJob {
 
     @Override
