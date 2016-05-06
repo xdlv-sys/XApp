@@ -28,7 +28,7 @@ public class FwServiceImpl extends MyBatisServiceImpl implements FwService {
     }
 
     @Override
-    //@Transactional
+    @Transactional
     public void saveOrUpdateUser(User user) {
         if (user.getId() != null) {
             userMapper.updateByPrimaryKey(user);
