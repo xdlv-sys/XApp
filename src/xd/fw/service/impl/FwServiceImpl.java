@@ -10,8 +10,7 @@ import xd.fw.service.FwService;
 import java.util.List;
 
 @Service
-@Transactional(readOnly=true)
-public class FwServiceImpl extends BaseServiceImpl implements FwService {
+public class FwServiceImpl extends MyBatisServiceImpl implements FwService {
     @Autowired
     UserMapper userMapper;
     @Autowired
@@ -29,7 +28,7 @@ public class FwServiceImpl extends BaseServiceImpl implements FwService {
     }
 
     @Override
-    @Transactional
+    //@Transactional
     public void saveOrUpdateUser(User user) {
         if (user.getId() != null) {
             userMapper.updateByPrimaryKey(user);

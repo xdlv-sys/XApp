@@ -2,8 +2,9 @@ package xd.fw.job;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
-@Controller
+@Service
 public abstract class BaseJob {
 
     protected Logger logger = Logger.getLogger(getClass());
