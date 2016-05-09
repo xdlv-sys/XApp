@@ -53,12 +53,12 @@ Ext.define('XApp.view.main.Head', {
             bind: {text: '{currentUser.name}'},
             
             cls: 'top-user-name'
-        },{
+        }/*,{
             cls: 'delete-focus-bg',
             iconCls:'x-fa fa-th-large',
             text: '账户信息',
             handler: 'modUser'
-        },{
+        }*/,{
             width: 50,
             text : '退出',
             href: 'index.html',

@@ -14,11 +14,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HttpClientTpl {
+    static Logger logger = Logger.getLogger(HttpClientTpl.class);
     public static final String UTF8 = "UTF-8";
     public static interface Processor {
         Object process(HttpEntity entity) throws Exception;
@@ -56,6 +58,7 @@ public class HttpClientTpl {
         HttpEntity entity = null;
         try{
             HttpUriRequest request;
+            logger.debug(url);
             if (post){
                 request = new HttpPost(url);
                 request.addHeader("Content-Type","text/html;charset=" + UTF8);
@@ -83,7 +86,9 @@ public class HttpClientTpl {
                 throw new Exception("http status is wrong:" + statusLine);
             }
             entity = response.getEntity();
-            return processor.process(entity);
+            Object res = processor.process(entity);
+            logger.debug(res);
+            return res;
         } finally {
             if (entity != null){
                 try{
