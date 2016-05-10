@@ -8,9 +8,7 @@ Ext.define('XApp.view.mod.ModTreeModel', {
     },
 
     stores: {
-        modstore: {
-            type: 'modtreestore'
-        }
+
     }
 
 });
