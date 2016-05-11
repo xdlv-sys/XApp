@@ -1,6 +1,11 @@
 Ext.define('XApp.store.ModTree', {
     extend: 'Ext.data.TreeStore',
     alias: 'store.modtreestore',
+
+    root:{
+        text: 'mods',
+        expend: false
+    },
     proxy: {
         type: 'ajax',
         url: 'mod!obtainUserMods.cmd',

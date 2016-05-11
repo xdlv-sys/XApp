@@ -6,101 +6,28 @@ Ext.define('XApp.view.user.UserManagerController', {
         return btn.up('grid');
     },
     // user manager
-    openUserInfo: function (btn, user) {
-        var win = Ext.create('XApp.view.cdu.BaseInfo', {
+    openUserInfo: function (btn, user,saveCallback) {
+        Ext.create('XApp.view.user.UserInfo',{
+            roleEditable: true,
+            saveCallback: saveCallback,
             viewModel: {
                 data: {
-                    operation: this.saveUser,
-                    grid: this.getGrid(btn),
-                    title: '用户信息',
                     user: user
                 }
-            },
-            fieldItems: [{
-                xtype: 'textfield',
-                name: 'user.id',
-                hidden: true,
-                bind: '{user.id}'
-            }, {
-                name: 'user.name',
-                xtype: 'textfield',
-                fieldLabel: '用户名',
-                bind: '{user.name}'
-            }, {
-                xtype: 'textfield',
-                name: 'user.password',
-                inputType: 'password',
-                fieldLabel: '密码',
-                bind: '{user.password}'
-            }, {
-                xtype: 'textfield',
-                name: 'user.mail',
-                fieldLabel: '邮箱',
-                bind: '{user.mail}'
-            }, {
-                xtype: 'grid',
-                fieldLabel: '角色',
-                store: {
-                    model: 'Role',
-                    autoLoad: true
-                },
-                selModel: 'checkboxmodel',
-                columns: [{
-                    text: "角色名",
-                    sortable: true,
-                    dataIndex: 'name'
-                }]
-            }]
-        });
-        win.show(null, function () {
-            if (!user) {
-                return;
             }
-            Ext.defer(function () {
-                XApp.Util.ajax({
-                    url: 'role!obtainUserRoles.cmd',
-                    params: {'user.id': user.id},
-                    success: function (records) {
-                        var data = win.down('grid').getStore().getData();
-                        var checkModel = win.down('grid').getSelectionModel();
-                        Ext.each(data.items, function (d, j) {
-                            Ext.each(records.roles, function (r, i) {
-                                if (d.id == r.id) {
-                                    checkModel.select(d,true);
-                                }
-                            });
-                        });
-
-
-                        return true;
-                    }
-                });
-            }, 300);
-
-        });
-    },
-    saveUser: function (btn) {
-        var win = btn.up('window');
-        var params = Ext.apply({}, btn.up('form').getValues());
-        Ext.each(win.down('grid').getSelection(), function (v, i) {
-            params['user.roles[' + i + '].id'] = v.id;
-        });
-        XApp.Util.ajax({
-            url: 'user!saveUser.cmd',
-            params: params,
-            success: function (response) {
-                win.getViewModel().get('grid').getStore().reload();
-                win.close();
-            }
-        });
+        }).show();
     },
 
     addUser: function (btn) {
-        this.openUserInfo(btn);
+        this.openUserInfo(btn,null,function(){
+            btn.up('grid').getStore().reload();
+        });
     },
     modUser: function (btn) {
         var users = this.getGrid(btn).getSelection();
-        this.openUserInfo(btn, Ext.apply({}, users[0]));
+        this.openUserInfo(btn, Ext.apply({}, users[0]),function(){
+            btn.up('grid').getStore().reload();
+        });
     },
     delUser: function (btn) {
         var users = this.getGrid(btn).getSelection();

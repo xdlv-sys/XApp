@@ -148,11 +148,10 @@ Ext.define('XApp.view.main.MainController', {
         this.setCurrentView(id);
     },
     modUser: function (btn) {
-        Ext.create('XApp.view.user.AddUser', {
+        Ext.create('XApp.view.user.UserInfo', {
             viewModel: {
                 data: {
-                    user: this.getViewModel().getData().currentUser,
-                    superUser : this.getViewModel().getData().currentUser.get('userRole') == 0
+                    user: this.getViewModel().getData().currentUser
                 }
             }
         }).show();
