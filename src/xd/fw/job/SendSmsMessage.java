@@ -1,13 +1,13 @@
 package xd.fw.job;
 
-import org.springframework.stereotype.Controller;
-import xd.fw.I18n;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import xd.fw.I18n;
 import xd.fw.bean.UserValidate;
 import xd.fw.service.MainSerivce;
-@Controller
+@Service
 public class SendSmsMessage extends BaseJob{
 	@Autowired
 	MainSerivce mainSerivce;

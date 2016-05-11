@@ -2,10 +2,7 @@ package xd.fw.action;
 
 
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.ExceptionMapping;
-import org.apache.struts2.convention.annotation.ExceptionMappings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import xd.fw.FwException;
 import xd.fw.I18n;
 import xd.fw.bean.User;

@@ -33,7 +33,7 @@ Ext.define('XApp.view.importA.ImportTelphoneController', {
         if (Ext.isEmpty(params['userCompany.phone'])){
             delete params['userCompany.phone'];
         }
-        this.getStore('store').reload({
+        this.getStore('store').loadPage(1,{
             params: params
         });
     },

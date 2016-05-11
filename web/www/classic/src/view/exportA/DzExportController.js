@@ -3,7 +3,7 @@ Ext.define('XApp.view.exportA.DzExportController', {
     alias: 'controller.export-dzexport',
 
     queryDzlist: function (btn) {
-        this.getStore('store').reload({
+        this.getStore('store').loadPage(1,{
             params: this.prepareParams(btn)
         });
     },

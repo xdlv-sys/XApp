@@ -1,6 +1,5 @@
 package xd.fw;
 
-import xd.fw.FwUtil;
 import xd.fw.action.BaseAction;
 
 import javax.servlet.*;

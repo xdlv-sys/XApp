@@ -1,10 +1,10 @@
 package xd.fw.job;
 
-import org.springframework.stereotype.Controller;
+import net.sf.json.JSONObject;
+import org.springframework.stereotype.Service;
 import xd.fw.HttpClientTpl;
 import xd.fw.I18n;
-import net.sf.json.JSONObject;
-@Controller
+@Service
 public class RefreshAccessToken extends BaseJob{
 
     String accessToken;

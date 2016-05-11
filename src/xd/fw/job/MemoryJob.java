@@ -1,6 +1,5 @@
 package xd.fw.job;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
 @Service

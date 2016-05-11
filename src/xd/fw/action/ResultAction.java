@@ -1,10 +1,8 @@
 package xd.fw.action;
 
-import com.opensymphony.xwork2.ActionSupport;
-import org.springframework.stereotype.Controller;
-import xd.fw.FwException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import xd.fw.FwException;
 
 import javax.servlet.http.HttpServletRequest;
 

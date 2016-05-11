@@ -2,15 +2,16 @@ package xd.fw.action;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.beanutils.BeanUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.*;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-import org.springframework.stereotype.Controller;
 import xd.fw.FwUtil;
 import xd.fw.bean.User;
 

@@ -1,19 +1,19 @@
 package xd.fw.job;
 
-import org.springframework.stereotype.Controller;
-import xd.fw.FwUtil;
-import xd.fw.HttpClientTpl;
-import xd.fw.I18n;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import xd.fw.FwUtil;
+import xd.fw.HttpClientTpl;
+import xd.fw.I18n;
 import xd.fw.bean.ImportDzRecord;
 import xd.fw.bean.Userdz;
 import xd.fw.service.MainSerivce;
 
 import java.util.List;
 
-@Controller
+@Service
 public class NotifyMessage  extends BaseJob{
     @Autowired
     MainSerivce mainSerivce;

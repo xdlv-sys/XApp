@@ -1,8 +1,5 @@
 package xd.fw.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import xd.fw.bean.Mod;
 import xd.fw.bean.Role;
 import xd.fw.bean.User;
