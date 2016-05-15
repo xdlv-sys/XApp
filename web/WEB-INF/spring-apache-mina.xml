@@ -1,0 +1,56 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                     http://www.springframework.org/schema/beans/spring-beans.xsd
+                     http://www.springframework.org/schema/tx
+                     http://www.springframework.org/schema/tx/spring-tx.xsd
+                     http://www.springframework.org/schema/aop
+                     http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="tlvCodecFilter" class="org.apache.mina.filter.codec.ProtocolCodecFilter">
+        <constructor-arg>
+            <bean class="xd.fw.mina.tlv.TLVCodecFactory">
+                <constructor-arg>
+                    <value>UTF-8</value>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+    <bean id="loggingFilter" class="org.apache.mina.filter.logging.LoggingFilter" />
+
+    <bean id="filterChainBuilder" class="org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder">
+        <property name="filters">
+            <map>
+                <entry key="loggingFilter" value-ref="loggingFilter"/>
+                <entry key="codecFilter" value-ref="tlvCodecFilter"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="java.net.SocketAddress"
+                       value="org.apache.mina.integration.beans.InetSocketAddressEditor"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="sessionConfig" factory-bean="ioAcceptor" factory-method="getSessionConfig" >
+        <property name="readerIdleTime" value="10"/>
+        <property name="minReadBufferSize" value="512"/>
+        <property name="maxReadBufferSize" value="10240"/>
+    </bean>
+
+    <!-- The IoAcceptor which binds to port 18080 -->
+    <bean id="ioAcceptor" class="org.apache.mina.transport.socket.nio.NioSocketAcceptor"
+          init-method="bind" destroy-method="unbind">
+        <property name="defaultLocalAddress" value=":18080" />
+        <property name="reuseAddress" value="true"/>
+
+        <property name="handler" ref="tlvHandler" />
+        <property name="filterChainBuilder" ref="filterChainBuilder" />
+    </bean>
+</beans>

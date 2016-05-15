@@ -130,5 +130,6 @@
     </bean>
 
     <import resource="spring-quartx-jobs.xml"/>
+    <import resource="spring-apache-mina.xml"/>
 
 </beans>
