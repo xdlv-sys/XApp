@@ -22,16 +22,12 @@ import java.util.List;
 public class HttpClientTpl {
     static Logger logger = Logger.getLogger(HttpClientTpl.class);
     public static final String UTF8 = "UTF-8";
-    public static interface Processor {
+
+    public interface Processor {
         Object process(HttpEntity entity) throws Exception;
     }
-    static class StringProcessor implements Processor{
-        @Override
-        public Object process(HttpEntity entity) throws Exception {
-            return EntityUtils.toString(entity);
-        }
-    }
-    static StringProcessor stringProcessor = new StringProcessor();
+
+    final static Processor stringProcessor = (entity)->EntityUtils.toString(entity);
 
     public static String postJson(String url,String json) throws Exception{
         return (String)execute(url,true,null,json,stringProcessor);
@@ -104,22 +100,13 @@ public class HttpClientTpl {
         }
     }
     public static void main(String[] args) throws Exception {
-        Object get = get("http://httpbin.org/get", new Processor() {
-            @Override
-            public Object process(HttpEntity entity) throws Exception {
-                return EntityUtils.toString(entity);
-            }
-        });
+        Object get = get("http://httpbin.org/get");
 
         System.out.println(get);
         Object post = post("http://httpbin.org/post", new String[][]{
                 {"name", "vip"},
                 {"password", "secret"}
-        }, new Processor() {
-            public Object process(HttpEntity entity) throws Exception {
-                return EntityUtils.toString(entity);
-            }
-        });
+        }, entity -> EntityUtils.toString(entity));
         System.out.println(post);
     }
 
