@@ -24,7 +24,14 @@ public class TLVMessage {
     }
 
     public TLVMessage getNext() {
-        return next;
+        return getNext(0);
+    }
+    public TLVMessage getNext(int index){
+        TLVMessage tmp = this;
+        while (index -- > -1){
+            tmp = tmp.next;
+        }
+        return tmp;
     }
 
     public TLVMessage setNext(TLVMessage next) {
