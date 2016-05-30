@@ -57,20 +57,21 @@ public class HttpClientTpl {
             logger.debug(url);
             if (post){
                 request = new HttpPost(url);
-                request.addHeader("Content-Type","text/html;charset=" + UTF8);
+                //request.addHeader("Content-Type","text/html;charset=" + UTF8);
                 if (params != null){
                     List <NameValuePair> nvps = new ArrayList <NameValuePair>();
                     for (String[] param : params){
                         nvps.add(new BasicNameValuePair(param[0], param[1]));
                     }
 
-                    ((HttpPost)request).setEntity(new UrlEncodedFormEntity(nvps));
+                    ((HttpPost)request).setEntity(new UrlEncodedFormEntity(nvps,UTF8));
                 }
                 if (json != null){
                     StringEntity jsonEntity = new StringEntity(json, UTF8);   // 中文乱码在此解决
                     jsonEntity.setContentType("application/json");
                     ((HttpPost)request).setEntity(jsonEntity);
                 } else {
+                    ((HttpPost)request).setHeader("Content-Type","text/html;charset=UTF-8");
                 }
             } else {
                 request = new HttpGet(url);
