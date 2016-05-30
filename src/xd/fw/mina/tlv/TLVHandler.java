@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  */
 @Service("tlvHandler")
 public class TLVHandler extends IoHandlerAdapter {
-    protected Logger logger = Logger.getLogger(TLVHandler.class);
+    protected Logger logger = Logger.getLogger(getClass());
 
     @Override
     public void sessionIdle(IoSession session, IdleStatus status) throws Exception {

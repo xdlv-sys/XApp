@@ -31,6 +31,14 @@ public class TLVMessage {
         this.next = next;
         return this.next;
     }
+    public TLVMessage setNext(Object next){
+        if (next instanceof TLVMessage){
+            this.next = (TLVMessage)next;
+        } else {
+            this.next = new TLVMessage(next);
+        }
+        return this.next;
+    }
 
     public static TLVMessage parse(IoBuffer buffer){
         return parse(buffer, FwUtil.UTF8);
@@ -66,7 +74,7 @@ public class TLVMessage {
         throw new IllegalArgumentException("invalidate buffer:" + type);
     }
 
-    public void fill(IoBuffer buffer, String charesetName) {
+    public void fill(IoBuffer buffer, String charsetName) {
         if (value == null) {
             return;
         }
@@ -102,7 +110,7 @@ public class TLVMessage {
         }
         if (value instanceof String) {
             try {
-                byte[] bytes = ((String) value).getBytes(charesetName);
+                byte[] bytes = ((String) value).getBytes(charsetName);
                 buffer.put(STRING_TYPE);
                 buffer.putInt(bytes.length);
                 buffer.put(bytes);
@@ -116,12 +124,19 @@ public class TLVMessage {
 
     @Override
     public String toString() {
-        StringBuffer stringBuffer = new StringBuffer(value.toString()).append("->");
+        StringBuffer stringBuffer = new StringBuffer(value.toString());
         TLVMessage tmp = this;
         while ((tmp = tmp.getNext()) != null){
-            stringBuffer.append(tmp.getValue()).append("->");
+            stringBuffer.append("->").append(tmp.getValue());
         }
         return stringBuffer.toString();
 
+    }
+
+    public static void main(String[] args){
+        TLVMessage root = new TLVMessage("hello");
+        root.setNext(12).setNext(new TLVMessage(12.01f)).setNext("end");
+
+        System.out.println(root);
     }
 }
