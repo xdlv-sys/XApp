@@ -19,47 +19,12 @@
     </bean>
 
     <!--enter-->
-    <bean id="enterJob" class="xd.fw.job.EnterJob">
+    <bean id="freeJob" class="xd.fw.job.FreeJob">
         <property name="parkingNo">
             <value>6201141</value>
         </property>
         <property name="serverHostName">
             <value>wap.dh-etc.com</value>
-        </property>
-    </bean>
-    <bean id="outJob" class="xd.fw.job.OutJob" parent="enterJob"/>
-    <bean id="freeJob" class="xd.fw.job.FreeJob" parent="enterJob"/>
-    <bean id="deleteJob" class="xd.fw.job.DeleteJob" parent="enterJob"/>
-
-    <bean id="enterJobDetail" parent="baseJobDetail">
-        <property name="targetObject">
-            <ref bean="enterJob"/>
-        </property>
-    </bean>
-
-    <bean id="enterJobDoTime"
-          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail">
-            <ref bean="enterJobDetail"/>
-        </property>
-        <property name="cronExpression">
-            <value>0/30 * * * * ?</value>
-        </property>
-    </bean>
-
-    <bean id="outJobDetail" parent="baseJobDetail">
-        <property name="targetObject">
-            <ref bean="outJob"/>
-        </property>
-    </bean>
-
-    <bean id="outJobDoTime"
-          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail">
-            <ref bean="outJobDetail"/>
-        </property>
-        <property name="cronExpression">
-            <value>0/30 * * * * ?</value>
         </property>
     </bean>
 
@@ -76,22 +41,6 @@
         </property>
         <property name="cronExpression">
             <value>0/30 * * * * ?</value>
-        </property>
-    </bean>
-
-    <bean id="deleteJobDetail" parent="baseJobDetail">
-        <property name="targetObject">
-            <ref bean="deleteJob"/>
-        </property>
-    </bean>
-
-    <bean id="deleteJobDoTime"
-          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail">
-            <ref bean="deleteJobDetail"/>
-        </property>
-        <property name="cronExpression">
-            <value>0 0 1 * * ?</value>
         </property>
     </bean>
     
