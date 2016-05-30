@@ -33,17 +33,14 @@ public class Test extends IoHandlerAdapter {
         future.awaitUninterruptibly();
         session = future.getSession();
 
-        TLVMessage tlvMessage = new TLVMessage(123);
-        TLVMessage floatMessage = new TLVMessage(12.01f);
-        TLVMessage stringMessage = new TLVMessage("Hello word");
-        tlvMessage.setNext(floatMessage).setNext(stringMessage);
-        session.write(tlvMessage);
+        TLVMessage enter = new TLVMessage(1);
+        enter.setNext("苏A12345").setNext("20160530163322");
+        session.write(enter);
 
-        TLVMessage tlvMessage2 = new TLVMessage(89L);
-        TLVMessage tlvMessage3 = new TLVMessage((byte)9);
-        TLVMessage tlvMessage4 = new TLVMessage(1.02);
-        tlvMessage2.setNext(tlvMessage3).setNext(tlvMessage4);
-        //session.write(tlvMessage2);
+        TLVMessage out = new TLVMessage(2);
+        out.setNext("苏A12345").setNext(1.0f).setNext("20160530163322").setNext("20160530163323");
+        session.write(out);
+
     }
 
     public void messageReceived(IoSession session, Object message) throws Exception {
@@ -54,6 +51,6 @@ public class Test extends IoHandlerAdapter {
         Test t = new Test("127.0.0.1",18080);
         System.in.read();
         t.session.closeNow();
-        System.exit(0);
+        System.out.println("close");
     }
 }

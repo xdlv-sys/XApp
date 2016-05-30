@@ -62,4 +62,8 @@
         <property name="handler" ref="tlvHandler"/>
         <property name="filterChainBuilder" ref="filterChainBuilder"/>
     </bean>
+
+    <bean id="tlvHandler" class="xd.fw.job.ParkHandler" destroy-method="save">
+
+    </bean>
 </beans>
