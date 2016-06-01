@@ -64,7 +64,7 @@ public class HttpClientTpl {
                     ((HttpPost)request).setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
                 }
                 if (json != null){
-                    StringEntity jsonEntity = new StringEntity(json, UTF8);   // 中文乱码在此解决
+                    StringEntity jsonEntity = new StringEntity(json, Consts.UTF_8);   // 中文乱码在此解决
                     jsonEntity.setContentType("application/json");
                     ((HttpPost)request).setEntity(jsonEntity);
                 }
@@ -103,6 +103,10 @@ public class HttpClientTpl {
                 {"name", "vip"},
                 {"password", "secret"}
         }, entity -> EntityUtils.toString(entity));
+
+        post("http://localhost:8080/accept!accept.cmd",new String[][]{
+                {"Carnumber","中国人民123"}
+        });
         System.out.println(post);
     }
 
