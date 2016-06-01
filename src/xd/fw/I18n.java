@@ -24,4 +24,8 @@ public class I18n {
     public static String getI18n(String key) {
         return properties.getProperty(key, key);
     }
+
+    public static void setI18n(String key, String value){
+        properties.setProperty(key, value);
+    }
 }

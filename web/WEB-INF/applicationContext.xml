@@ -129,6 +129,8 @@
         </property>
     </bean>
 
+    <bean class="org.springframework.jmx.export.annotation.AnnotationMBeanExporter"/>
+
     <import resource="spring-quartx-jobs.xml"/>
     <import resource="spring-apache-mina.xml"/>
 
