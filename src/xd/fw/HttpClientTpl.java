@@ -1,9 +1,6 @@
 package xd.fw;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -64,14 +61,12 @@ public class HttpClientTpl {
                         nvps.add(new BasicNameValuePair(param[0], param[1]));
                     }
 
-                    ((HttpPost)request).setEntity(new UrlEncodedFormEntity(nvps,UTF8));
+                    ((HttpPost)request).setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
                 }
                 if (json != null){
                     StringEntity jsonEntity = new StringEntity(json, UTF8);   // 中文乱码在此解决
                     jsonEntity.setContentType("application/json");
                     ((HttpPost)request).setEntity(jsonEntity);
-                } else {
-                    ((HttpPost)request).setHeader("Content-Type","text/html;charset=UTF-8");
                 }
             } else {
                 request = new HttpGet(url);
