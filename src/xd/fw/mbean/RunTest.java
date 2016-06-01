@@ -4,15 +4,18 @@ import org.springframework.stereotype.Service;
 
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
 
 @Service
-public class TlvTest extends BaseMBeanImpl implements TlvTestMBean{
+public class RunTest extends BaseMBeanImpl implements RunTestMBean{
     String hostName;
     int port;
 
     @Override
-    public String hello(String s) {
-        return "hello " + s;
+    public String runCase(String className, String method, String params) throws Exception{
+        Object obj = Class.forName(className).newInstance();
+        Method method1 = obj.getClass().getDeclaredMethod(method,String.class);
+        return String.valueOf(method1.invoke(obj,params));
     }
 
     public String getHostName() {
