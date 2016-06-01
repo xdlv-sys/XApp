@@ -68,7 +68,6 @@ public class ParkHandler extends TLVHandler{
         }
         SendRequest sendRequest = action == 1 ? enter : out;
 
-
         String timeStamp = getTimeStamp();
         String[][] params = sendRequest.constructParams(timeStamp,request.getNext());
 
@@ -90,8 +89,8 @@ public class ParkHandler extends TLVHandler{
             jsonObject.put("msg","-1");
         }
 
-        TLVMessage ret = new TLVMessage(Integer.valueOf(jsonObject.getString("msg")));
-        ret.setNext("").setNext(request.getNext().getValue());
+        TLVMessage ret = new TLVMessage(action);
+        ret.setNext(Integer.valueOf(jsonObject.getString("msg"))).setNext(request.getNext().getValue());
         session.write(ret);
     }
 }
