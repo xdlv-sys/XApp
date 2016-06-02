@@ -13,12 +13,12 @@
         <constructor-arg>
             <bean class="xd.fw.mina.tlv.TLVCodecFactory">
                 <constructor-arg>
-                    <value>UTF-8</value>
+                    <value>${mina_encoding}</value>
                 </constructor-arg>
             </bean>
         </constructor-arg>
     </bean>
-    <bean id="loggingFilter" class="org.apache.mina.filter.logging.LoggingFilter" />
+    <bean id="loggingFilter" class="xd.fw.mina.tlv.BufferLoggingFilter" />
 
     <bean id="filterChainBuilder" class="org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder">
         <property name="filters">

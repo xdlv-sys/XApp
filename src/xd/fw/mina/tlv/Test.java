@@ -43,7 +43,7 @@ public class Test extends IoHandlerAdapter {
         TLVMessage tlvMessage3 = new TLVMessage((byte)9);
         TLVMessage tlvMessage4 = new TLVMessage(1.02);
         tlvMessage2.setNext(tlvMessage3).setNext(tlvMessage4);
-        session.write(tlvMessage2);
+        //session.write(tlvMessage2);
     }
 
     public void messageReceived(IoSession session, Object message) throws Exception {
@@ -54,5 +54,6 @@ public class Test extends IoHandlerAdapter {
         Test t = new Test("127.0.0.1",18080);
         System.in.read();
         t.session.closeNow();
+        System.exit(0);
     }
 }
