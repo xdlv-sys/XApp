@@ -1,6 +1,7 @@
 package xd.fw.job;
 
 import com.sun.org.glassfish.gmbal.ManagedObject;
+import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
@@ -30,18 +31,31 @@ public class ParkTest extends IoHandlerAdapter {
 
         if ("1".equals(action)){
             TLVMessage enter = new TLVMessage(1);
-            enter.setNext("?A12345").setNext("20160530163322");
+            enter.setNext("À’A12345").setNext("20160530163322");
             session.write(enter);
         } else {
             TLVMessage out = new TLVMessage(2);
-            out.setNext("?A12345").setNext(1.0f).setNext("20160530163322").setNext("20160530163323");
+            out.setNext("À’A12345").setNext(1.0f).setNext("20160530163322").setNext("20160530163323");
             session.write(out);
         }
         synchronized (this){
             wait(10000);
         }
         return ret + "";
+    }
 
+    public void sendDirectBuffer(){
+        byte[] bytes = new byte[]{0x05,(byte)0x10,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x29,(byte)0x02,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x06,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x08,(byte)0xBD,(byte)0xF2,(byte)0x41,(byte)0x48,(byte)0x55,(byte)0x4B,(byte)0x4A,(byte)0x50,(byte)0x06,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x0E,(byte)0x32,(byte)0x30,(byte)0x31,(byte)0x36,(byte)0x30,(byte)0x36,(byte)0x30,(byte)0x34,(byte)0x32,(byte)0x30,(byte)0x35,(byte)0x32,(byte)0x30,(byte)0x35};
+
+        SocketConnector connector = new NioSocketConnector();
+        /*connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(
+                new TLVCodecFactory("gb2312")));*/
+        connector.setHandler(this);
+
+        ConnectFuture future = connector.connect(new InetSocketAddress("localhost", 48011));
+        future.awaitUninterruptibly();
+        IoSession session = future.getSession();
+        session.write(IoBuffer.wrap(bytes));
     }
 
     @Override
@@ -51,5 +65,10 @@ public class ParkTest extends IoHandlerAdapter {
         synchronized (this){
             notifyAll();
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        new ParkTest().sendDirectBuffer();
+        //new ParkTest().testPark("localhost,48011,1");
     }
 }
