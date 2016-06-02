@@ -14,6 +14,7 @@
         <property name="triggers">
             <list>
                 <!--<ref bean="memoryCheckDoTime"/>-->
+                <ref bean="freeJobDoTime"/>
             </list>
         </property>
     </bean>
@@ -21,7 +22,7 @@
     <!--enter-->
     <bean id="freeJob" class="xd.fw.job.FreeJob">
         <property name="parkingNo">
-            <value>6201141</value>
+            <value>${park_no}</value>
         </property>
         <property name="serverHostName">
             <value>wap.dh-etc.com</value>
