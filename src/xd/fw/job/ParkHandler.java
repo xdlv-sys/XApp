@@ -23,7 +23,6 @@ import java.util.Scanner;
 public class ParkHandler extends TLVHandler{
 
     protected SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-    final String CODE = "fsAsf2015";
 
     static Logger logger = Logger.getLogger(ParkHandler.class);
 

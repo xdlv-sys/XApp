@@ -48,7 +48,7 @@ public class Test extends IoHandlerAdapter {
     }
 
     public static void main(String[] args)throws Exception{
-        Test t = new Test("127.0.0.1",18080);
+        Test t = new Test("127.0.0.1",48011);
         System.in.read();
         t.session.closeNow();
         System.out.println("close");
