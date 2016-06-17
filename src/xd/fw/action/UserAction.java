@@ -2,12 +2,9 @@ package xd.fw.action;
 
 
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.ExceptionMapping;
-import org.apache.struts2.convention.annotation.ExceptionMappings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Value;
 import xd.fw.FwException;
-import xd.fw.I18n;
 import xd.fw.bean.User;
 import xd.fw.service.FwService;
 
@@ -20,6 +17,8 @@ public class UserAction extends BaseAction {
 
     User user;
     List<User> users;
+
+    @Value("${version}")
     String version;
     public String userLogin() {
         User userRecord = fwService.userLogin(user.getName(), user.getPassword());
@@ -53,7 +52,6 @@ public class UserAction extends BaseAction {
     }
 
     public String version(){
-        version = I18n.getI18n("version");
         return SUCCESS;
     }
 

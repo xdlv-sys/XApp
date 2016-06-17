@@ -52,7 +52,6 @@ public class FwUtil {
         return md5code;
     }
 
-
     public static void main(String[] args){
         for (int i=1; i< 13;i++)
         System.out.println(i + " = " + getLastDayInMonth(2015,i));
