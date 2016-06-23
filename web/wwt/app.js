@@ -48,6 +48,7 @@ Ext.application({
                     window.localStorage.clear();
                     window.location.reload();
                 }
+                XApp.version = msg.version;
             }
         });
         // Destroy the #appLoadingIndicator element
