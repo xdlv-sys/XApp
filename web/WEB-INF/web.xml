@@ -3,6 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
+
+    <filter>
+        <filter-name>session</filter-name>
+        <filter-class>xd.fw.SessionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>session</filter-name>
+        <url-pattern>*.cmd</url-pattern>
+    </filter-mapping>
+
     <filter>
         <filter-name>CharacterEncoding</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -19,16 +29,6 @@
         <filter-name>CharacterEncoding</filter-name>
         <url-pattern>*.cmd</url-pattern>
     </filter-mapping>
-
-    <!--<filter>
-        <filter-name>session</filter-name>
-        <filter-class>xd.fw.SessionFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>session</filter-name>
-        <url-pattern>*.cmd</url-pattern>
-    </filter-mapping>-->
-
 
     <filter>
         <filter-name>struts2</filter-name>

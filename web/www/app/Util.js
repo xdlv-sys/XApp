@@ -9,13 +9,17 @@ Ext.define('XApp.Util', {
             scope: objs.scope,
             callback: function(options,success,response){
                 var jsonObj = Ext.decode(response.responseText, true);
+                if (jsonObj && jsonObj.needLogin){
+                    window.location.href='/';
+                    return;
+                }
                 var blockTips = false;
                 if (!success || Ext.isEmpty(jsonObj) || !jsonObj.success){
                     if (objs.failure) {
                         blockTips = objs.failure(jsonObj);
                     }
                     if (!blockTips) {
-                        Ext.MessageBox.alert('错误', '操作失败:' + jsonObj == null ? "" : jsonObj.msg);
+                        Ext.MessageBox.alert('错误', '操作失败:' + Ext.isEmpty(jsonObj) ? "" : jsonObj.msg);
                     }
                     return;
                 }

@@ -1,6 +1,7 @@
 package xd.fw.action;
 
 import com.opensymphony.xwork2.ActionSupport;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import xd.fw.FwException;
 import org.apache.log4j.Logger;
@@ -13,6 +14,7 @@ public class ResultAction extends BaseAction{
     static Logger logger = Logger.getLogger(ResultAction.class);
     String msg = "操作成功";
     boolean success = true;
+    boolean needLogin = false;
 
     public String execute(){
         HttpServletRequest request = ServletActionContext.getRequest();
@@ -53,5 +55,13 @@ public class ResultAction extends BaseAction{
 
     public void setSuccess(boolean success) {
         this.success = success;
+    }
+
+    public boolean isNeedLogin() {
+        return needLogin;
+    }
+
+    public void setNeedLogin(boolean needLogin) {
+        this.needLogin = needLogin;
     }
 }

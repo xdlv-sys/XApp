@@ -18,13 +18,15 @@ public class SessionFilter implements Filter {
             throws IOException, ServletException {
 
         String uri = ((HttpServletRequest) servletrequest).getRequestURI();
-            if (!uri.endsWith("user!userLogin.cmd") && BaseAction.currentUser() == null) {
-                HttpServletResponse response = (HttpServletResponse) resp;
-                response.setHeader("Cache-Control", "no-store");
-                response.setDateHeader("Expires", 0);
-                response.setHeader("Prama", "no-cache");
-                response.sendRedirect("/");
-                return;
+        if (!uri.endsWith("user!userLogin.cmd")
+                &&!uri.endsWith("result.cmd") && ((HttpServletRequest) servletrequest).getSession()
+                .getAttribute(BaseAction.USER) == null) {
+            HttpServletResponse response = (HttpServletResponse) resp;
+            response.setHeader("Cache-Control", "no-store");
+            response.setDateHeader("Expires", 0);
+            response.setHeader("Prama", "no-cache");
+            response.sendRedirect("result.cmd?needLogin=true");
+            return;
         }
         filterchain.doFilter(servletrequest, resp);
     }
