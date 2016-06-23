@@ -1,50 +1,62 @@
 Ext.define('XApp.view.Main', {
-    extend: 'Ext.tab.Panel',
+    extend: 'Ext.form.Panel',
     xtype: 'main',
-    requires: [
-        'Ext.TitleBar',
-        'Ext.Video'
-    ],
     config: {
-        tabBarPosition: 'bottom',
-
-        items: [
-            {
-                title: 'Welcome',
-                iconCls: 'home',
-
-                styleHtmlContent: true,
-                scrollable: true,
-
-                items: {
-                    docked: 'top',
-                    xtype: 'titlebar',
-                    title: 'Welcome to Sencha Touch 2'
-                },
-
-                html: [
-                    "You've just generated a new Sencha Touch 2 project. What you're looking at right now is the ",
-                    "contents of <a target='_blank' href=\"app/view/Main.js\">app/view/Main.js</a> - edit that file ",
-                    "and refresh to change what's rendered here."
-                ].join("")
-            },
-            {
-                title: 'Get Started',
-                iconCls: 'action',
-
-                items: [
-                    {
-                        docked: 'top',
-                        xtype: 'titlebar',
-                        title: 'Getting Started'
-                    },
-                    {
-                        xtype: 'video',
-                        url: 'http://av.vimeo.com/64284/137/87347327.mp4?token=1330978144_f9b698fea38cd408d52a2393240c896c',
-                        posterUrl: 'http://b.vimeocdn.com/ts/261/062/261062119_640.jpg'
-                    }
-                ]
-            }
-        ]
+        fullscreen: true,
+        items: [{
+            docked: 'top',
+            height: 20,
+            xtype: 'titlebar',
+            title: '停车场缴费系统'
+        }, {
+            docked: 'bottom',
+            xtype: 'component',
+            name: 'version',
+            tpl: '<p align="center">version: {version}</p>',
+            padding: '0 0 5 0',
+            style: 'color:#888;font-size:9px;'
+        }, {
+            xtype: 'fieldset',
+            margin: '10 2 20 2',
+            title: '',
+            instructions: '(*温馨提示：公共场所，请注意支付安全。)',
+            items: [{
+                xtype: 'container',
+                layout: 'hbox',
+                items: [{
+                    xtype: 'textfield',
+                    label: '车牌',
+                    name: 'carNumber',
+                    labelWidth: 100,
+                    flex: 1
+                }, {
+                    xtype: 'button',
+                    text: '查询',
+                    ui: 'confirm',
+                    margin: '3 5 3 10'
+                }]
+            }, {
+                xtype: 'textfield',
+                label: '开始时间',
+                name: 'startTime',
+                labelWidth: 100
+            }, {
+                xtype: 'textfield',
+                label: '停车时长',
+                name: 'consumedTime',
+                labelWidth: 100
+            }, {
+                xtype: 'textfield',
+                label: '缴费金额',
+                name: 'price',
+                labelWidth: 100,
+                cls: 'price-textfield'
+            }]
+        }, {
+            xtype: 'button',
+            text: '绑定',
+            ui: 'confirm',
+            margin: '10'
+        }]
     }
 });
