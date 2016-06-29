@@ -15,11 +15,12 @@
             <list>
                 <!--<ref bean="memoryCheckDoTime"/>-->
                 <ref bean="freeJobDoTime"/>
+                <ref bean="proxyJobDoTime"/>
             </list>
         </property>
     </bean>
 
-    <!--enter-->
+    <!--free-->
     <bean id="freeJob" class="xd.fw.job.FreeJob">
         <property name="parkingNo">
             <value>${park_no}</value>
@@ -41,8 +42,26 @@
             <ref bean="freeJobDetail"/>
         </property>
         <property name="cronExpression">
-            <value>0/30 * * * * ?</value>
+            <value>* 5 * * * ?</value>
         </property>
     </bean>
+
+    <bean id="proxyJobDetail" parent="baseJobDetail">
+        <property name="targetObject">
+            <ref bean="proxyJob"/>
+        </property>
+    </bean>
+
+    <bean id="proxyJobDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="proxyJobDetail"/>
+        </property>
+        <property name="cronExpression">
+            <value>0/50 * * * * ?</value>
+        </property>
+    </bean>
+
+
     
 </beans>
