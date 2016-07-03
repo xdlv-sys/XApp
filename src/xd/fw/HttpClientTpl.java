@@ -24,7 +24,7 @@ public class HttpClientTpl {
         Object process(HttpEntity entity) throws Exception;
     }
 
-    final static Processor stringProcessor = (entity)->EntityUtils.toString(entity);
+    final static Processor stringProcessor = (entity)->EntityUtils.toString(entity,Consts.UTF_8);
 
     public static String postJson(String url,String json) throws Exception{
         return (String)execute(url,true,null,json,stringProcessor);
