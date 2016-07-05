@@ -5,6 +5,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
+import xd.fw.FwUtil;
 
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
@@ -21,8 +22,14 @@ public class RunTest {
             @ManagedOperationParameter(name="parameters", description = "ip,port,action example:localhost,48011,1")
     })
     public String runCase(String className, String methodName, String params) throws Exception{
-        Object obj = Class.forName(className).newInstance();
-        Method method = obj.getClass().getDeclaredMethod(methodName,String.class);
+        Object obj;
+        Method method;
+        if (className.indexOf(".") < 0){
+            obj = FwUtil.getBean(className);
+        } else {
+            obj = Class.forName(className).newInstance();
+        }
+        method = obj.getClass().getDeclaredMethod(methodName,String.class);
         return String.valueOf(method.invoke(obj,params));
     }
 }
