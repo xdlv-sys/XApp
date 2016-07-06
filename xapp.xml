@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="xapp" default="war">
+
+    <property file="xapp.properties"/>
+
+    <property name="output" value="../output"/>
+
+    <target name="clean">
+
+        <delete dir="${output}"/>
+        <mkdir dir="${output}"/>
+        <delete dir="web/wwt/build"/>
+        <delete dir="web/www/build"/>
+    </target>
+    <target name="sencha" depends="clean">
+        <exec dir="web/wwt" command="sencha app build"/>
+        <exec dir="web/www" command="sencha app build classic"/>
+    </target>
+
+    <target name="copy" depends="sencha">
+        <copydir src="out/artifacts/XApp_war_exploded/WEB-INF" dest="${output}/WEB-INF"/>
+        <copydir src="web/wwt/build/production/XApp" dest="${output}/wwt"/>
+        <copydir src="web/www/build/production/XApp" dest="${output}/www"/>
+        <copy todir="${output}">
+            <fileset dir="web">
+                <include name="*.*"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="war" depends="copy">
+        <zip destfile="${output}/war.zip">
+            <fileset dir="${output}">
+                <include name="**"/>
+                <exclude name="${output}/WEB-INF/lib"/>
+            </fileset>
+        </zip>
+    </target>
+</project>
