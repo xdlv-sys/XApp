@@ -8,4 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class HibernateServiceImpl extends BaseServiceImpl{
     @Autowired
     protected HibernateTemplate htpl;
+
+    public void saveOrUpdate(Object entity){
+        htpl.saveOrUpdate(entity);
+    }
+
 }

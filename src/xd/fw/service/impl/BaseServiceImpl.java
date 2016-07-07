@@ -47,4 +47,8 @@ public class BaseServiceImpl implements BaseService {
 		}
 		return value[0];
 	}
+
+	public void saveOrUpdate(Object entity){
+		throw new RuntimeException("no implementation");
+	}
 }
