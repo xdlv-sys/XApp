@@ -11,6 +11,10 @@
             <param-name>whiteNames</param-name>
             <param-value>user!userLogin.cmd,result.cmd,user!version.cmd</param-value>
         </init-param>
+        <init-param>
+            <param-name>showParameters</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>session</filter-name>
