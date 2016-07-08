@@ -33,6 +33,8 @@ public class ProxyJob extends BaseJob {
     @Value("${park_id}")
     String parkId;
 
+    @Value("${park_name}")
+    String parkName;
 
     private SocketConnector connector;
     private IoSession session;
@@ -73,7 +75,8 @@ public class ProxyJob extends BaseJob {
         logger.info("start to send heart beat message");
         checkSession();
         TLVMessage registryMessage = new TLVMessage(REGISTRY);
-        registryMessage.setNext(parkId).setNext("南京公共").setNext(100);
+
+        registryMessage.setNext(parkId).setNext(parkName).setNext(100);
         session.write(registryMessage);
     }
 
