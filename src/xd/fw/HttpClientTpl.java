@@ -26,6 +26,7 @@ public class HttpClientTpl {
 
     static Logger logger = Logger.getLogger(HttpClientTpl.class);
     public static final String UTF8 = "UTF-8";
+    static CloseableHttpClient httpclient = createHttpClient();
 
     private static CloseableHttpClient createHttpClient() {
         return HttpClients.custom().setConnectionManager(
@@ -61,7 +62,7 @@ public class HttpClientTpl {
     }
 
     static Object execute(String url, boolean post, String[][] params, String json, Processor processor) throws Exception {
-        CloseableHttpClient httpclient = createHttpClient();
+
         CloseableHttpResponse response = null;
         HttpEntity entity = null;
         try {
@@ -109,7 +110,7 @@ public class HttpClientTpl {
                 } catch (Exception e) {
                 }
             }
-            httpclient.close();
+            //httpclient.close();
         }
     }
 
