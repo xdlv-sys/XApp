@@ -53,7 +53,7 @@ public class ProxyJob extends BaseJob {
                         logger.debug("query for " + carNumber);
 
                         ret = new TLVMessage(QUERY_CAR_RESP);
-                        ret.setNext("2016-1-1 18:30:20").setNext("3小时20分钟").setNext(0.1f).setNext(carNumber);
+                        ret.setNext("2016-1-1 18:30:20").setNext("3小时20分钟").setNext(0.01f).setNext(carNumber);
                         session.write(ret);
                         break;
                     case FREE:
@@ -73,7 +73,7 @@ public class ProxyJob extends BaseJob {
         logger.info("start to send heart beat message");
         checkSession();
         TLVMessage registryMessage = new TLVMessage(REGISTRY);
-        registryMessage.setNext(parkId);
+        registryMessage.setNext(parkId).setNext("南京公共").setNext(100);
         session.write(registryMessage);
     }
 
