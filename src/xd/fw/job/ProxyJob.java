@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
 @Service
 public class ProxyJob extends BaseJob {
 
-    static final byte REGISTRY = 1, QUERY_CAR = 2, QUERY_CAR_RESP = 3,FREE = 4, FREE_RESP = 5, PAY_FEE = 6, PAY_FEE_RESP = 7;
+    static final byte NULL_MSG = 0, REGISTRY = 1, QUERY_CAR = 2, QUERY_CAR_RESP = 3,FREE = 4, FREE_RESP = 5, PAY_FEE = 6, PAY_FEE_RESP = 7;
 
     @Autowired
     ParkService parkService;
@@ -51,6 +51,7 @@ public class ProxyJob extends BaseJob {
 
                 String messageId = (String)msg.getValue();
                 byte code = (byte)msg.getNext().getValue();
+
                 logger.debug("messageId:" + messageId + ", code:" + code);
                 TLVMessage ret = new TLVMessage(messageId);
 
@@ -58,7 +59,12 @@ public class ProxyJob extends BaseJob {
                     case QUERY_CAR:
                         String carNumber = (String)msg.getNext(1).getValue();
                         logger.debug("query for " + carNumber);
-                        ret.setNext(QUERY_CAR_RESP).setNext("2016-1-1 18:30:20").setNext("3小时20分钟").setNext(0.01f).setNext(carNumber);
+                        if (carNumber.equals("苏A12345")){
+                            ret.setNext(QUERY_CAR_RESP).setNext("2016-1-1 18:30:20"
+                            ).setNext("3小时20分钟").setNext(0.01f).setNext(carNumber);
+                        } else {
+                            ret.setNext(NULL_MSG);
+                        }
                         session.write(ret);
                         break;
                     case FREE:
@@ -80,8 +86,10 @@ public class ProxyJob extends BaseJob {
     public void doExecute() throws Exception {
         logger.info("start to send heart beat message");
         checkSession();
-        TLVMessage registryMessage = new TLVMessage(REGISTRY);
-        registryMessage.setNext(parkId).setNext("test_pay").setNext(100);
+        String messageId = String.valueOf(System.currentTimeMillis());
+
+        TLVMessage registryMessage = new TLVMessage(messageId);
+        registryMessage.setNext(REGISTRY).setNext(parkId).setNext("test_pay").setNext(100);
 
         session.write(registryMessage);
     }
