@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
 @Service
 public class ProxyJob extends BaseJob {
 
-    final byte REGISTRY = 1, QUERY_CAR = 2, QUERY_CAR_RESP = 3,FREE = 4, FREE_RESP = 5;
+    static final byte REGISTRY = 1, QUERY_CAR = 2, QUERY_CAR_RESP = 3,FREE = 4, FREE_RESP = 5, PAY_FEE = 6, PAY_FEE_RESP = 7;
 
     @Autowired
     ParkService parkService;
@@ -48,19 +48,25 @@ public class ProxyJob extends BaseJob {
             @Override
             public void messageReceived(IoSession session, Object message) throws Exception {
                 TLVMessage msg = (TLVMessage)message;
-                TLVMessage ret;
-                switch ((byte)msg.getValue()){
-                    case QUERY_CAR:
-                        String carNumber = (String)msg.getNext().getValue();
-                        logger.debug("query for " + carNumber);
 
-                        ret = new TLVMessage(QUERY_CAR_RESP);
-                        ret.setNext("2016-1-1 18:30:20").setNext("3小时20分钟").setNext(0.01f).setNext(carNumber);
+                String messageId = (String)msg.getValue();
+                byte code = (byte)msg.getNext().getValue();
+                logger.debug("messageId:" + messageId + ", code:" + code);
+                TLVMessage ret = new TLVMessage(messageId);
+
+                switch (code){
+                    case QUERY_CAR:
+                        String carNumber = (String)msg.getNext(1).getValue();
+                        logger.debug("query for " + carNumber);
+                        ret.setNext(QUERY_CAR_RESP).setNext("2016-1-1 18:30:20").setNext("3小时20分钟").setNext(0.01f).setNext(carNumber);
                         session.write(ret);
                         break;
                     case FREE:
-                        ret = new TLVMessage(FREE_RESP);
-                        ret.setNext(parkService.getFreeParkStation());
+                        ret.setNext(FREE_RESP).setNext(parkService.getFreeParkStation());
+                        session.write(ret);
+                        break;
+                    case PAY_FEE:
+                        ret.setNext(PAY_FEE_RESP).setNext("OK");
                         session.write(ret);
                         break;
                     default:
@@ -75,8 +81,8 @@ public class ProxyJob extends BaseJob {
         logger.info("start to send heart beat message");
         checkSession();
         TLVMessage registryMessage = new TLVMessage(REGISTRY);
+        registryMessage.setNext(parkId).setNext("test_pay").setNext(100);
 
-        registryMessage.setNext(parkId).setNext(parkName).setNext(100);
         session.write(registryMessage);
     }
 
