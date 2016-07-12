@@ -6,7 +6,7 @@ import xd.fw.FwUtil;
 import java.io.UnsupportedEncodingException;
 
 public class TLVMessage {
-    public static final byte BYTE_TYPE = 1, INT_TYPE = 2, LONG_TYPE = 3, FLOAT_TYPE = 4, DOUBLE_TYPE = 5, STRING_TYPE = 6;
+    public static final byte BYTE_TYPE = 1, INT_TYPE = 2, LONG_TYPE = 3, FLOAT_TYPE = 4, DOUBLE_TYPE = 5, STRING_TYPE = 6, BOOLEAN_TYPE = 7;
     //byte type;
     Object value;
     TLVMessage next;
@@ -30,8 +30,16 @@ public class TLVMessage {
         TLVMessage tmp = this;
         while (index -- > -1){
             tmp = tmp.next;
+            if (tmp == null){
+                return null;
+            }
         }
         return tmp;
+    }
+
+    public Object getNextValue(int index){
+        TLVMessage message = getNext(index);
+        return message == null ? null : message.getValue();
     }
 
     public TLVMessage setNext(TLVMessage next) {
