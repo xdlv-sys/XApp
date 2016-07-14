@@ -1,26 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="xapp" default="war">
 
-    <property file="xapp.properties"/>
-
-    <property name="output" value="../output"/>
+    <dirname property="basedir" file="${ant.file}"/>
+    <property name="output" value="${basedir}/../output"/>
 
     <target name="clean">
-
         <delete dir="${output}"/>
         <mkdir dir="${output}"/>
-        <delete dir="web/wwt/build"/>
-        <delete dir="web/www/build"/>
     </target>
-    <target name="sencha" depends="clean">
-        <exec dir="web/wwt" command="sencha app build"/>
-        <exec dir="web/www" command="sencha app build classic"/>
+    <target name="sencha-wwt">
+        <delete dir="${output}/wwt"/>
+        <mkdir dir="${output}/wwt"/>
+        <exec dir="web/wwt" command="sencha app build --destination ${output}/wwt"/>
+    </target>
+    <target name="sencha-www">
+        <delete dir="${output}/www"/>
+        <mkdir dir="${output}/www"/>
+        <exec dir="web/www" command="sencha app build --destination ${output}/www"/>
     </target>
 
-    <target name="copy" depends="sencha">
-        <copydir src="out/artifacts/XApp_war_exploded/WEB-INF" dest="${output}/WEB-INF"/>
-        <copydir src="web/wwt/build/production/XApp" dest="${output}/wwt"/>
-        <copydir src="web/www/build/production/XApp" dest="${output}/www"/>
+    <target name="sencha">
+        <parallel failonany="true">
+            <antcall target="sencha-wwt"/>
+            <antcall target="sencha-www"/>
+        </parallel>
+    </target>
+
+    <property name="output.class" value="${output}/classes"/>
+
+    <target name="compile" description="Compile module XApp">
+        <delete dir="${output.class}"/>
+        <mkdir dir="${output.class}"/>
+        <javac destdir="${output.class}" debug="on" nowarn="off" fork="true">
+            <compilerarg line="-encoding UTF-8 -source 8 "/>
+            <classpath>
+                <fileset dir="web/WEB-INF/lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+            <src path="src"/>
+        </javac>
+
+        <copy todir="${output.class}">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copy" depends="compile">
+        <copydir src="web/WEB-INF" dest="${output}/WEB-INF">
+            <exclude name="lib/**"/>
+        </copydir>
+        <copydir src="${output.class}" dest="${output}/WEB-INF/classes"/>
         <copy todir="${output}">
             <fileset dir="web">
                 <include name="*.*"/>
@@ -28,12 +60,13 @@
         </copy>
     </target>
 
-    <target name="war" depends="copy">
+    <target name="war" depends="clean, sencha ,copy">
         <zip destfile="${output}/war.zip">
             <fileset dir="${output}">
                 <include name="**"/>
-                <exclude name="${output}/WEB-INF/lib"/>
+                <exclude name="classes"/>
             </fileset>
         </zip>
     </target>
+
 </project>
