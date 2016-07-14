@@ -89,7 +89,7 @@ public class ProxyJob extends BaseJob {
         String messageId = String.valueOf(System.currentTimeMillis());
 
         TLVMessage registryMessage = new TLVMessage(messageId);
-        registryMessage.setNext(REGISTRY).setNext(parkId).setNext("test_pay").setNext(100);
+        registryMessage.setNext(REGISTRY).setNext(parkId).setNext(parkName).setNext(100);
 
         session.write(registryMessage);
     }
