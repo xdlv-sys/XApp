@@ -6,8 +6,12 @@ import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilterChain;
 import org.apache.mina.core.filterchain.IoFilterChainBuilder;
 import org.apache.mina.core.service.IoHandler;
+import org.apache.mina.core.service.SimpleIoProcessorPool;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.transport.socket.SocketSessionConfig;
+import org.apache.mina.transport.socket.nio.NioProcessor;
+import org.apache.mina.transport.socket.nio.NioSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
 import java.io.IOException;
@@ -23,9 +27,12 @@ public class MinaWrapper {
     IoHandler handler;
     IoFilterChainBuilder filterChainBuilder;
     NioSocketAcceptor acceptor;
+    SimpleIoProcessorPool<NioSession> pool;
 
     public void init() throws IOException {
-        acceptor = new NioSocketAcceptor();
+        pool = new SimpleIoProcessorPool<NioSession>(NioProcessor.class);
+
+        acceptor = new NioSocketAcceptor(pool);
         acceptor.setDefaultLocalAddress(defaultLocalAddress);
         acceptor.setReuseAddress(reuseAddress);
         acceptor.setFilterChainBuilder(filterChainBuilder);
@@ -34,8 +41,12 @@ public class MinaWrapper {
     }
 
     public void destroy() throws Exception{
+        for(IoSession session : this.acceptor.getManagedSessions().values()) {
+            session.closeOnFlush();
+        }
         acceptor.dispose();
         acceptor.unbind();
+        pool.dispose();
 
         DefaultIoFilterChainBuilder dBuilder = (DefaultIoFilterChainBuilder)filterChainBuilder;
         for (IoFilterChain.Entry entry : dBuilder.getAll()){
@@ -63,5 +74,8 @@ public class MinaWrapper {
 
     public void setFilterChainBuilder(IoFilterChainBuilder filterChainBuilder) {
         this.filterChainBuilder = filterChainBuilder;
+    }
+    public SimpleIoProcessorPool getPool(){
+        return this.pool;
     }
 }
