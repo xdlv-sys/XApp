@@ -34,13 +34,8 @@ public class MinaWrapper {
     }
 
     public void destroy() throws Exception{
+        acceptor.dispose();
         acceptor.unbind();
-
-        Method method = acceptor.getClass().getDeclaredMethod("destroy");
-        Logger logger = Logger.getLogger("Mina");
-        logger.info(method);
-        method.setAccessible(true);
-        method.invoke(acceptor);
 
         DefaultIoFilterChainBuilder dBuilder = (DefaultIoFilterChainBuilder)filterChainBuilder;
         for (IoFilterChain.Entry entry : dBuilder.getAll()){
