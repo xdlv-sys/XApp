@@ -9,12 +9,14 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import xd.fw.mina.tlv.MinaWrapper;
 import xd.fw.mina.tlv.TLVCodecFactory;
 import xd.fw.mina.tlv.TLVHandler;
 import xd.fw.mina.tlv.TLVMessage;
 import xd.fw.service.ParkService;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
 
 @Service
@@ -36,12 +38,16 @@ public class ProxyJob extends BaseJob {
     @Value("${park_name}")
     String parkName;
 
+    @Autowired
+    MinaWrapper wrapper;
+
     private SocketConnector connector;
     private IoSession session;
 
     @PostConstruct
     public void init(){
-        connector = new NioSocketConnector();
+
+        connector = new NioSocketConnector(wrapper.getPool());
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(
                 new TLVCodecFactory("UTF-8")));
         connector.setHandler(new TLVHandler(){
@@ -80,6 +86,10 @@ public class ProxyJob extends BaseJob {
                 }
             }
         });
+    }
+    @PreDestroy
+    public void destroy(){
+        connector.dispose();
     }
 
     @Override
