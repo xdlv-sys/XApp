@@ -3,6 +3,7 @@ package xd.fw;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
@@ -50,6 +51,19 @@ public class FwUtil {
             md5code = "0" + md5code;
         }
         return md5code;
+    }
+
+    public static void invokeBeanFields(Object o, BeanFieldProcess p)throws IllegalAccessException{
+        Field[] fields = o.getClass().getDeclaredFields();
+        Object v;
+        for (Field f : fields) {
+            f.setAccessible(true);
+            v = f.get(o);
+            p.process(f, v);
+        }
+    }
+    public interface BeanFieldProcess{
+        void process(Field f, Object o);
     }
 
     public static void main(String[] args){

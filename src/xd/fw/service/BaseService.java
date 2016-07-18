@@ -7,7 +7,11 @@ public interface BaseService {
 
     int getAllCount();
 
-	int getAllCount(Class<?> cls);
+    <T> int getAllCount(Class<T> cls);
+
+    <T> int getAllCount(Class<T> cls, T params);
+
+    <T> List<T> getList(Class<T> cls, T param, String orderBy, int start, int limit);
 
     <T> List<T> getList(Class<T> cls, String orderBy, int start, int limit);
 

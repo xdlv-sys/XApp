@@ -56,7 +56,17 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public int getAllCount(Class<?> cls) {
+    public <T> int getAllCount(Class<T> cls) {
+        throw new RuntimeException("no implementation");
+    }
+
+    @Override
+    public <T> int getAllCount(Class<T> cls, T params) {
+        throw new RuntimeException("no implementation");
+    }
+
+    @Override
+    public <T> List<T> getList(Class<T> cls, T param, String orderBy, int start, int limit) {
         throw new RuntimeException("no implementation");
     }
 
@@ -94,4 +104,6 @@ public class BaseServiceImpl implements BaseService {
     public <T> List<T> getList(String hsql) {
         throw new RuntimeException("no implementation");
     }
+
+
 }
