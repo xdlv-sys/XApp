@@ -7,9 +7,11 @@ Ext.define("XApp.view.cdu.BaseInfo", {
     layout: 'fit',
     items: [{
         xtype: 'form',
+        layout: 'form',
         margin: '10',
         items: [{
             xtype: 'fieldset',
+            defaults: {anchor: '100%'},
             bind: {
                 title: '{title}'
             }

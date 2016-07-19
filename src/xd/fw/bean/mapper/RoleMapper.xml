@@ -103,7 +103,7 @@
         select  count(*) from t_role where id &gt; -2
     </select>
   <select id="selectUserRoles" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select * from t_role r , T_UserRole ur where r.id = ur.roleId and ur.userId=#{userId,jdbcType=INTEGER}
+    select * from t_role r , t_userrole ur where r.id = ur.roleId and ur.userId=#{userId,jdbcType=INTEGER}
   </select>
 
 </mapper>
