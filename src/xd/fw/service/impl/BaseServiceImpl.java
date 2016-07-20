@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BaseServiceImpl implements BaseService {
+public abstract class BaseServiceImpl implements BaseService {
 
     @Autowired
     PrimaryKeyMapper primaryKeyMapper;

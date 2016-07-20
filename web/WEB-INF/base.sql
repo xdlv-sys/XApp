@@ -9,7 +9,7 @@ drop table IF EXISTS T_User;
 create table T_User(
     id int not null primary key,
     name VARCHAR(50),
-    password VARCHAR(20),
+    password VARCHAR(32),
     mail varchar(20)
 )ENGINE = INNODB;
 
@@ -43,8 +43,8 @@ create table T_RoleMod(
     modId int not null
 )ENGINE = INNODB;
 
-insert into t_user values(-10,'a','a','a@a.com');
-insert into t_user values(-9,'g','g','g@g.com');
+insert into t_user values(-10,'a','0cc175b9c0f1b6a831c399e269772661','a@a.com');
+insert into t_user values(-9,'g','b2f5ff47436671b6e533d8dc3614845d','g@g.com');
 
 insert into t_role values(-2,'administrator');
 insert into t_role values(-1,'guest');

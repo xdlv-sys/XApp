@@ -5,6 +5,7 @@ import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import xd.fw.FwException;
+import xd.fw.FwUtil;
 import xd.fw.bean.User;
 import xd.fw.service.FwService;
 
@@ -20,8 +21,8 @@ public class UserAction extends BaseAction {
 
     @Value("${version}")
     String version;
-    public String userLogin() {
-        User userRecord = fwService.userLogin(user.getName(), user.getPassword());
+    public String userLogin() throws Exception {
+        User userRecord = fwService.userLogin(user.getName(), FwUtil.md5(user.getPassword()));
         if (userRecord != null) {
             users = new ArrayList<User>();
             users.add(userRecord);
@@ -46,7 +47,7 @@ public class UserAction extends BaseAction {
         return SUCCESS;
     }
 
-    public String saveUser() {
+    public String saveUser() throws Exception {
         fwService.saveOrUpdateUser(user);
         return FINISH;
     }

@@ -3,6 +3,7 @@ package xd.fw.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import xd.fw.FwUtil;
 import xd.fw.bean.*;
 import xd.fw.bean.mapper.*;
 import xd.fw.service.FwService;
@@ -31,10 +32,29 @@ public class FwServiceImpl extends MyBatisServiceImpl implements FwService {
     @Transactional
     public void saveOrUpdateUser(User user) {
         if (user.getId() != null) {
+            User record = userMapper.selectByPrimaryKey(user.getId());
+            if (!record.getPassword().equals(user.getPassword())){
+                try {
+                    user.setPassword(FwUtil.md5(user.getPassword()));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
             userMapper.updateByPrimaryKey(user);
         } else {
             user.setId(getPrimaryKey("t_user"));
+            try {
+                user.setPassword(FwUtil.md5(user.getPassword()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             userMapper.insert(user);
+        }
+        List<UserRole> userRoles = userRoleMapper.selectByUserId(user.getId());
+        boolean isAdmin = userRoles != null
+                && userRoles.size() > 0 && userRoles.get(0).getRoleid() == -2;
+        if (isAdmin){
+            return;
         }
         userRoleMapper.deleteByUserId(user.getId());
         if (user.getRoles() != null) {
