@@ -18,6 +18,8 @@ public class UserAction extends BaseAction {
 
     User user;
     List<User> users;
+    @Value("${web-name}")
+    String name;
 
     @Value("${version}")
     String version;
@@ -76,4 +78,7 @@ public class UserAction extends BaseAction {
         return version;
     }
 
+    public String getName() {
+        return name;
+    }
 }

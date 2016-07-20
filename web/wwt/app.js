@@ -49,6 +49,7 @@ Ext.application({
                     window.location.reload();
                 }
                 XApp.version = msg.version;
+                ducument.title = msg.name;
             }
         });
         // Destroy the #appLoadingIndicator element

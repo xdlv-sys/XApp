@@ -9,8 +9,10 @@ Ext.define('XApp.view.main.Head', {
             xtype: 'component',
             reference: 'senchaLogo',
             cls: 'company-logo',
-            html: '<div class="main-logo"><img src="resources/images/company-logo.png">' + 
-            	'XApp</div>',
+
+            bind: {
+                html: '<div class="main-logo"><img src="resources/images/company-logo.png">{title}</div>'
+            },
             width: 250
         },
         {

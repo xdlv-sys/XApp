@@ -3,6 +3,15 @@ Ext.define('XApp.controller.Root', {
     requires: ['Ext.data.TreeStore','Ext.data.Session'],
     
     onLaunch : function(){
+        var me = this;
+        XApp.Util.ajax({
+            url: 'user!version.cmd',
+            success: function (msg) {
+                document.title = msg.name;
+                return true;
+            }
+        });
+
     	//create session for application scope
     	this.session = new Ext.data.Session({
             autoDestroy: false
@@ -51,7 +60,8 @@ Ext.define('XApp.controller.Root', {
             session: this.session,
             viewModel: {
                 data : {
-                    currentUser : user
+                    currentUser : user,
+                    title: document.title
                 },
                 stores: {
                     navItems: Ext.create('Ext.data.TreeStore',{
