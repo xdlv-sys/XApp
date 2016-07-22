@@ -1,23 +1,16 @@
 package xd.fw.job;
 
 import net.sf.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.mina.core.session.IoSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xd.fw.FwUtil;
 import xd.fw.HttpClientTpl;
-import xd.fw.bean.EnterOrOutRecord;
 import xd.fw.mina.tlv.TLVHandler;
 import xd.fw.mina.tlv.TLVMessage;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
-import java.util.Scanner;
 
 @Service
 public class ParkHandler extends TLVHandler{
@@ -47,7 +40,8 @@ public class ParkHandler extends TLVHandler{
         }
     };
 
-    final SendRequest out = new OutJob();
+    @Autowired
+    OutJob out;
 
     public void save(){
         out.save();

@@ -1,61 +1,55 @@
 package xd.fw.job;
 
-import net.sf.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import xd.fw.HttpClientTpl;
-import xd.fw.bean.EnterOrOutRecord;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
-import xd.fw.service.ParkService;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.annotation.PostConstruct;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
+@Service
 public class OutJob implements SendRequest {
 
     long current = 1;
-    String currentDate;
-    String parkProperties = "/park.properties";
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
-    public OutJob() {
-        Properties properties = new Properties();
-        try (InputStream ins = SendRequest.class.getResourceAsStream(parkProperties)) {
-            properties.load(ins);
-            String currentStr = properties.getProperty("current");
-            if (StringUtils.isNotBlank(currentStr)) {
-                current = Long.parseLong(currentStr);
-            }
-            logger().info("current sequence:" + current);
+    Logger logger = Logger.getLogger(OutJob.class);
 
-            String currentDate = properties.getProperty("currentDate");
-            //reset current when another new day
-            if (!getCurrentDay().equals(currentDate)) {
-                current = 1;
+    @PostConstruct
+    public void init(){
+        final boolean[] hasCurrentSequence = new boolean[]{false};
+
+        jdbcTemplate.query("select currentIndex from DCurrentSequence where currentDate=?"
+                , new Object[]{new Date(System.currentTimeMillis())}, new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                //check if has current data record
+                hasCurrentSequence[0] = true;
+                current = rs.getInt(1);
+                logger.info("current:" + current);
             }
-        } catch (Exception e) {
-            logger().error("", e);
+        });
+        if (!hasCurrentSequence[0]){
+            int success = jdbcTemplate.update("insert into DCurrentSequence values(?,?)",new Date(System.currentTimeMillis()),current);
+            logger.info("insert new current date successfully:" + success);
         }
     }
 
     @Override
     public void save() {
-        Properties properties = new Properties();
-        try (OutputStream outs = new FileOutputStream(SendRequest.class.getResource(parkProperties).getFile())) {
-            properties.setProperty("current", String.valueOf(current));
-            properties.setProperty("currentDate", getCurrentDay());
-            properties.store(outs, "");
-        } catch (Exception e) {
-            logger().error("", e);
-        }
+        int success = jdbcTemplate.update("update DCurrentSequence set currentIndex=? where currentDate=?"
+                , current, new Date(System.currentTimeMillis()));
+        logger.info("save current date successfully:" + success);
     }
 
     String getCurrentDay() {
-        return new SimpleDateFormat("yyyyMMdd").format(new Date());
+        return new SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
     }
 
     synchronized String getCurrentSequence() {

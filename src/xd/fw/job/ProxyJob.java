@@ -1,5 +1,6 @@
 package xd.fw.job;
 
+import oracle.jdbc.proxy.annotation.Post;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
@@ -46,7 +47,6 @@ public class ProxyJob extends BaseJob {
 
     @PostConstruct
     public void init(){
-
         connector = new NioSocketConnector(wrapper.getPool());
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(
                 new TLVCodecFactory("UTF-8")));
@@ -65,12 +65,8 @@ public class ProxyJob extends BaseJob {
                     case QUERY_CAR:
                         String carNumber = (String)msg.getNext(1).getValue();
                         logger.debug("query for " + carNumber);
-                        if (carNumber.equals("苏A12345")){
-                            ret.setNext(QUERY_CAR_RESP).setNext("2016-1-1 18:30:20"
-                            ).setNext("3小时20分钟").setNext(0.01f).setNext(carNumber);
-                        } else {
-                            ret.setNext(NULL_MSG);
-                        }
+                        ret.setNext(QUERY_CAR_RESP).setNext("2016-1-1 18:30:20"
+                        ).setNext("3小时20分钟").setNext(0.01f).setNext(carNumber);
                         session.write(ret);
                         break;
                     case FREE:
@@ -89,6 +85,7 @@ public class ProxyJob extends BaseJob {
     }
     @PreDestroy
     public void destroy(){
+        super.destroy();
         connector.dispose();
     }
 

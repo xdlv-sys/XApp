@@ -32,4 +32,24 @@ public class RunTest {
         method = obj.getClass().getDeclaredMethod(methodName,String.class);
         return String.valueOf(method.invoke(obj,params));
     }
+
+    @ManagedOperation(description = "Run SpringBean")
+    @ManagedOperationParameters({
+            @ManagedOperationParameter(name="className",description = "bean name"),
+            @ManagedOperationParameter(name="methodName", description = "method Name"),
+            @ManagedOperationParameter(name="parameters", description = "ip,port,action example:localhost,48011,1")
+    })
+    public String runBean(String className, String methodName, String params) throws Exception{
+        Object obj = FwUtil.getBean(className);
+        Method[] methods = obj.getClass().getDeclaredMethods();
+        Method method = null;
+        for (Method m: methods){
+            if (m.getName().equals(methodName)){
+                method = m;
+                break;
+            }
+        }
+        method.setAccessible(true);
+        return String.valueOf(method.invoke(obj,params));
+    }
 }
