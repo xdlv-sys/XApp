@@ -4,17 +4,23 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Service
 public abstract class BaseJob {
 
     protected Logger logger = Logger.getLogger(getClass());
 
-    protected void init(){}
-    protected void destroy(){}
+    private boolean destroyed = false;
+
+    protected void destroy(){
+        destroyed = true;
+    }
 
     public final void execute() throws Exception{
-        init();
-        doExecute();
+        if (!destroyed){
+            doExecute();
+        }
     }
 
     public abstract void doExecute() throws Exception;
