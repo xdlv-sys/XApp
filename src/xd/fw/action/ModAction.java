@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import xd.fw.bean.Mod;
 import xd.fw.bean.Role;
+import xd.fw.bean.User;
 import xd.fw.service.FwService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ModAction extends BaseAction{
     final static int ADMIN_ID = -10;
@@ -18,24 +21,24 @@ public class ModAction extends BaseAction{
     Role role;
 
     Mod mod;
-    public String obtainUserMods() throws Exception {
-        String filter = obtainFilterValue();
-        int userId = ADMIN_ID;
-        if (StringUtils.isNotBlank(filter)){
-            userId = Integer.parseInt(filter);
-        }
-        mods = fwService.getUserMods(userId);
+    public String obtainMods() throws Exception {
+        total = fwService.getAllCount(Mod.class);
+        mods = fwService.getList(Mod.class,null,start, limit);
         return SUCCESS;
     }
 
     public String obtainModsByRole() throws Exception{
-        mods = fwService.getModsByRole(role.getId());
+        Set<Mod> mods = fwService.get(Role.class,role.getId()).getMods();
+        this.mods = new ArrayList<>(mods.size());
+        this.mods.addAll(mods);
         return SUCCESS;
     }
 
     public String delMod() throws Exception{
         if (mods != null){
-            fwService.deleteMods(mods);
+            for (Mod mod : mods){
+                fwService.delete(Mod.class,mod.getId());
+            }
         }
         return FINISH;
     }
@@ -49,7 +52,7 @@ public class ModAction extends BaseAction{
     }
 
     public String saveMod() throws Exception{
-        fwService.saveOrUpdateMod(mod);
+        fwService.saveOrUpdate(mod);
         return FINISH;
     }
 

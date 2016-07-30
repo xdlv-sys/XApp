@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Random;
 
 public class FwUtil {
@@ -64,6 +65,16 @@ public class FwUtil {
     }
     public interface BeanFieldProcess{
         void process(Field f, Object o);
+    }
+    public interface SafeEachProcess<T>{
+        void process(T t);
+    }
+
+    public static <T> void safeEach(Collection<T> list, SafeEachProcess<T> p){
+        if (list == null || list.size() < 1){
+            return;
+        }
+        list.forEach(p::process);
     }
 
     public static void main(String[] args){

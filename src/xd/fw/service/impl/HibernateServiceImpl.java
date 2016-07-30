@@ -9,17 +9,50 @@ import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import xd.fw.FwUtil;
+import xd.fw.bean.PrimaryKey;
+import xd.fw.service.BaseService;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Transactional(value = "transactionManager2", readOnly = true)
-public class HibernateServiceImpl extends BaseServiceImpl {
+@Transactional(readOnly = true)
+public class HibernateServiceImpl implements BaseService{
+    static Map<String, int[]> primaryKeyMap = new HashMap<String, int[]>();
+    final static int PRE_OCCUPY_MAX = 10;
+
     @Autowired
     protected HibernateTemplate htpl;
-    
+
+    public int getPrimaryKey(Class<?> cls){
+        int[] value;
+        String tableName = cls.getSimpleName();
+        synchronized (primaryKeyMap) {
+            value = primaryKeyMap.get(tableName);
+            if (value == null || value[0] == value[1]) {
+                PrimaryKey primaryKey = get(PrimaryKey.class, tableName);
+                if (primaryKey == null){
+                    primaryKey = new PrimaryKey();
+                    primaryKey.setCurrentId(PRE_OCCUPY_MAX);
+                    primaryKey.setTableName(tableName);
+                    save(primaryKey);
+                    value = new int[]{1, PRE_OCCUPY_MAX};
+                } else {
+                    value = new int[]{primaryKey.getCurrentId() + 1, primaryKey.getCurrentId() + PRE_OCCUPY_MAX};
+                    primaryKey.setCurrentId(value[1]);
+                    update(primaryKey);
+                }
+                primaryKeyMap.put(tableName, value);
+            } else {
+                value[0] += 1;
+            }
+        }
+        return value[0];
+    }
+
     @Override
-    @Transactional("transactionManager2")
+    @Transactional
     public void saveOrUpdate(Object entity) {
         htpl.saveOrUpdate(entity);
     }
@@ -32,10 +65,15 @@ public class HibernateServiceImpl extends BaseServiceImpl {
                 FwUtil.invokeBeanFields(parms, (f, o) -> {
                     if (o != null && StringUtils.isNotBlank(o.toString())) {
                         if (!appendWhere[0]) {
-                            hsql.append(" where ").append(f.getName()).append("=").append(o);
+                            hsql.append(" where ");
                             appendWhere[0] = true;
                         } else {
-                            hsql.append(" and ").append(f.getName()).append("=").append(o);
+                            hsql.append(" and ");
+                        }
+                        if (o instanceof String){
+                            hsql.append(f.getName()).append(" like :").append(f.getName());
+                        } else {
+                            hsql.append(f.getName()).append("=:").append(f.getName());
                         }
                     }
                 });
@@ -54,7 +92,7 @@ public class HibernateServiceImpl extends BaseServiceImpl {
     }
 
     public <T> int getAllCount(Class<T> cls, T params){
-        List<Object> list = this.getList(constructHsql("select count(*) ",cls, params, null),-1,0);
+        List<Object> list = this.getList(constructHsql("select count(*) ",cls, params, null), params, -1,0);
         return ((Long) list.get(0)).intValue();
     }
 
@@ -63,14 +101,29 @@ public class HibernateServiceImpl extends BaseServiceImpl {
     }
 
     public <T> List<T> getList(Class<T> cls, T param, String orderBy, int start, int limit) {
-        return this.getList(constructHsql("",cls,param,orderBy),start, limit);
+        return this.getList(constructHsql("",cls,param,orderBy), param, start, limit);
     }
 
-    public <T> List<T> getList(String hsql,int start, int limit){
+    public <T> List<T> getList(String hsql, T params, int start, int limit){
         return htpl.execute(new HibernateCallback<List<T>>() {
             @Override
             public List<T> doInHibernate(Session session) throws HibernateException {
                 Query query = session.createQuery(hsql);
+                if (params != null){
+                    try {
+                        FwUtil.invokeBeanFields(params, (f, o) -> {
+                            if (o != null && StringUtils.isNotBlank(o.toString())) {
+                                if (o instanceof String){
+                                    query.setParameter(f.getName(),"%" + o + "%");
+                                } else {
+                                    query.setParameter(f.getName(),o);
+                                }
+                            }
+                        });
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 if (start > -1){
                     query.setFirstResult(start);
                 }
@@ -92,26 +145,33 @@ public class HibernateServiceImpl extends BaseServiceImpl {
     }
 
     @Override
-    @Transactional("transactionManager2")
+    @Transactional
     public void update(Object entity) {
         htpl.update(entity);
     }
 
     @Override
-    @Transactional("transactionManager2")
+    @Transactional
     public void save(Object entity) {
         htpl.save(entity);
     }
 
     @Override
-    @Transactional("transactionManager2")
-    public void merge(Object entity) {
-        htpl.merge(entity);
+    @Transactional
+    public Object merge(Object entity) {
+        return htpl.merge(entity);
     }
 
     @Override
-    @Transactional("transactionManager2")
+    @Transactional
     public void delete(Object entity) {
         htpl.delete(entity);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Class<?> cls, Serializable id) {
+        Object record = htpl.get(cls,id);
+        htpl.delete(record);
     }
 }

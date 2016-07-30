@@ -6,11 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import xd.fw.FwException;
 import xd.fw.FwUtil;
+import xd.fw.bean.Role;
 import xd.fw.bean.User;
 import xd.fw.service.FwService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UserAction extends BaseAction {
     @Autowired
@@ -23,8 +26,9 @@ public class UserAction extends BaseAction {
 
     @Value("${version}")
     String version;
+
     public String userLogin() throws Exception {
-        User userRecord = fwService.userLogin(user.getName(), FwUtil.md5(user.getPassword()));
+        User userRecord = fwService.userLogin(user);
         if (userRecord != null) {
             users = new ArrayList<User>();
             users.add(userRecord);
@@ -38,14 +42,14 @@ public class UserAction extends BaseAction {
 
     public String deleteUser() {
         for (int i=0; users != null && i<users.size();i++){
-            fwService.deleteUserById(users.get(i).getId());
+            fwService.delete(User.class,users.get(i).getId());
         }
         return FINISH;
     }
 
     public String obtainUsers() {
-        total = fwService.getUsersCount();
-        users = fwService.getUsers(start, limit);
+        total = fwService.getAllCount(User.class);
+        users = fwService.getList(User.class,null, start, limit);
         return SUCCESS;
     }
 

@@ -4,8 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface BaseService {
-
-    int getAllCount();
+	int INVALIDATE_INT = -1000;
 
     <T> int getAllCount(Class<T> cls);
 
@@ -15,7 +14,7 @@ public interface BaseService {
 
     <T> List<T> getList(Class<T> cls, String orderBy, int start, int limit);
 
-	int getPrimaryKey(String tableName);
+	int getPrimaryKey(Class<?> cls);
 
 	void saveOrUpdate(Object entity);
 
@@ -27,9 +26,10 @@ public interface BaseService {
 
 	void save(Object entity);
 
-	void merge(Object entity);
+	Object merge(Object entity);
 
 	void delete (Object entity);
 
-    <T> List<T> getList(String hsql);
+	void delete(Class<?> obj, Serializable id);
+
 }

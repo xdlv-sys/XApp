@@ -4,7 +4,7 @@ Ext.define('XApp.model.Mod',{
 	fields : ['name','url','routerId','addition',{name: 'parentId', type: 'int'}],
 
 	proxy: {
-		url: 'mod!obtainUserMods.cmd',
+		url: 'mod!obtainMods.cmd',
 		reader: {
 			type: 'json',
 			rootProperty: 'mods'
