@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta charset="UTF-8">
+    <title>接口测试</title>
+    <script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+</head>
+
+<style>
+    .title {
+        margin: 0 auto;
+        font-weight: bold;
+        font-size: 24px;
+        color: #b30000;
+        width: 200px;
+        padding: 20px;
+    }
+
+    form {
+        border: 1px solid #b30000;
+        padding: 10px;
+        width: 800px;
+        margin: 0 auto;
+    }
+    .test_input{
+        margin: 10px;
+    }
+    .input_v{
+        margin-left: 10px;
+        width: 80%;
+    }
+    .label_v{
+        width: 80%;
+    }
+
+</style>
+<body ng-app="interfaceTest" ng-controller="interfaceCtrl">
+
+    <input-form action="syncUser.cmd"
+                title="用户同步syncUser"
+                params="jknUser.userId-用户ID
+                -jknUser.userName-用户名
+                -jknUser.referrer-推荐人ID
+                -jknUser.telephone-手机号码">
+    </input-form>
+
+    <input-form action="addTrade.cmd"
+                title="新增交易addTrade"
+                params="order.orderId-交易ID
+                -order.userId-用户ID
+                -order.payType-支付类型
+                -order.lastUpdateS-交易时间
+                -order.totalFee-金额">
+    </input-form>
+
+</body>
+<script language="javascript">
+    var app = angular.module("interfaceTest", []);
+    app.directive("inputForm", function() {
+        return {
+            templateUrl: 'inputForm.html',
+            replace: true,
+            scope:true,
+            link: function(scope,element,attrs){
+                scope.action = attrs.action;
+                scope.title = attrs.title;
+                scope.inputs=[];
+                var tmp = attrs.params.split('-');
+                for (var i = 0; i<tmp.length;i+=2){
+                    scope.inputs.push({
+                        label: tmp[i + 1],
+                        name: tmp[i]
+                    });
+                }
+
+            }
+        };
+    });
+    app.controller('interfaceCtrl', function($scope){
+        $scope.submitForm = function(button){
+
+        };
+    });
+</script>
+</html>
