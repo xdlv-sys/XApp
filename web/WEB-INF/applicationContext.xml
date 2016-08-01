@@ -97,19 +97,18 @@
         </property>
     </bean>
 
-    <bean id="memoryCheckJobDetail" parent="baseJobDetail">
-        <property name="targetObject">
-            <ref bean="memoryJob"/>
-        </property>
-    </bean>
 
     <bean id="memoryCheckDoTime"
           class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail">
-            <ref bean="memoryCheckJobDetail"/>
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="memoryJob"/>
+                </property>
+            </bean>
         </property>
         <property name="cronExpression">
-            <value>0/30 * * * * ?</value>
+            <value>0/10 * * * * ?</value>
         </property>
     </bean>
     <bean id="httpClientConnectionManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">
