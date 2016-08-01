@@ -9,9 +9,10 @@ import xd.fw.service.JknService;
 import java.util.List;
 
 @Service
-public class EventJob extends BaseJob {
-    public static JknEvent USER_UPDATE = new JknEvent(JknService.EV_USER_UPDATE, JknService.EV_INI),
-            ADD_ORDER = new JknEvent(JknService.EV_ADD_ORDER, JknService.EV_INI);
+public abstract class EventJob extends BaseJob {
+    public static JknEvent USER_UPDATE = new JknEvent(EV_USER_UPDATE, EV_INI),
+            ADD_ORDER = new JknEvent(EV_ADD_ORDER, EV_INI),
+            USER_UPGRADE = new JknEvent(EV_USER_UPGRADE,EV_INI);
 
     @Value("${batch_event}")
     int batchEvent = 100;
@@ -20,9 +21,23 @@ public class EventJob extends BaseJob {
     JknService jknService;
 
     @Override
-    public void doExecute() throws Exception {
-
+    public final void doExecute() throws Exception {
+        List<JknEvent> events = getEvent(processType());
+        if (events == null || events.size() < 1){
+            return;
+        }
+        logger.info("start to process event:" + processType().getEventType());
+        byte eventStatus;
+        for (JknEvent event : events){
+            eventStatus = process(event);
+            event.setEventStatus(eventStatus);
+            jknService.update(event);
+        }
+        logger.info("end to process event:" + processType().getEventType());
     }
+    protected abstract byte process(JknEvent event);
+
+    protected abstract JknEvent processType();
 
     protected List<JknEvent> getEvent(JknEvent type) {
         return jknService.getList(JknEvent.class, type, null, 0, 100);

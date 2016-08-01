@@ -23,7 +23,7 @@ create table t_jkn_order(
   pay_type tinyint,
   total_fee int,
   trade_status tinyint,
-  [] timestamp default now()
+  last_date timestamp default now()
 )ENGINE = INNODB;
 
 drop table IF EXISTS t_jkn_order_item;
@@ -62,6 +62,7 @@ create table t_jkn_event(
   event_id int auto_increment primary key,
   event_type tinyint not null,
   db_key int,
+  db_int int,
   db_content varchar(32),
   event_status tinyint
 )ENGINE = INNODB;

@@ -21,13 +21,15 @@ public class JknAction extends BaseAction{
             code = 201;
             return SUCCESS;
         }
-        jknService.saveJknUser(jknUser);
+        code = jknService.saveJknUser(jknUser);
+        jknUser = null;
         return SUCCESS;
     }
 
     @Action("addTrade")
     public String addTrade(){
         code = jknService.saveOrder(order);
+        order = null;
         return SUCCESS;
     }
 

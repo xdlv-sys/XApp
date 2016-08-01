@@ -14,7 +14,40 @@
         <property name="triggers">
             <list>
                 <!--<ref bean="memoryCheckDoTime"/>-->
+                <ref bean="notifyUserUpdateDoTime"/>
+                <ref bean="userUpdateDoTime"/>
+
             </list>
         </property>
     </bean>
+
+    <bean id="notifyUserUpdateDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="notifyUserUpdatedJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0/10 * * * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="userUpdateDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="userUpdateJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0/10 * * * * ?</value>
+        </property>
+    </bean>
+
+
 </beans>
