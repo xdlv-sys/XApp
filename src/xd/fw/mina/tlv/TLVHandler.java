@@ -5,12 +5,13 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.stereotype.Service;
+import xd.fw.service.IConst;
 
 /**
  * Created by xd on 2016/5/13.
  */
 @Service("tlvHandler")
-public class TLVHandler extends IoHandlerAdapter {
+public class TLVHandler extends IoHandlerAdapter implements IConst{
     protected Logger logger = Logger.getLogger(getClass());
 
     @Override

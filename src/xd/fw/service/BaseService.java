@@ -3,8 +3,7 @@ package xd.fw.service;
 import java.io.Serializable;
 import java.util.List;
 
-public interface BaseService {
-	int INVALIDATE_INT = -1000;
+public interface BaseService extends IConst{
 
     <T> int getAllCount(Class<T> cls);
 

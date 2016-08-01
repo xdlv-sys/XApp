@@ -13,6 +13,7 @@ import org.jdom.input.SAXBuilder;
 import org.springframework.stereotype.Controller;
 import xd.fw.FwUtil;
 import xd.fw.bean.User;
+import xd.fw.service.IConst;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
                         "contentDisposition", "attachment;filename=\"${fileName}\"",
                         "bufferSize", "1024"})
 })
-public abstract class BaseAction extends ActionSupport {
+public abstract class BaseAction extends ActionSupport implements IConst{
     private static final long serialVersionUID = 1L;
 
     public final static String FINISH = "finish", LOGIN = "login", XML = "xml", EXCEL = "excel";

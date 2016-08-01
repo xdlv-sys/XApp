@@ -3,11 +3,12 @@ package xd.fw.job;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
+import xd.fw.service.IConst;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public abstract class BaseJob {
+public abstract class BaseJob implements IConst{
 
     protected Logger logger = Logger.getLogger(getClass());
 
