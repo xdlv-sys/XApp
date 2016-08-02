@@ -6,7 +6,11 @@ import xd.fw.bean.JknEvent;
 import xd.fw.bean.JknUser;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class UserUpdateJob extends EventJob {
     static Map<Integer, UserDesc> userMap = new HashMap<>();
@@ -27,24 +31,44 @@ public class UserUpdateJob extends EventJob {
     int diamondAcn = 30;
 
     @Override
-    protected JknEvent processType() {
-        return USER_UPDATE;
+    protected Byte[] processType() {
+        return new Byte[]{EV_USER_UPDATE, EV_USER_UPGRADE,EV_USER_SETTLEMENT };
     }
 
     @Override
-    public byte process(JknEvent event) {
+    public Byte process(JknEvent eventType) {
+        JknUser self = jknService.get(JknUser.class, eventType.getDbKey());
+        UserDesc user = userMap.get(eventType.getDbKey());
+
+        // sync user info between map and db
+        // user properties (telephone, email account etc)update since user desc already exists
+        user.user = self;
+
+        if (eventType.getEventType() == EV_USER_UPDATE.byteValue()){
+            // just return for update already be done
+            return EV_DONE;
+        }
+        //user upgrade
+        if (eventType.getEventType() == EV_USER_UPGRADE){
+
+        }
+
         List<JknEvent> eventList = new ArrayList<>();
 
-        JknUser self = jknService.get(JknUser.class, event.getDbKey());
-        UserDesc user = userMap.get(event.getDbKey());
+        JknUser self = jknService.get(JknUser.class, eventType.getDbKey());
+        UserDesc user = userMap.get(eventType.getDbKey());
         if (user != null) {
-            // user update since user desc already exists
+            // user properties (telephone, email etc)update since user desc already exists
             user.user = self;
             return EV_DONE;
         }
         // new User
         user = new UserDesc(self);
         UserDesc parent = userMap.get(self.getReferrer());
+        if (parent == null) {
+            //should never happen
+            return EV_FAIL;
+        }
         user.parent = parent;
         user.parent.children.add(user);
 
@@ -90,12 +114,11 @@ public class UserUpdateJob extends EventJob {
 
     @PostConstruct
     public void buildUserTree() {
-        int total = jknService.getAllCount(JknUser.class);
         int start = 0;
         List<JknUser> users;
         UserDesc self, parent;
-        while (start < total) {
-            users = jknService.getList(JknUser.class, null, start, start += 100);
+
+        while ((users = jknService.getMemberUser(start, start += 100)).size() > 0) {
             for (JknUser user : users) {
                 self = userMap.get(user.getUserId());
                 if (self == null) {
@@ -117,28 +140,14 @@ public class UserUpdateJob extends EventJob {
         }
     }
 
-    static class UserDesc {
-        UserDesc(JknUser user) {
-            this.user = user;
-        }
-
-        JknUser user;
-        UserDesc parent;
-        List<UserDesc> children = new LinkedList<>();
-
-        int allChildCount() {
-            int count = children.size();
-            for (UserDesc son : children) { // son
-                count += son.children.size();
-                for (UserDesc gradeSon : son.children) { //gradeSon
-                    count += gradeSon.children.size();
-                    for (UserDesc gradeGradeSon : gradeSon.children) { // gradeGradeSon
-                        count += gradeGradeSon.children.size();
-                    }
-                }
-            }
-            return count;
+    /*static UserDesc getUserDesc(Integer userId){
+        synchronized (userMap){
+            return userMap.get(userId);
         }
     }
-
+    static UserDesc setUserDesc(Integer userId, UserDesc userDesc){
+        synchronized (userMap){
+            return userMap.put(userId, userDesc);
+        }
+    }*/
 }

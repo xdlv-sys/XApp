@@ -1,54 +1,56 @@
 package xd.fw.bean;
 
-import xd.fw.service.JknService;
-
-import javax.persistence.*;
-import javax.print.attribute.IntegerSyntax;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "t_jkn_event")
 public class JknEvent {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer eventId;
-    private Byte eventType;
+    private int eventId;
+    private byte eventType;
     private Integer dbKey;
     private Integer dbInt;
     private String dbContent;
     private Byte eventStatus;
+    private Timestamp triggerDate;
 
-    //-------------
-    public JknEvent(){}
+    public JknEvent() {
+    }
 
     public JknEvent(Byte eventType, Integer dbKey, String dbContent) {
         this.eventType = eventType;
         this.dbKey = dbKey;
         this.dbContent = dbContent;
     }
+
     public JknEvent(Byte eventType, Integer dbKey, int dbInt) {
         this.eventType = eventType;
         this.dbKey = dbKey;
         this.dbInt = dbInt;
     }
+
     public JknEvent(Byte eventType, Byte eventStatus) {
         this.eventType = eventType;
         this.eventStatus = eventStatus;
     }
-    //---------
 
-    public Integer getEventId() {
+
+    public int getEventId() {
         return eventId;
     }
 
-    public void setEventId(Integer eventId) {
+    public void setEventId(int eventId) {
         this.eventId = eventId;
     }
 
-    public Byte getEventType() {
+    public byte getEventType() {
         return eventType;
     }
 
-    public void setEventType(Byte eventType) {
+    public void setEventType(byte eventType) {
         this.eventType = eventType;
     }
 
@@ -58,6 +60,14 @@ public class JknEvent {
 
     public void setDbKey(Integer dbKey) {
         this.dbKey = dbKey;
+    }
+
+    public Integer getDbInt() {
+        return dbInt;
+    }
+
+    public void setDbInt(Integer dbInt) {
+        this.dbInt = dbInt;
     }
 
     public String getDbContent() {
@@ -76,12 +86,12 @@ public class JknEvent {
         this.eventStatus = eventStatus;
     }
 
-    public void setDbInt(Integer dbInt) {
-        this.dbInt = dbInt;
+    public Timestamp getTriggerDate() {
+        return triggerDate;
     }
 
-    public Integer getDbInt() {
-        return dbInt;
+    public void setTriggerDate(Timestamp triggerDate) {
+        this.triggerDate = triggerDate;
     }
 
     @Override
@@ -89,25 +99,27 @@ public class JknEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JknEvent jknEvent = (JknEvent) o;
+        JknEvent event = (JknEvent) o;
 
-        if (eventId != null ? !eventId.equals(jknEvent.eventId) : jknEvent.eventId != null) return false;
-        if (eventType != null ? !eventType.equals(jknEvent.eventType) : jknEvent.eventType != null) return false;
-        if (dbKey != null ? !dbKey.equals(jknEvent.dbKey) : jknEvent.dbKey != null) return false;
-        if (dbInt != null ? !dbInt.equals(jknEvent.dbInt) : jknEvent.dbInt != null) return false;
-        if (dbContent != null ? !dbContent.equals(jknEvent.dbContent) : jknEvent.dbContent != null) return false;
-        return eventStatus != null ? eventStatus.equals(jknEvent.eventStatus) : jknEvent.eventStatus == null;
+        if (eventId != event.eventId) return false;
+        if (eventType != event.eventType) return false;
+        if (dbKey != null ? !dbKey.equals(event.dbKey) : event.dbKey != null) return false;
+        if (dbInt != null ? !dbInt.equals(event.dbInt) : event.dbInt != null) return false;
+        if (dbContent != null ? !dbContent.equals(event.dbContent) : event.dbContent != null) return false;
+        if (eventStatus != null ? !eventStatus.equals(event.eventStatus) : event.eventStatus != null) return false;
+        return triggerDate != null ? triggerDate.equals(event.triggerDate) : event.triggerDate == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = eventId != null ? eventId.hashCode() : 0;
-        result = 31 * result + (eventType != null ? eventType.hashCode() : 0);
+        int result = eventId;
+        result = 31 * result + (int) eventType;
         result = 31 * result + (dbKey != null ? dbKey.hashCode() : 0);
         result = 31 * result + (dbInt != null ? dbInt.hashCode() : 0);
         result = 31 * result + (dbContent != null ? dbContent.hashCode() : 0);
         result = 31 * result + (eventStatus != null ? eventStatus.hashCode() : 0);
+        result = 31 * result + (triggerDate != null ? triggerDate.hashCode() : 0);
         return result;
     }
 }

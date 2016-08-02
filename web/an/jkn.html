@@ -21,7 +21,9 @@
         border: 1px solid #b30000;
         padding: 10px;
         width: 800px;
-        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
     }
 
     .test_input {
@@ -30,11 +32,8 @@
 
     .input_v {
         margin-left: 10px;
-        width: 80%;
-    }
-
-    .label_v {
-        width: 80%;
+        width: 90%;
+        line-height: 26px;
     }
 
 </style>
@@ -52,9 +51,11 @@
             title="新增交易addTrade"
             params="order.orderId-交易ID
                 -order.userId-用户ID
-                -order.payType-支付类型
-                -order.lastUpdateS-交易时间
-                -order.totalFee-金额">
+                -order.payType-支付类型(0 微信,1 支付宝,2银行卡,3余额支付)
+                -order.tradeType-交易类型(0:消费；1:提现)
+                -order.totalFee-金额
+                -order.balanceFee-余额消费
+                -order.lastUpdateS-交易时间">
 </input-form>
 
 </body>
@@ -73,11 +74,7 @@
                         httpParams[v.name] = form[v.name].value;
                     });
                     $http.post(scope.action, httpParams).success(function (data) {
-                        if (data.code == 200){
-                            alert('OK');
-                        } else {
-                            alert('Fail:' + data.code);
-                        }
+                        alert(data.code === 200 ? ('OK:') : ('Fail:' + data.code));
                     });
                 };
 
@@ -86,9 +83,17 @@
                 scope.inputs = [];
                 var tmp = attrs.params.split('-');
                 for (var i = 0; i < tmp.length; i += 2) {
+                    var comment = '';
+                    var label = tmp[i + 1];
+                    var index = tmp[i + 1].indexOf('(');
+                    if (index > -1){
+                        label = tmp[i + 1].substring(0,index);
+                        comment = tmp[i + 1].substring(index,tmp[i + 1].length -1);
+                    }
                     scope.inputs.push({
-                        label: tmp[i + 1],
-                        name: tmp[i]
+                        label: label,
+                        name: tmp[i],
+                        comment: comment
                     });
                 }
             }

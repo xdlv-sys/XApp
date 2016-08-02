@@ -1,9 +1,12 @@
 <form method="post">
     <div class="title">{{title}}</div>
-        <div class="test_input" ng-repeat="t in inputs">
-            <label class="label_v">{{t.label}}:
-            <input class="input_v" type="text" name="{{t.name}}"/></label>
-        </div>
+        <table border="0">
+            <tr  ng-repeat="t in inputs">
+                <td>{{t.label}}:</td>
+                <td width="400px"><input class="input_v" type="text" name="{{t.name}}"/></td>
+                <td>{{t.comment}}</td>
+            </tr>
+        </table>
     <hr>
     <button type="button" ng-click="submitForm()">提交</button>
 </form>

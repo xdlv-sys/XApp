@@ -17,6 +17,7 @@ public class JknUser {
     private Byte vip;
     private Byte userLevel;
     private Byte areaLevel;
+    private Integer consumedCount;
     private Integer count;
     private Integer countOne;
     private Integer countTwo;
@@ -120,26 +121,36 @@ public class JknUser {
         this.regDate = regDate;
     }
 
+    public Integer getConsumedCount() {
+        return consumedCount;
+    }
+
+    public void setConsumedCount(Integer consumedCount) {
+        this.consumedCount = consumedCount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JknUser jknUser = (JknUser) o;
+        JknUser user = (JknUser) o;
 
-        if (userId != null ? !userId.equals(jknUser.userId) : jknUser.userId != null) return false;
-        if (userName != null ? !userName.equals(jknUser.userName) : jknUser.userName != null) return false;
-        if (referrer != null ? !referrer.equals(jknUser.referrer) : jknUser.referrer != null) return false;
-        if (telephone != null ? !telephone.equals(jknUser.telephone) : jknUser.telephone != null) return false;
-        if (vip != null ? !vip.equals(jknUser.vip) : jknUser.vip != null) return false;
-        if (userLevel != null ? !userLevel.equals(jknUser.userLevel) : jknUser.userLevel != null) return false;
-        if (areaLevel != null ? !areaLevel.equals(jknUser.areaLevel) : jknUser.areaLevel != null) return false;
-        if (count != null ? !count.equals(jknUser.count) : jknUser.count != null) return false;
-        if (countOne != null ? !countOne.equals(jknUser.countOne) : jknUser.countOne != null) return false;
-        if (countTwo != null ? !countTwo.equals(jknUser.countTwo) : jknUser.countTwo != null) return false;
-        if (countThree != null ? !countThree.equals(jknUser.countThree) : jknUser.countThree != null) return false;
+        if (userId != null ? !userId.equals(user.userId) : user.userId != null) return false;
+        if (userName != null ? !userName.equals(user.userName) : user.userName != null) return false;
+        if (referrer != null ? !referrer.equals(user.referrer) : user.referrer != null) return false;
+        if (telephone != null ? !telephone.equals(user.telephone) : user.telephone != null) return false;
+        if (vip != null ? !vip.equals(user.vip) : user.vip != null) return false;
+        if (userLevel != null ? !userLevel.equals(user.userLevel) : user.userLevel != null) return false;
+        if (areaLevel != null ? !areaLevel.equals(user.areaLevel) : user.areaLevel != null) return false;
+        if (consumedCount != null ? !consumedCount.equals(user.consumedCount) : user.consumedCount != null)
+            return false;
+        if (count != null ? !count.equals(user.count) : user.count != null) return false;
+        if (countOne != null ? !countOne.equals(user.countOne) : user.countOne != null) return false;
+        if (countTwo != null ? !countTwo.equals(user.countTwo) : user.countTwo != null) return false;
+        if (countThree != null ? !countThree.equals(user.countThree) : user.countThree != null) return false;
+        return regDate != null ? regDate.equals(user.regDate) : user.regDate == null;
 
-        return true;
     }
 
     @Override
@@ -151,10 +162,12 @@ public class JknUser {
         result = 31 * result + (vip != null ? vip.hashCode() : 0);
         result = 31 * result + (userLevel != null ? userLevel.hashCode() : 0);
         result = 31 * result + (areaLevel != null ? areaLevel.hashCode() : 0);
+        result = 31 * result + (consumedCount != null ? consumedCount.hashCode() : 0);
         result = 31 * result + (count != null ? count.hashCode() : 0);
         result = 31 * result + (countOne != null ? countOne.hashCode() : 0);
         result = 31 * result + (countTwo != null ? countTwo.hashCode() : 0);
         result = 31 * result + (countThree != null ? countThree.hashCode() : 0);
+        result = 31 * result + (regDate != null ? regDate.hashCode() : 0);
         return result;
     }
 }

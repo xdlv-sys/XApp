@@ -7,13 +7,13 @@ import xd.fw.bean.JknEvent;
 public class NotifyUserUpdatedJob extends EventJob {
 
     @Override
-    protected byte process(JknEvent event) {
+    protected Byte process(JknEvent eventType) {
         //TODO notify user updated
         return EV_DONE;
     }
 
     @Override
-    protected JknEvent processType() {
-        return USER_UPGRADE;
+    protected Byte[] processType() {
+        return EV_USER_UPGRADE;
     }
 }

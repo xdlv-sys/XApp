@@ -14,8 +14,11 @@ public class Order {
     private Short year;
     private Byte month;
     private Byte payType;
-    private Integer totalFee;
+    private Byte tradeType;
+    private int totalFee;
+    private int balanceFee;
     private Byte tradeStatus;
+
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastDate;
@@ -60,11 +63,11 @@ public class Order {
         this.payType = payType;
     }
 
-    public Integer getTotalFee() {
+    public int getTotalFee() {
         return totalFee;
     }
 
-    public void setTotalFee(Integer totalFee) {
+    public void setTotalFee(int totalFee) {
         this.totalFee = totalFee;
     }
 
@@ -88,6 +91,22 @@ public class Order {
         this.lastDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
     }
 
+    public Byte getTradeType() {
+        return tradeType;
+    }
+
+    public void setTradeType(Byte tradeType) {
+        this.tradeType = tradeType;
+    }
+
+    public int getBalanceFee() {
+        return balanceFee;
+    }
+
+    public void setBalanceFee(int balanceFee) {
+        this.balanceFee = balanceFee;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -95,15 +114,17 @@ public class Order {
 
         Order order = (Order) o;
 
+        if (totalFee != order.totalFee) return false;
+        if (balanceFee != order.balanceFee) return false;
         if (orderId != null ? !orderId.equals(order.orderId) : order.orderId != null) return false;
         if (userId != null ? !userId.equals(order.userId) : order.userId != null) return false;
         if (year != null ? !year.equals(order.year) : order.year != null) return false;
         if (month != null ? !month.equals(order.month) : order.month != null) return false;
         if (payType != null ? !payType.equals(order.payType) : order.payType != null) return false;
-        if (totalFee != null ? !totalFee.equals(order.totalFee) : order.totalFee != null) return false;
+        if (tradeType != null ? !tradeType.equals(order.tradeType) : order.tradeType != null) return false;
         if (tradeStatus != null ? !tradeStatus.equals(order.tradeStatus) : order.tradeStatus != null) return false;
+        return lastDate != null ? lastDate.equals(order.lastDate) : order.lastDate == null;
 
-        return true;
     }
 
     @Override
@@ -113,8 +134,11 @@ public class Order {
         result = 31 * result + (year != null ? year.hashCode() : 0);
         result = 31 * result + (month != null ? month.hashCode() : 0);
         result = 31 * result + (payType != null ? payType.hashCode() : 0);
-        result = 31 * result + (totalFee != null ? totalFee.hashCode() : 0);
+        result = 31 * result + (tradeType != null ? tradeType.hashCode() : 0);
+        result = 31 * result + totalFee;
+        result = 31 * result + balanceFee;
         result = 31 * result + (tradeStatus != null ? tradeStatus.hashCode() : 0);
+        result = 31 * result + (lastDate != null ? lastDate.hashCode() : 0);
         return result;
     }
 }

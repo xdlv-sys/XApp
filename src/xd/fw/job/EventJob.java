@@ -6,13 +6,11 @@ import org.springframework.stereotype.Service;
 import xd.fw.bean.JknEvent;
 import xd.fw.service.JknService;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public abstract class EventJob extends BaseJob {
-    public static JknEvent USER_UPDATE = new JknEvent(EV_USER_UPDATE, EV_INI),
-            ADD_ORDER = new JknEvent(EV_ADD_ORDER, EV_INI),
-            USER_UPGRADE = new JknEvent(EV_USER_UPGRADE,EV_INI);
 
     @Value("${batch_event}")
     int batchEvent = 100;
@@ -22,24 +20,28 @@ public abstract class EventJob extends BaseJob {
 
     @Override
     public final void doExecute() throws Exception {
-        List<JknEvent> events = getEvent(processType());
+        List<JknEvent> events = getEvent();
         if (events == null || events.size() < 1){
             return;
         }
-        logger.info("start to process event:" + processType().getEventType());
-        byte eventStatus;
+        logger.info("start to process event:" + Arrays.toString(processType()));
+        byte eventStatus = EV_FAIL;
         for (JknEvent event : events){
-            eventStatus = process(event);
+            try{
+                eventStatus = process(event);
+            } catch (Throwable e){
+                logger.error("",e);
+            }
             event.setEventStatus(eventStatus);
             jknService.update(event);
         }
-        logger.info("end to process event:" + processType().getEventType());
+        logger.info("end to process event:" + Arrays.toString(processType()));
     }
-    protected abstract byte process(JknEvent event);
+    protected abstract Byte process(JknEvent eventType);
 
-    protected abstract JknEvent processType();
+    protected abstract Byte[] processType();
 
-    protected List<JknEvent> getEvent(JknEvent type) {
-        return jknService.getList(JknEvent.class, type, null, 0, 100);
+    protected List<JknEvent> getEvent() {
+        return jknService.getTriggeringEvent(processType(), 0, 100);
     }
 }

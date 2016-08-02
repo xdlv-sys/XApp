@@ -50,7 +50,7 @@ Ext.define("XApp.view.jkn.UserManager",{
                     case 1 : return '会员';
                     case 2 : return '黄金';
                     case 3: return '钻石';
-                    default : return '非会员'
+                    default : return '顾客'
                 }
             }
         },{
@@ -75,6 +75,12 @@ Ext.define("XApp.view.jkn.UserManager",{
             dataIndex: 'countOne',
             renderer: function(v,o,record){
                 return (v + record.get('countTwo') + record.get('countThree'))/100.0;
+            }
+        },{
+            text: '消费总额(元)',
+            dataIndex: 'consumedCount',
+            renderer : function(v){
+                return v/100.0;
             }
         },{
             text: '注册时间',
