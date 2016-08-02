@@ -24,7 +24,7 @@ create table t_jkn_order(
   pay_type tinyint,
   trade_type tinyint,
   total_fee int,
-  balanceFee int,
+  balance_fee int,
   trade_status tinyint,
   last_date timestamp default now()
 )ENGINE = INNODB;
@@ -81,13 +81,16 @@ create table t_jkn_event(
   db_int int,
   db_content varchar(32),
   event_status tinyint,
+  try_count tinyint,
   trigger_date DATETIME not null
 )ENGINE = INNODB;
 
 delete from t_mod where id > 0;
 insert into t_mod values(1,'用户信息',null,'jkn-UserManager','x-fa fa-users',0);
-
 insert into t_mod values(2,'交易信息',null,'jkn-OrderManager','x-fa fa-reorder',0);
+insert into t_mod values(3,'动态参数',null,'jkn-DynamicParameter','x-fa fa-pencil',0);
+insert into t_mod values(4,'事件管理',null,'jkn-EventManager','x-fa fa-commenting-o',0);
+
 
 INSERT INTO xapp.t_jkn_user (user_id, user_name, referrer, telephone, vip, user_level, area_level, count, count_one, count_two, count_three, reg_date)
 VALUES (1, 'a1', null, '123', 0, 2, 0, 0, 0, 0, 0, '2016-08-02 10:10:48');

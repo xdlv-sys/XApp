@@ -15,6 +15,7 @@ public class JknEvent {
     private Integer dbInt;
     private String dbContent;
     private Byte eventStatus;
+    private Byte tryCount;
     private Timestamp triggerDate;
 
     public JknEvent() {
@@ -92,6 +93,14 @@ public class JknEvent {
 
     public void setTriggerDate(Timestamp triggerDate) {
         this.triggerDate = triggerDate;
+    }
+
+    public void setTryCount(Byte tryCount) {
+        this.tryCount = tryCount;
+    }
+
+    public Byte getTryCount() {
+        return tryCount;
     }
 
     @Override

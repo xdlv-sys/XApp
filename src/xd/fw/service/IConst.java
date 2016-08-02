@@ -26,5 +26,6 @@ public interface IConst {
 
     //event type 1 用户属性更新 2 新交易 11 用户升级（等级，VIP) 12 用户余额发生变化
     Byte EV_USER_UPDATE = 1, EV_ADD_ORDER = 2,
-    /*sub event*/EV_USER_UPGRADE = 11, EV_USER_SETTLEMENT = 12;
+    /*sub event*/EV_USER_UPGRADE = 11, EV_USER_SETTLEMENT = 12, EV_USER_NOTIFY = 13
+            , EV_USER_SETTLEMENT_APPLY = 14;
 }

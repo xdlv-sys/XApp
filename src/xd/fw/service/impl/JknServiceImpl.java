@@ -22,7 +22,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
     @Override
     @Transactional
     public int saveJknUser(JknUser jknUser) {
-        JknUser record = load(JknUser.class,jknUser.getUserId());
+        JknUser record = get(JknUser.class,jknUser.getUserId());
         if (record != null){
             //not allowed to change referrer
             if (jknUser.getReferrer() != record.getReferrer()){
@@ -76,8 +76,13 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
     }
 
     @Override
+    @Transactional
     public void triggerEvent(JknEvent event) {
         event.setEventStatus(EV_INI);
+        event.setTryCount((byte)0);
+        if (event.getTriggerDate() == null){
+            event.setTriggerDate(new Timestamp(System.currentTimeMillis()));
+        }
         save(event);
     }
 
@@ -99,32 +104,31 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
         return getList("from JknUser where userLevel > " + UL_NON, null, start,limit);
     }
 
-    @Override
+    /*//@Override
     @Transactional
     public void saveUserCount(JknUser user) {
         JknUser record = load(JknUser.class,user.getUserId());
         record.setCount(user.getCount());
         update(record);
-    }
+    }*/
 
     @Override
     @Transactional
-    public void saveSettelment(OrderSettlement orderSettlement, JknUser user, List<JknUser> impactedUsers) {
+    public void saveSettlement(OrderSettlement orderSettlement, List<JknUser> impactedUsers) {
         save(orderSettlement);
-        update(user);
-
         for (JknUser u : impactedUsers){
             update(u);
-            JknEvent event = new JknEvent(EV_USER_SETTLEMENT, u.getUserId(), null);
-            event.setTriggerDate(new Timestamp(System.currentTimeMillis() + settlementPeriod));
-            triggerEvent(event);
         }
+        JknEvent event = new JknEvent(EV_USER_SETTLEMENT_APPLY,orderSettlement.getOrderId(),null);
+        event.setTriggerDate(new Timestamp(System.currentTimeMillis() + settlementPeriod));
+        triggerEvent(event);
     }
 
     @Override
     public List<JknEvent> getTriggeringEvent(Byte[] eventType, int start, int limit) {
         StringBuffer hsql = new StringBuffer(128);
-        hsql.append("from JknEvent where eventType in(");
+        hsql.append("from JknEvent where eventStatus in (").append(EV_INI).append("" +
+                ",").append(EV_FAIL).append(") and tryCount <").append(8).append(" and eventType in(");
         for (Byte type: eventType){
             hsql.append(type).append(",");
         }

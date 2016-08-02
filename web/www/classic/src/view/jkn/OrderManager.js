@@ -25,7 +25,7 @@ Ext.define("XApp.view.jkn.OrderManager",{
         columns: [{
             text: "交易ID",
             sortable: true,
-            dataIndex: 'userId',
+            dataIndex: 'orderId',
             flex: 1
         }, {
             text: "用户ID",

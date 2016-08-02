@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.bean.JknEvent;
 import xd.fw.bean.JknUser;
+import xd.fw.bean.Order;
+import xd.fw.bean.OrderSettlement;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -30,64 +32,113 @@ public class UserUpdateJob extends EventJob {
     @Value("${diamond_acn}")
     int diamondAcn = 30;
 
+    @Value("${settlement_one}")
+    float settlementOne;
+    @Value("${settlement_two}")
+    float settlementTwo;
+    @Value("${settlement_three}")
+    float settlementThree;
+
     @Override
     protected Byte[] processType() {
         return new Byte[]{EV_USER_UPDATE, EV_USER_UPGRADE,EV_USER_SETTLEMENT };
     }
-
-    @Override
-    public Byte process(JknEvent eventType) {
-        JknUser self = jknService.get(JknUser.class, eventType.getDbKey());
-        UserDesc user = userMap.get(eventType.getDbKey());
-
-        // sync user info between map and db
-        // user properties (telephone, email account etc)update since user desc already exists
+    private Byte processUpdate(JknEvent event){
+        JknUser self = jknService.get(JknUser.class, event.getDbKey());
+        UserDesc user = userMap.get(event.getDbKey());
         user.user = self;
-
-        if (eventType.getEventType() == EV_USER_UPDATE.byteValue()){
-            // just return for update already be done
-            return EV_DONE;
-        }
-        //user upgrade
-        if (eventType.getEventType() == EV_USER_UPGRADE){
-
-        }
-
-        List<JknEvent> eventList = new ArrayList<>();
-
-        JknUser self = jknService.get(JknUser.class, eventType.getDbKey());
-        UserDesc user = userMap.get(eventType.getDbKey());
-        if (user != null) {
-            // user properties (telephone, email etc)update since user desc already exists
-            user.user = self;
-            return EV_DONE;
-        }
-        // new User
-        user = new UserDesc(self);
-        UserDesc parent = userMap.get(self.getReferrer());
-        if (parent == null) {
-            //should never happen
-            return EV_FAIL;
-        }
-        user.parent = parent;
-        user.parent.children.add(user);
-
-        userMap.put(self.getUserId(), user);
-
-        //upgrade user level from parent
-        JknEvent upgradeEvent;
-        while (parent != null) {
-            upgradeEvent = upgrade(user.parent);
-            if (upgradeEvent != null) {
-                eventList.add(upgradeEvent);
-            }
-            parent = parent.parent;
-        }
-        jknService.upgradeJknUser(eventList);
         return EV_DONE;
     }
 
-    private JknEvent upgrade(UserDesc user) {
+    private Byte processUpgrade(JknEvent event){
+        JknUser self = jknService.get(JknUser.class, event.getDbKey());
+        UserDesc user = userMap.get(event.getDbKey());
+
+        if (user == null){
+            //user upgrade from customer to membership
+            user = new UserDesc(self);
+            user.parent = userMap.get(self.getReferrer());
+            user.parent.children.add(user);
+            userMap.put(self.getUserId(), user);
+
+            //upgrade father ...
+            List<JknEvent> eventList = new ArrayList<>();
+            upgrade(user.parent, eventList);
+            upgrade(user.parent.parent,eventList);
+            upgrade(user.parent.parent.parent,eventList);
+
+            // update user level and trigger notify event
+            jknService.upgradeJknUser(eventList);
+        } else {
+            //user is membership already.
+            user.user = self;
+        }
+        return EV_DONE;
+    }
+    private Byte processSettlement(JknEvent event) {
+        Order order = jknService.get(Order.class, event.getDbKey());
+        UserDesc user = userMap.get(order.getUserId());
+
+        int totalFee = order.getTotalFee();
+
+        List<JknUser> impactedUsers = new ArrayList<>(3);
+
+        OrderSettlement orderSettlement = new OrderSettlement();
+        orderSettlement.setOrderId(order.getOrderId());
+        orderSettlement.setUserId(user.user.getUserId());
+
+        int fee;
+        UserDesc target = user.parent;
+        if (target != null) {
+            fee = (int) (totalFee * settlementOne);
+            target.user.setCountOne(target.user.getCountOne() + fee);
+            orderSettlement.setCountOne(target.user.getUserId());
+            orderSettlement.setCountOne(fee);
+            orderSettlement.setUserIdOne(target.user.getUserId());
+            impactedUsers.add(target.user);
+            target = target.parent;
+            if (target != null) {
+                fee = (int) (totalFee * settlementTwo);
+                target.user.setCountTwo(target.user.getCountTwo() + fee);
+                orderSettlement.setCountTwo(target.user.getUserId());
+                orderSettlement.setCountTwo(fee);
+                orderSettlement.setUserIdTwo(target.user.getUserId());
+                impactedUsers.add(target.user);
+                target = target.parent;
+                if (target != null) {
+                    fee = (int) (totalFee * settlementThree);
+                    target.user.setCountThree(target.user.getCountThree() + fee);
+                    orderSettlement.setCountThree(target.user.getUserId());
+                    orderSettlement.setCountThree(fee);
+                    orderSettlement.setUserIdThree(target.user.getUserId());
+                    impactedUsers.add(target.user);
+                }
+            }
+        }
+        jknService.saveSettlement(orderSettlement, impactedUsers);
+        return EV_DONE;
+    }
+
+    @Override
+    public Byte process(JknEvent eventType) {
+
+        // sync user info between map and db including ccout, count_one ...
+        if (eventType.getEventType() == EV_USER_UPDATE.byteValue()){
+            return processUpdate(eventType);
+        }
+        //user upgrade
+        if (eventType.getEventType() == EV_USER_UPGRADE.byteValue()){
+            return processUpgrade(eventType);
+        }
+
+        if (eventType.getEventType() == EV_USER_SETTLEMENT.byteValue()){
+            return processSettlement(eventType);
+        }
+
+        return EV_FAIL;
+    }
+
+    private void upgrade(UserDesc user, List<JknEvent> eventList) {
         Byte userLevel = user.user.getUserLevel();
         int childrenCount = user.children.size();
         int allChildrenCount = user.allChildCount();
@@ -107,9 +158,9 @@ public class UserUpdateJob extends EventJob {
         if (userLevel < shouldLevel) {
             //upgrade user level and the record in db will be upgraded later
             user.user.setUserLevel(shouldLevel);
-            return new JknEvent(EV_USER_UPGRADE, user.user.getUserId(), shouldLevel);
+            eventList.add(new JknEvent(EV_USER_NOTIFY
+                    , user.user.getUserId(), shouldLevel));
         }
-        return null;
     }
 
     @PostConstruct

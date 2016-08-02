@@ -14,6 +14,6 @@ public class NotifyUserUpdatedJob extends EventJob {
 
     @Override
     protected Byte[] processType() {
-        return EV_USER_UPGRADE;
+        return new Byte[]{EV_USER_NOTIFY};
     }
 }

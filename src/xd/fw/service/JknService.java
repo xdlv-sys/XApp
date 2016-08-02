@@ -24,7 +24,7 @@ public interface JknService extends BaseService {
 
     //void saveUserCount(JknUser user);
 
-    void saveSettelment(OrderSettlement orderSettlement, JknUser user, List<JknUser> impactedUsers);
+    void saveSettlement(OrderSettlement orderSettlement, List<JknUser> impactedUsers);
 
     List<JknEvent> getTriggeringEvent(Byte[] eventType, int start, int limit);
 }
