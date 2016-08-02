@@ -32,31 +32,38 @@ Ext.define('XApp.controller.Root', {
             children:[]
         };
         var map={0 : root};
+        var mods = [];
         Ext.each(user.data.roles, function(role){
             Ext.each(role.mods, function(v){
-                var id = v.id;
-                var routerId = v.routerId;
-                var viewId;
-                map[id] = Ext.applyIf(map[id] || {}, {
-                    text: v.name,
-                    iconCls: v.addition,
-                    children:[]
-                });
-                if (!Ext.isEmpty(routerId)){
-                    viewId = routerId.substring(0,routerId.indexOf('-')).concat(
-                        '.',routerId.substring(routerId.indexOf('-') + 1));
-                    map[id].view= viewId;
-                    map[id].routeId = routerId;
-                    map[id].leaf = true;
-                }
-                var parent = map[v.parentId];
-                if (!parent){
-                    parent = map[v.parentId]={
-                        children:[]
-                    };
-                }
-                parent.children.push(map[id]);
+                mods.push(v);
             });
+        });
+        Ext.Array.sort(mods, function(a,b){
+            return a.id - b.id;
+        });
+        Ext.each(mods, function(v){
+            var id = v.id;
+            var routerId = v.routerId;
+            var viewId;
+            map[id] = Ext.applyIf(map[id] || {}, {
+                text: v.name,
+                iconCls: v.addition,
+                children:[]
+            });
+            if (!Ext.isEmpty(routerId)){
+                viewId = routerId.substring(0,routerId.indexOf('-')).concat(
+                    '.',routerId.substring(routerId.indexOf('-') + 1));
+                map[id].view= viewId;
+                map[id].routeId = routerId;
+                map[id].leaf = true;
+            }
+            var parent = map[v.parentId];
+            if (!parent){
+                parent = map[v.parentId]={
+                    children:[]
+                };
+            }
+            parent.children.push(map[id]);
         });
 
         Ext.create('XApp.view.main.Main',{

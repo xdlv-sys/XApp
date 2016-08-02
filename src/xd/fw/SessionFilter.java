@@ -18,9 +18,11 @@ public class SessionFilter implements Filter {
 
     String[] whiteNames;
     boolean showParameters = false;
+    boolean open = true;
     public void init(FilterConfig filterconfig) throws ServletException {
         whiteNames = filterconfig.getInitParameter("whiteNames").split(",");
         showParameters = Boolean.valueOf(filterconfig.getInitParameter("showParameters"));
+        open = Boolean.valueOf(filterconfig.getInitParameter("open"));
     }
 
     boolean accept(String uri){
@@ -36,7 +38,7 @@ public class SessionFilter implements Filter {
                          ServletResponse resp, FilterChain filterchain)
             throws IOException, ServletException {
         String uri = ((HttpServletRequest) servletrequest).getRequestURI();
-        if (!accept(uri) &&
+        if (open && !accept(uri) &&
             ((HttpServletRequest) servletrequest).getSession().getAttribute(BaseAction.USER) == null){
             HttpServletResponse response = (HttpServletResponse) resp;
             response.setHeader("Cache-Control", "no-store");

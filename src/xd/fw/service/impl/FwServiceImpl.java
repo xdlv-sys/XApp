@@ -3,18 +3,17 @@ package xd.fw.service.impl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xd.fw.FwUtil;
-import xd.fw.bean.*;
-import xd.fw.bean.mapper.*;
+import xd.fw.bean.Mod;
+import xd.fw.bean.Role;
+import xd.fw.bean.User;
 import xd.fw.service.FwService;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class FwServiceImpl extends HibernateServiceImpl implements FwService {

@@ -16,7 +16,10 @@ Ext.define('XApp.store.ModTree', {
                     children:[]
                 };
                 var map={0 : root};
-                Ext.each(data.mods, function(v,i,a){
+                var mods = Ext.Array.sort(data.mods, function (a,b) {
+                    return a.id - b.id;
+                });
+                Ext.each(mods, function(v,i,a){
                     var id = v.id;
                     var routerId = v.routerId;
                     map[id] = Ext.applyIf(map[id] || {}, {
