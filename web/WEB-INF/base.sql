@@ -1,54 +1,54 @@
 -- CREATE DATABASE xapp DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 drop table IF EXISTS t_primary_key;
 create table t_primary_key(
-    table_name varchar(32) not null primary key,
-    current_id int not null
+  table_name varchar(32) not null primary key,
+  current_id int not null
 )ENGINE = INNODB;
 
 drop table IF EXISTS t_user;
 create table t_user(
-    id int not null primary key,
-    name VARCHAR(50),
-    password VARCHAR(32),
-    mail varchar(20)
+  id int not null primary key,
+  name VARCHAR(50),
+  password VARCHAR(32),
+  mail varchar(20)
 )ENGINE = INNODB;
 
 drop table IF EXISTS t_role;
 create table t_role(
-    id int not null primary key,
-    name VARCHAR(50)
+  id int not null primary key,
+  name VARCHAR(50)
 )ENGINE = INNODB;
 
 drop table IF EXISTS t_mod;
 create table t_mod(
-    id int not null primary key,
-    name VARCHAR(50),
-    url varchar(50),
-    router_id varchar(50),
-    addition VARCHAR(50),
-    parent_id int
+  id int not null primary key,
+  name VARCHAR(50),
+  url varchar(50),
+  router_id varchar(50),
+  addition VARCHAR(50),
+  parent_id int
 )ENGINE = INNODB;
 
 drop table IF EXISTS t_user_role;
 create table t_user_role(
-    id int AUTO_INCREMENT primary key,
-    user_id int not null,
-    role_id int not null
+  id int AUTO_INCREMENT primary key,
+  user_id int not null,
+  role_id int not null
 )ENGINE = INNODB;
 
 drop table IF EXISTS t_role_mod;
 create table t_role_mod(
-    id int AUTO_INCREMENT primary key,
-    role_id int not null,
-    mod_id int not null
+  id int AUTO_INCREMENT primary key,
+  role_id int not null,
+  mod_id int not null
 )ENGINE = INNODB;
 
 drop table IF EXISTS t_dynamic_conf;
 create table t_dynamic_conf(
-    conf_name varchar(60) primary key,
-    conf_value varchar(128),
-    conf_desc varchar(128),
-    dirty tinyint
+  conf_name varchar(60) primary key,
+  conf_value varchar(128),
+  conf_desc varchar(128),
+  dirty tinyint
 )ENGINE = INNODB;
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('appUpdating','false','升级升级前，请将此参数改为true',0);
 
@@ -70,7 +70,6 @@ insert into t_mod values(-98,'动态参数',null,'user-DynamicConfig','x-fa fa-p
 insert into t_role_mod values(-10,-2,-100);
 insert into t_role_mod values(-9,-2,-99);
 insert into t_role_mod values(-8,-2,-98);
-
 
 
 
