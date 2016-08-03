@@ -101,3 +101,19 @@ VALUES (2, 'a2', 1, '1234', 0, 2, 0, 0, 0, 0, 0, '2016-08-02 10:27:49');
 INSERT INTO xapp.t_jkn_user (user_id, user_name, referrer, telephone, vip, user_level, area_level, count, count_one, count_two, count_three, reg_date)
 VALUES (3, 'a3', 2, '12345', 0, 1, 0, 0, 0, 0, 0, '2016-08-02 10:28:31');
 
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('batch_event','100','批量抓取事件个数',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('gold_ucn','1','升级成黄金会员直推人数',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('gold_acn','0','升级成黄金会员伞下人数',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('white_ucn','10','升级成白金会员直推人数',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('white_acn','0','升级成白金会员伞下人数',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('diamond_ucn','10','升级成钻石会员直推人数',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('diamond_acn','30','升级成钻石会员伞下人数',0);
+
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('membership_count','5900','成为会员最低消费单位（分）',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('vip_cost','59000','VIP最低消费单位（分）',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_one','0.07','一代分成比例',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_two','0.09','二代分成比例',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_three','0.11','三代分成比例',0);
+
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_period','60000','预算期时长（单位毫秒）',0);
+
