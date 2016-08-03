@@ -89,6 +89,10 @@ public class JknUser {
         this.count = count;
     }
 
+    public void addCount(Integer count){
+        this.count += count;
+    }
+
     public Integer getCountOne() {
         return countOne;
     }

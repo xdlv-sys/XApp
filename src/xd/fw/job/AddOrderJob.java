@@ -15,19 +15,19 @@ public class AddOrderJob extends EventJob {
     int vipCost;
 
     @Override
-    protected Byte process(JknEvent eventType) {
+    protected Byte process(JknEvent event) {
         /**
          * 消费: 升级成会员 VIP
          * 提现: 调整用户余额
          */
-        Order order = jknService.get(Order.class, eventType.getDbKey());
+        Order order = jknService.get(Order.class, event.getDbKey());
         int totalFee = order.getTotalFee();
         if (totalFee < 0) {
-            return EV_FAIL_TF_NEGATIVE;
+            return ES_FAIL_TF_NEGATIVE;
         }
         int balance = order.getBalanceFee();
         if (balance < 0) {
-            return EV_FAIL_BALANCE_NEGATIVE;
+            return ES_FAIL_BALANCE_NEGATIVE;
         }
 
         JknUser user = jknService.get(JknUser.class, order.getUserId());
@@ -37,9 +37,8 @@ public class AddOrderJob extends EventJob {
         //若是提现，则修改用户余额无须通知
         if (order.getTradeStatus().equals(TR_TYPE_MONEY)) {
             user.setCount(user.getCount() - totalFee);
-            jknService.update(user);
-            jknService.triggerEvent(new JknEvent(EV_USER_UPDATE,user.getUserId(),null));
-            return EV_DONE;
+            jknService.updateJknUser(user);
+            return ES_DONE;
         }
         //余额支付
         if (order.getBalanceFee() > 0) {
@@ -58,8 +57,14 @@ public class AddOrderJob extends EventJob {
             upgrade = true;
         }
 
-        if (upgrade){
-            jknService.triggerEvent(new JknEvent(EV_USER_UPGRADE,user.getUserId(),null));
+        //用户己是会员，需要update, 若不是，只需要更新数据中DB即可
+        if (user.getUserLevel() > UL_NON){
+            jknService.updateJknUser(user);
+            if (upgrade){
+                jknService.triggerEvent(new JknEvent(EV_USER_UPGRADE,user.getUserId(),null));
+            }
+
+        } else {
             jknService.update(user);
         }
 
@@ -68,7 +73,7 @@ public class AddOrderJob extends EventJob {
             jknService.triggerEvent(new JknEvent(EV_USER_SETTLEMENT,order.getOrderId(),null));
         }
 
-        return EV_DONE;
+        return ES_DONE;
     }
 
     @Override

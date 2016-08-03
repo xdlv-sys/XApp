@@ -40,6 +40,7 @@ Ext.define("XApp.view.jkn.EventManager",{
                     case 12 : return '交易结算';
                     case 13 : return '通知电商用户信息';
                     case 14 : return '交易结束结算期';
+                    case 15 : return '通知电商用户结算信息';
                     default : return '未知';
                 }
             }

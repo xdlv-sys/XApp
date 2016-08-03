@@ -2,6 +2,7 @@ package xd.fw.action;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import xd.fw.bean.Order;
+import xd.fw.bean.OrderSettlement;
 import xd.fw.service.JknService;
 
 import java.util.List;
@@ -15,9 +16,16 @@ public class JknOrderAction extends BaseAction {
 
     Order order;
     List<Order> orders;
+    List<OrderSettlement> orderSettlements;
     public String obtainOrders(){
         total = jknService.getAllCount(Order.class);
         orders = jknService.getList(Order.class,null, start, limit);
+        return SUCCESS;
+    }
+
+    public String obtainOrderSettlements(){
+        total = jknService.getAllCount(OrderSettlement.class);
+        orderSettlements = jknService.getList(OrderSettlement.class,null, start, limit);
         return SUCCESS;
     }
 
@@ -31,5 +39,13 @@ public class JknOrderAction extends BaseAction {
 
     public List<Order> getOrders() {
         return orders;
+    }
+
+    public List<OrderSettlement> getOrderSettlements() {
+        return orderSettlements;
+    }
+
+    public void setOrderSettlements(List<OrderSettlement> orderSettlements) {
+        this.orderSettlements = orderSettlements;
     }
 }

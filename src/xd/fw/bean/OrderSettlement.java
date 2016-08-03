@@ -18,6 +18,7 @@ public class OrderSettlement {
     private Integer countTwo;
     private Integer userIdThree;
     private Integer countThree;
+    private byte settlementStatus;
     private Timestamp lastDate;
 
     public int getOrderId() {
@@ -90,6 +91,14 @@ public class OrderSettlement {
 
     public void setLastDate(Timestamp lastDate) {
         this.lastDate = lastDate;
+    }
+
+    public void setSettlementStatus(byte settlementStatus) {
+        this.settlementStatus = settlementStatus;
+    }
+
+    public byte getSettlementStatus() {
+        return settlementStatus;
     }
 
     @Override

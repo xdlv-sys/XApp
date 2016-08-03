@@ -20,12 +20,15 @@ public interface IConst {
     //交易类型: 0 消费 1 提现
     Byte TR_TYPE_CONSUME = 0, TR_TYPE_MONEY = 1;
     //event status
-    Byte EV_INI = 0, EV_PROCESSING = 1, EV_DONE = 2, EV_FAIL = 3,
+    Byte ES_INI = 0, ES_PROCESSING = 1, ES_DONE = 2, ES_FAIL = 3,
     /*4: 消费额为负*/
-    EV_FAIL_TF_NEGATIVE = 4, EV_FAIL_BALANCE_NEGATIVE = 5;
+    ES_FAIL_TF_NEGATIVE = 4, ES_FAIL_BALANCE_NEGATIVE = 5;
 
     //event type 1 用户属性更新 2 新交易 11 用户升级（等级，VIP) 12 用户余额发生变化
     Byte EV_USER_UPDATE = 1, EV_ADD_ORDER = 2,
     /*sub event*/EV_USER_UPGRADE = 11, EV_USER_SETTLEMENT = 12, EV_USER_NOTIFY = 13
-            , EV_USER_SETTLEMENT_APPLY = 14;
+            , EV_USER_SETTLEMENT_APPLY = 14, EV_USER_NOTIFY_COUNT = 15;
+
+    //结算明细状态 0 未结算 1 己结算
+    Byte SS_INI = 0, SS_DONE = 1;
 }

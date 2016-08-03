@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import xd.fw.bean.JknEvent;
 
 @Service
-public class NotifyUserUpdatedJob extends EventJob {
+public class NotifyUserCountUpdateJob extends EventJob {
 
     @Override
     protected Byte process(JknEvent event) {
@@ -14,6 +14,12 @@ public class NotifyUserUpdatedJob extends EventJob {
 
     @Override
     protected Byte[] processType() {
-        return new Byte[]{EV_USER_NOTIFY};
+        return new Byte[]{EV_USER_NOTIFY_COUNT};
+    }
+
+
+    @Override
+    protected int maxLimit() {
+        return 2000;
     }
 }

@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Table(name = "t_jkn_event")
 public class JknEvent {
     @Id
-    private int eventId;
+    private Integer eventId;
     private byte eventType;
     private Integer dbKey;
     private Integer dbInt;
@@ -39,11 +39,11 @@ public class JknEvent {
     }
 
 
-    public int getEventId() {
+    public Integer getEventId() {
         return eventId;
     }
 
-    public void setEventId(int eventId) {
+    public void setEventId(Integer eventId) {
         this.eventId = eventId;
     }
 

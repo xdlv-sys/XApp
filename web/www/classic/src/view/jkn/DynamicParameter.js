@@ -12,5 +12,5 @@ Ext.define("XApp.view.jkn.DynamicParameter",{
         type: "jkn-dynamicparameter"
     },
 
-    html: "Hello, World!!"
+    
 });

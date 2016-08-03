@@ -27,4 +27,8 @@ public interface JknService extends BaseService {
     void saveSettlement(OrderSettlement orderSettlement, List<JknUser> impactedUsers);
 
     List<JknEvent> getTriggeringEvent(Byte[] eventType, int start, int limit);
+
+    Byte applySettlement(Integer dbKey);
+
+    void updateJknUser(JknUser user);
 }

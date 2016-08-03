@@ -17,7 +17,8 @@
                 <ref bean="notifyUserUpdateDoTime"/>
                 <ref bean="userUpdateDoTime"/>
                 <ref bean="addOrderDoTime"/>
-
+                <ref bean="settlementApplayDoTime"/>
+                <ref bean="notifyUserCountDoTime"/>
             </list>
         </property>
     </bean>
@@ -61,6 +62,34 @@
         </property>
         <property name="cronExpression">
             <value>0/10 * * * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="settlementApplayDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="settlementApplyJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0/30 * * * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="notifyUserCountDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="notifyUserCountUpdateJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0/30 * * * * ?</value>
         </property>
     </bean>
 

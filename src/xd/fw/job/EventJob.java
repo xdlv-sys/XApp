@@ -25,7 +25,7 @@ public abstract class EventJob extends BaseJob {
             return;
         }
         logger.info("start to process event:" + Arrays.toString(processType()));
-        byte eventStatus = EV_FAIL;
+        byte eventStatus = ES_FAIL;
         for (JknEvent event : events){
             try{
                 eventStatus = process(event);
@@ -38,11 +38,15 @@ public abstract class EventJob extends BaseJob {
         }
         logger.info("end to process event:" + Arrays.toString(processType()));
     }
-    protected abstract Byte process(JknEvent eventType);
+    protected abstract Byte process(JknEvent event);
 
     protected abstract Byte[] processType();
 
     protected List<JknEvent> getEvent() {
-        return jknService.getTriggeringEvent(processType(), 0, 100);
+        return jknService.getTriggeringEvent(processType(), 0, maxLimit());
+    }
+
+    protected int maxLimit(){
+        return 100;
     }
 }
