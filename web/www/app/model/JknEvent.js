@@ -3,7 +3,7 @@ Ext.define('XApp.model.JknEvent', {
 
     fields: [{name: 'eventId', type: 'int'}
         , {name: 'eventType', type: 'int'}, {name: 'eventStatus', type: 'int'}
-        , 'triggerDate',{name: 'tryCount', type: 'int'}],
+        , 'triggerDate',{name: 'tryCount', type: 'int'}, {name: 'dbKey', type: 'int'}],
 
     proxy: {
         url: 'jkn_event!obtainEvents.cmd',

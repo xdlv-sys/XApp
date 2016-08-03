@@ -28,14 +28,14 @@ public class AddOrderJob extends EventJob {
 
         JknUser user = jknService.get(JknUser.class, order.getUserId());
 
-        user.setConsumedCount(user.getConsumedCount() + totalFee);
-
         //若是提现，则修改用户余额无须通知
-        if (order.getTradeStatus().equals(TR_TYPE_MONEY)) {
+        if (order.getTradeType().equals(TR_TYPE_MONEY)) {
             user.setCount(user.getCount() - totalFee);
             jknService.updateJknUser(user);
             return ES_DONE;
         }
+        //增加消费总额
+        user.setConsumedCount(user.getConsumedCount() + totalFee);
         //余额支付
         if (order.getBalanceFee() > 0) {
             user.setCount(user.getCount() - order.getBalanceFee());
@@ -53,15 +53,15 @@ public class AddOrderJob extends EventJob {
             upgrade = true;
         }
 
-        //用户己是会员，需要update, 若不是，只需要更新数据中DB即可
-        if (user.getUserLevel() > UL_NON){
-            jknService.updateJknUser(user);
-            if (upgrade){
-                jknService.triggerEvent(new JknEvent(EV_USER_UPGRADE,user.getUserId(),null));
-            }
+        jknService.update(user);
 
+        if (upgrade){
+            jknService.triggerEvent(new JknEvent(EV_USER_UPGRADE,user.getUserId(),null));
         } else {
-            jknService.update(user);
+            //若用户己是会员，则需要更新Map
+            if (user.getUserLevel() > UL_NON){
+                jknService.triggerEvent(new JknEvent(EV_USER_UPDATE, user.getUserId(),null));
+            }
         }
 
         //三级分销 当前用户是会员

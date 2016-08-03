@@ -54,6 +54,8 @@ public class UserUpdateJob extends EventJob {
         // update user level and trigger notify event, no need to trigger update event, since user in map already been
         // updated in above function upgrade
         jknService.upgradeJknUser(eventList);
+        //notify user self
+        jknService.triggerEvent(new JknEvent(EV_USER_NOTIFY  , user.user.getUserId(), null));
 
         return ES_DONE;
     }

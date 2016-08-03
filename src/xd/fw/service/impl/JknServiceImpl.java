@@ -62,6 +62,12 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
             //duplicated order
             return 201;
         }
+        // 若取现，则必须余额足够
+        if (order.getTradeType().equals(TR_TYPE_MONEY)){
+            if (order.getTotalFee() > load(JknUser.class, order.getUserId()).getCount()){
+                return 202;
+            }
+        }
         order.setTradeStatus(TR_PAY);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(order.getLastDate());
