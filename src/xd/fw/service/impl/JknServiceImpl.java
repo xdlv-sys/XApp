@@ -3,6 +3,7 @@ package xd.fw.service.impl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
 import xd.fw.bean.JknUser;
 import xd.fw.bean.Order;
@@ -15,9 +16,6 @@ import java.util.List;
 
 @Service
 public class JknServiceImpl extends HibernateServiceImpl implements JknService {
-
-    @Value("${settlement_period}")
-    long settlementPeriod;
 
     @Override
     @Transactional
@@ -120,7 +118,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
         JknEvent event = new JknEvent(EV_USER_SETTLEMENT_APPLY
                 , orderSettlement.getOrderId(), null);
-        event.setTriggerDate(new Timestamp(System.currentTimeMillis() + settlementPeriod));
+        event.setTriggerDate(new Timestamp(System.currentTimeMillis() + JKN.settlement_period));
         triggerEvent(event);
     }
 

@@ -2,17 +2,13 @@ package xd.fw.job;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
 import xd.fw.bean.JknUser;
 import xd.fw.bean.Order;
 
 @Service
 public class AddOrderJob extends EventJob {
-    @Value("${membership_count}")
-    int membershipCount;
-
-    @Value("${vip_cost}")
-    int vipCost;
 
     @Override
     protected Byte process(JknEvent event) {
@@ -47,12 +43,12 @@ public class AddOrderJob extends EventJob {
         boolean upgrade = false;
 
         // 升级成正式会员,若消费总额达到59元
-        if (user.getUserLevel() < UL_NORMAL && user.getConsumedCount() >= membershipCount) {
+        if (user.getUserLevel() < UL_NORMAL && user.getConsumedCount() >= JKN.membership_count) {
             user.setUserLevel(UL_NORMAL);
             upgrade = true;
         }
         //升级成VIP，若消费总额达到590
-        if (user.getVip() < VIP && user.getConsumedCount() >= vipCost) {
+        if (user.getVip() < VIP && user.getConsumedCount() >= JKN.vip_cost) {
             user.setVip(VIP);
             upgrade = true;
         }

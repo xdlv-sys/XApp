@@ -2,6 +2,7 @@ package xd.fw.job;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
 import xd.fw.bean.JknUser;
 import xd.fw.bean.Order;
@@ -16,28 +17,6 @@ import java.util.Map;
 @Service
 public class UserUpdateJob extends EventJob {
     static Map<Integer, UserDesc> userMap = new HashMap<>();
-
-    @Value("${gold_ucn}")
-    int goldUcn = 1;
-    @Value("${gold_acn}")
-    int goldAcn = 0;
-
-    @Value("${white_ucn}")
-    int whiteUcn = 10;
-    @Value("${white_acn}")
-    int whiteAcn = 0;
-
-    @Value("${diamond_ucn}")
-    int diamondUcn = 10;
-    @Value("${diamond_acn}")
-    int diamondAcn = 30;
-
-    @Value("${settlement_one}")
-    float settlementOne;
-    @Value("${settlement_two}")
-    float settlementTwo;
-    @Value("${settlement_three}")
-    float settlementThree;
 
     @Override
     protected Byte[] processType() {
@@ -94,7 +73,7 @@ public class UserUpdateJob extends EventJob {
         int fee;
         UserDesc target = user.parent;
         if (target != null) {
-            fee = (int) (totalFee * settlementOne);
+            fee = (int) (totalFee * JKN.settlement_one);
             target.user.setCountOne(target.user.getCountOne() + fee);
             orderSettlement.setCountOne(target.user.getUserId());
             orderSettlement.setCountOne(fee);
@@ -102,7 +81,7 @@ public class UserUpdateJob extends EventJob {
             impactedUsers.add(target.user);
             target = target.parent;
             if (target != null) {
-                fee = (int) (totalFee * settlementTwo);
+                fee = (int) (totalFee * JKN.settlement_two);
                 target.user.setCountTwo(target.user.getCountTwo() + fee);
                 orderSettlement.setCountTwo(target.user.getUserId());
                 orderSettlement.setCountTwo(fee);
@@ -110,7 +89,7 @@ public class UserUpdateJob extends EventJob {
                 impactedUsers.add(target.user);
                 target = target.parent;
                 if (target != null) {
-                    fee = (int) (totalFee * settlementThree);
+                    fee = (int) (totalFee * JKN.settlement_three);
                     target.user.setCountThree(target.user.getCountThree() + fee);
                     orderSettlement.setCountThree(target.user.getUserId());
                     orderSettlement.setCountThree(fee);
@@ -149,13 +128,13 @@ public class UserUpdateJob extends EventJob {
         int allChildrenCount = user.allChildCount();
 
         byte shouldLevel = UL_NON;
-        if (childrenCount >= goldUcn && allChildrenCount >= goldAcn) {
+        if (childrenCount >= JKN.gold_ucn && allChildrenCount >= JKN.gold_acn) {
             shouldLevel = UL_GOLD;
         }
-        if (childrenCount >= whiteUcn && allChildrenCount >= whiteAcn) {
+        if (childrenCount >= JKN.white_ucn && allChildrenCount >= JKN.white_acn) {
             shouldLevel = UL_WHITE;
         }
-        if (childrenCount >= diamondUcn && allChildrenCount >= diamondAcn) {
+        if (childrenCount >= JKN.diamond_ucn && allChildrenCount >= JKN.diamond_acn) {
             shouldLevel = UL_DIAMOND;
         }
         // TODO　are level implementation

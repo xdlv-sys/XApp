@@ -89,9 +89,8 @@ create table t_jkn_event(
 delete from t_mod where id > 0;
 insert into t_mod values(1,'用户信息',null,'jkn-UserManager','x-fa fa-users',0);
 insert into t_mod values(2,'交易信息',null,'jkn-OrderManager','x-fa fa-reorder',0);
-insert into t_mod values(3,'动态参数',null,'jkn-DynamicParameter','x-fa fa-pencil',0);
-insert into t_mod values(4,'事件管理',null,'jkn-EventManager','x-fa fa-bar-chart',0);
-insert into t_mod values(5,'结算明细',null,'jkn-Settlement','x-fa fa-dedent',0);
+insert into t_mod values(3,'事件管理',null,'jkn-EventManager','x-fa fa-bar-chart',0);
+insert into t_mod values(4,'结算明细',null,'jkn-Settlement','x-fa fa-dedent',0);
 
 
 INSERT INTO xapp.t_jkn_user (user_id, user_name, referrer, telephone, vip, user_level, area_level, count, count_one, count_two, count_three, reg_date)

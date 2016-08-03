@@ -3,6 +3,7 @@ package xd.fw.job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
 import xd.fw.service.JknService;
 
@@ -11,9 +12,6 @@ import java.util.List;
 
 @Service
 public abstract class EventJob extends BaseJob {
-
-    @Value("${batch_event}")
-    int batchEvent = 100;
 
     @Autowired
     JknService jknService;
@@ -47,6 +45,6 @@ public abstract class EventJob extends BaseJob {
     }
 
     protected int maxLimit(){
-        return 100;
+        return JKN.batch_event;
     }
 }

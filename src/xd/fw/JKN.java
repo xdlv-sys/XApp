@@ -10,6 +10,10 @@ public class JKN extends Conf {
     @PostConstruct
     public void readFromDb() {
         super.readFromDb();
+
+        addPropertyChangeListener((configName)->{
+            super.readFromDb();
+        });
     }
 
     public static int batch_event = 100;
