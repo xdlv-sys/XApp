@@ -38,8 +38,15 @@ Ext.define("XApp.view.jkn.OrderManager",{
                 switch (v){
                     case 0 : return '微信';
                     case 1 : return '支付宝';
-                    default : return '银行卡';
+                    case 2 : return '银行卡';
+                    default : return '余额';
                 }
+            }
+        },{
+            text: '交易类型',
+            dataIndex: 'tradeType',
+            renderer: function(v){
+                return v === 0 ? '消费' : '提现'
             }
         },{
             text: '金额(元)',
@@ -61,7 +68,7 @@ Ext.define("XApp.view.jkn.OrderManager",{
             }
         },{
             text: '交易时间',
-            flex: 1,
+            flex: 2,
             dataIndex: 'lastDate',
             renderer: function(v){
                 return v.replace('T', ' ');
