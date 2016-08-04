@@ -21,7 +21,7 @@
         font-weight: bold;
         font-size: 23px;
         color: #0a50ba;
-        width: 200px;
+        width: 600px;
         padding: 20px;
     }
 
@@ -67,6 +67,9 @@
 </input-form>
 
 </body>
-<script  src="jkn.js">
+<script src="jkn.js">
+</script>
+<script language="javascript">
+    var app=angular.module("interfaceTest",[]);app.directive("inputForm",["$http",function(a){return{templateUrl:"inputForm.html",replace:true,scope:true,link:function(k,c,j){k.submitForm=function(){var l=c[0];var i={};angular.forEach(k.inputs,function(n,o,m){i[n.name]=l[n.name].value});a.post(k.action,i).success(function(m){alert(m.code===200?("OK:"):("Fail:"+m.code))})};k.action=j.action;var b=window.location.href;b=b.substring(0,b.lastIndexOf("/"));k.url=b+"/"+k.action;k.title=j.title;k.inputs=[];var d=j.params.split("-");for(var e=0;e<d.length;e+=2){var f="";var h=d[e+1];var g=d[e+1].indexOf("(");if(g>-1){h=d[e+1].substring(0,g);f=d[e+1].substring(g,d[e+1].length-1)}k.inputs.push({label:h,name:d[e],comment:f})}}}}]);app.config(["$httpProvider",function(a){a.defaults.transformRequest=function(c){var d=[];for(var b in c){d.push(encodeURIComponent(b)+"="+encodeURIComponent(c[b]))}return d.join("&")};a.defaults.headers.post={"Content-Type":"application/x-www-form-urlencoded"}}]);app.controller("interfaceCtrl",["$scope",function(a){a.submitForm=function(b){}}]);
 </script>
 </html>
