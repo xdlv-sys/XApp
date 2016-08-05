@@ -9,27 +9,27 @@ import java.util.Date;
 @Table(name = "t_jkn_user")
 public class JknUser {
     @Id
-    private Integer userId;
+    private int userId;
 
     private String userName;
     private Integer referrer;
     private String telephone;
-    private Byte vip;
-    private Byte userLevel;
-    private Byte areaLevel;
-    private Integer consumedCount;
-    private Integer count;
-    private Integer countOne;
-    private Integer countTwo;
-    private Integer countThree;
+    private byte vip;
+    private byte userLevel;
+    private byte areaLevel;
+    private int consumedCount;
+    private int count;
+    private int countOne;
+    private int countTwo;
+    private int countThree;
     @Temporal(TemporalType.TIMESTAMP)
     private Date regDate;
 
-    public Integer getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -57,63 +57,63 @@ public class JknUser {
         this.telephone = telephone;
     }
 
-    public Byte getVip() {
+    public byte getVip() {
         return vip;
     }
 
-    public void setVip(Byte vip) {
+    public void setVip(byte vip) {
         this.vip = vip;
     }
 
-    public Byte getUserLevel() {
+    public byte getUserLevel() {
         return userLevel;
     }
 
-    public void setUserLevel(Byte userLevel) {
+    public void setUserLevel(byte userLevel) {
         this.userLevel = userLevel;
     }
 
-    public Byte getAreaLevel() {
+    public byte getAreaLevel() {
         return areaLevel;
     }
 
-    public void setAreaLevel(Byte areaLevel) {
+    public void setAreaLevel(byte areaLevel) {
         this.areaLevel = areaLevel;
     }
 
-    public Integer getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(int count) {
         this.count = count;
     }
 
-    public void addCount(Integer count){
+    public void addCount(int count){
         this.count += count;
     }
 
-    public Integer getCountOne() {
+    public int getCountOne() {
         return countOne;
     }
 
-    public void setCountOne(Integer countOne) {
+    public void setCountOne(int countOne) {
         this.countOne = countOne;
     }
 
-    public Integer getCountTwo() {
+    public int getCountTwo() {
         return countTwo;
     }
 
-    public void setCountTwo(Integer countTwo) {
+    public void setCountTwo(int countTwo) {
         this.countTwo = countTwo;
     }
 
-    public Integer getCountThree() {
+    public int getCountThree() {
         return countThree;
     }
 
-    public void setCountThree(Integer countThree) {
+    public void setCountThree(int countThree) {
         this.countThree = countThree;
     }
 
@@ -125,11 +125,11 @@ public class JknUser {
         this.regDate = regDate;
     }
 
-    public Integer getConsumedCount() {
+    public int getConsumedCount() {
         return consumedCount;
     }
 
-    public void setConsumedCount(Integer consumedCount) {
+    public void setConsumedCount(int consumedCount) {
         this.consumedCount = consumedCount;
     }
 
@@ -140,37 +140,36 @@ public class JknUser {
 
         JknUser user = (JknUser) o;
 
-        if (userId != null ? !userId.equals(user.userId) : user.userId != null) return false;
+        if (userId != user.userId) return false;
+        if (vip != user.vip) return false;
+        if (userLevel != user.userLevel) return false;
+        if (areaLevel != user.areaLevel) return false;
+        if (consumedCount != user.consumedCount) return false;
+        if (count != user.count) return false;
+        if (countOne != user.countOne) return false;
+        if (countTwo != user.countTwo) return false;
+        if (countThree != user.countThree) return false;
         if (userName != null ? !userName.equals(user.userName) : user.userName != null) return false;
         if (referrer != null ? !referrer.equals(user.referrer) : user.referrer != null) return false;
         if (telephone != null ? !telephone.equals(user.telephone) : user.telephone != null) return false;
-        if (vip != null ? !vip.equals(user.vip) : user.vip != null) return false;
-        if (userLevel != null ? !userLevel.equals(user.userLevel) : user.userLevel != null) return false;
-        if (areaLevel != null ? !areaLevel.equals(user.areaLevel) : user.areaLevel != null) return false;
-        if (consumedCount != null ? !consumedCount.equals(user.consumedCount) : user.consumedCount != null)
-            return false;
-        if (count != null ? !count.equals(user.count) : user.count != null) return false;
-        if (countOne != null ? !countOne.equals(user.countOne) : user.countOne != null) return false;
-        if (countTwo != null ? !countTwo.equals(user.countTwo) : user.countTwo != null) return false;
-        if (countThree != null ? !countThree.equals(user.countThree) : user.countThree != null) return false;
         return regDate != null ? regDate.equals(user.regDate) : user.regDate == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = userId != null ? userId.hashCode() : 0;
+        int result = userId;
         result = 31 * result + (userName != null ? userName.hashCode() : 0);
         result = 31 * result + (referrer != null ? referrer.hashCode() : 0);
         result = 31 * result + (telephone != null ? telephone.hashCode() : 0);
-        result = 31 * result + (vip != null ? vip.hashCode() : 0);
-        result = 31 * result + (userLevel != null ? userLevel.hashCode() : 0);
-        result = 31 * result + (areaLevel != null ? areaLevel.hashCode() : 0);
-        result = 31 * result + (consumedCount != null ? consumedCount.hashCode() : 0);
-        result = 31 * result + (count != null ? count.hashCode() : 0);
-        result = 31 * result + (countOne != null ? countOne.hashCode() : 0);
-        result = 31 * result + (countTwo != null ? countTwo.hashCode() : 0);
-        result = 31 * result + (countThree != null ? countThree.hashCode() : 0);
+        result = 31 * result + (int) vip;
+        result = 31 * result + (int) userLevel;
+        result = 31 * result + (int) areaLevel;
+        result = 31 * result + consumedCount;
+        result = 31 * result + count;
+        result = 31 * result + countOne;
+        result = 31 * result + countTwo;
+        result = 31 * result + countThree;
         result = 31 * result + (regDate != null ? regDate.hashCode() : 0);
         return result;
     }

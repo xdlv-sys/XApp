@@ -3,8 +3,8 @@
 
     <property name="DEV_HOME" value="../logs" />
     <property name="FORMAT" value="%d{yyyy-MM-dd HH:mm:ss} [%logger{0}] %-5level %msg%n"/>
-    <property name="MAX_HISTROY" value="5"/>
-    <property name="MAX_SIZE" value="1MB"/>
+    <property name="MAX_HISTROY" value="50"/>
+    <property name="MAX_SIZE" value="10MB"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -63,7 +63,7 @@
     </appender>
 
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE-AUDIT" />
         <appender-ref ref="FILE-ERROR" />

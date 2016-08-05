@@ -1,6 +1,5 @@
 package xd.fw.service.impl;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xd.fw.JKN;
@@ -75,7 +74,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
         order.setMonth((byte) calendar.get(Calendar.MONTH));
         save(order);
 
-        triggerEvent(new JknEvent(EV_ADD_ORDER, order.getOrderId(), null));
+        triggerEvent(new JknEvent(EV_USER_PROCESS_ORDER, order.getOrderId(), null));
         return OK;
     }
 
@@ -92,44 +91,12 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
     }
 
     @Override
-    @Transactional
-    public void upgradeJknUser(List<JknEvent> eventList) {
-        JknUser user;
-        for (JknEvent event : eventList) {
-            user = load(JknUser.class, event.getDbKey());
-            user.setUserLevel((byte) event.getDbInt().intValue());
-            update(user);
-            //trigger notification for mall
-            triggerEvent(event);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void updateJknUser(JknUser user) {
-        update(user);
-        triggerEvent(new JknEvent(EV_USER_UPDATE,user.getUserId(),null));
-    }
-
-    @Override
     public List<JknUser> getMemberUser(int start, int limit) {
         return getList("from JknUser where userLevel > " + UL_NON, null, start, limit);
     }
 
     @Override
-    @Transactional
-    public void saveSettlement(OrderSettlement orderSettlement, List<JknUser> impactedUsers) {
-        save(orderSettlement);
-        impactedUsers.forEach(this::update);
-
-        JknEvent event = new JknEvent(EV_USER_SETTLEMENT_APPLY
-                , orderSettlement.getOrderId(), null);
-        event.setTriggerDate(new Timestamp(System.currentTimeMillis() + JKN.settlement_period));
-        triggerEvent(event);
-    }
-
-    @Override
-    public List<JknEvent> getTriggeringEvent(Byte[] eventType, int start, int limit) {
+    public List<JknEvent> getTriggeringEvent(byte[] eventType, int start, int limit) {
         // the key: keep event in order
         StringBuffer hsql = new StringBuffer(128);
         hsql.append("from JknEvent where eventStatus in (").append(ES_INI).append("" +
@@ -144,7 +111,87 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public Byte applySettlement(Integer dbKey) {
+    public synchronized void updateUserCount(Integer userId, int count, int countOne, int countTwo, int countThree) {
+        JknUser user = load(JknUser.class, userId);
+        if (count > 0){
+            user.setCount(user.getCount() + count);
+        }
+        if (countOne > 0){
+            user.setCountOne(user.getCountOne() + countOne);
+        }
+        if (countTwo > 0){
+            user.setCountTwo(user.getCountTwo() + countTwo);
+        }
+        if (countThree > 0){
+            user.setCountThree(user.getCountThree() + countThree);
+        }
+        update(user);
+    }
+
+    @Override
+    @Transactional
+    public synchronized void updateUserProsForProcessOrder(JknUser modifyUser) {
+        JknUser user = load(JknUser.class, modifyUser.getUserId());
+
+        user.setConsumedCount(user.getConsumedCount() + modifyUser.getConsumedCount());
+        user.setCount(user.getCount() + modifyUser.getCount());
+
+        if (user.getUserLevel() < modifyUser.getUserLevel()){
+            user.setUserLevel(modifyUser.getUserLevel());
+        }
+
+        if (user.getVip() < modifyUser.getVip()){
+            user.setVip(modifyUser.getVip());
+        }
+        update(user);
+    }
+
+    @Override
+    @Transactional
+    public synchronized void upgradeUsers(List<JknEvent> eventList) {
+        JknUser user;
+        for (JknEvent event : eventList) {
+            user = load(JknUser.class, event.getDbKey());
+            if (user.getUserLevel() < event.getDbInt()){
+                user.setUserLevel((byte) event.getDbInt().intValue());
+                update(user);
+                //trigger notification for mall
+                triggerEvent(event);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public synchronized void saveSettlement(OrderSettlement orderSettlement) {
+        save(orderSettlement);
+
+        JknUser user;
+        if (orderSettlement.getUserIdOne() != null){
+            user = load(JknUser.class, orderSettlement.getUserIdOne());
+            user.setCountOne(user.getCountOne() + orderSettlement.getCountOne());
+            update(user);
+        }
+        if (orderSettlement.getUserIdTwo() != null){
+            user = load(JknUser.class, orderSettlement.getUserIdTwo());
+            user.setCountTwo(user.getCountTwo() + orderSettlement.getCountTwo());
+            update(user);
+        }
+        if (orderSettlement.getUserIdThree() != null){
+            user = load(JknUser.class, orderSettlement.getUserIdThree());
+            user.setCountThree(user.getCountThree() + orderSettlement.getCountThree());
+            update(user);
+        }
+
+        JknEvent event = new JknEvent(EV_USER_SETTLEMENT_APPLY
+                , orderSettlement.getOrderId(), null);
+        event.setTriggerDate(new Timestamp(System.currentTimeMillis() + JKN.settlement_period));
+        triggerEvent(event);
+    }
+
+    @Override
+    @Transactional
+    public synchronized byte applySettlement(Integer dbKey) {
         OrderSettlement orderSettlement = load(OrderSettlement.class, dbKey);
 
         JknUser userOne = load(JknUser.class, orderSettlement.getUserIdOne());
@@ -164,9 +211,9 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
         update(orderSettlement);
 
-        updateJknUser(userOne);
-        updateJknUser(userTwo);
-        updateJknUser(userThree);
+        update(userOne);
+        update(userTwo);
+        update(userThree);
 
         triggerEvent(new JknEvent(EV_USER_NOTIFY_COUNT,orderSettlement.getOrderId(),null));
         return ES_DONE;

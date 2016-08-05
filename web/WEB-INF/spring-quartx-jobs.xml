@@ -14,14 +14,27 @@
         <property name="triggers">
             <list>
                 <!--<ref bean="memoryCheckDoTime"/>-->
+                <ref bean="userProcessDoTime"/>
                 <ref bean="notifyUserUpdateDoTime"/>
-                <ref bean="userUpdateDoTime"/>
-                <ref bean="addOrderDoTime"/>
-                <ref bean="settlementApplayDoTime"/>
                 <ref bean="notifyUserCountDoTime"/>
             </list>
         </property>
     </bean>
+
+    <bean id="userProcessDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="userProcessorJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0/1 * * * * ?</value>
+        </property>
+    </bean>
+
 
     <bean id="notifyUserUpdateDoTime"
           class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
@@ -33,49 +46,7 @@
             </bean>
         </property>
         <property name="cronExpression">
-            <value>0/10 * * * * ?</value>
-        </property>
-    </bean>
-
-    <bean id="userUpdateDoTime"
-          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail">
-            <bean parent="baseJobDetail">
-                <property name="targetObject">
-                    <ref bean="userUpdateJob"/>
-                </property>
-            </bean>
-        </property>
-        <property name="cronExpression">
-            <value>0/10 * * * * ?</value>
-        </property>
-    </bean>
-
-    <bean id="addOrderDoTime"
-          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail">
-            <bean parent="baseJobDetail">
-                <property name="targetObject">
-                    <ref bean="addOrderJob"/>
-                </property>
-            </bean>
-        </property>
-        <property name="cronExpression">
-            <value>0/10 * * * * ?</value>
-        </property>
-    </bean>
-
-    <bean id="settlementApplayDoTime"
-          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail">
-            <bean parent="baseJobDetail">
-                <property name="targetObject">
-                    <ref bean="settlementApplyJob"/>
-                </property>
-            </bean>
-        </property>
-        <property name="cronExpression">
-            <value>0/30 * * * * ?</value>
+            <value>0/1 * * * * ?</value>
         </property>
     </bean>
 
@@ -89,7 +60,7 @@
             </bean>
         </property>
         <property name="cronExpression">
-            <value>0/30 * * * * ?</value>
+            <value>0/1 * * * * ?</value>
         </property>
     </bean>
 

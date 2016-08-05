@@ -7,14 +7,14 @@ import xd.fw.bean.JknEvent;
 public class NotifyUserCountUpdateJob extends EventJob {
 
     @Override
-    protected Byte process(JknEvent event) {
+    protected byte process(JknEvent event) {
         //TODO notify user updated
         return ES_DONE;
     }
 
     @Override
-    protected Byte[] processType() {
-        return new Byte[]{EV_USER_NOTIFY_COUNT};
+    protected byte[] processType() {
+        return new byte[]{EV_USER_NOTIFY_COUNT};
     }
 
 

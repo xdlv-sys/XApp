@@ -36,7 +36,7 @@ Ext.define("XApp.view.jkn.EventManager", {
                     case 1 :
                         tmp = '用户属性更新';
                         break;
-                    case 2 :
+                    case 3 :
                         tmp = '新交易';
                         break;
                     case 11 :

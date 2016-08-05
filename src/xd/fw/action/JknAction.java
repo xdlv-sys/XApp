@@ -17,7 +17,7 @@ public class JknAction extends BaseAction{
 
     @Action("syncUser")
     public String syncUser(){
-        if (jknUser.getUserId() == null || jknUser.getUserName() == null){
+        if (jknUser.getUserId() == 0 || jknUser.getUserName() == null){
             code = 201;
             return SUCCESS;
         }
@@ -28,6 +28,16 @@ public class JknAction extends BaseAction{
 
     @Action("addTrade")
     public String addTrade(){
+        int totalFee = order.getTotalFee();
+        if (totalFee < 0) {
+            code = 301;
+            return SUCCESS;
+        }
+        int balance = order.getBalanceFee();
+        if (balance < 0) {
+            code = 302;
+            return SUCCESS;
+        }
         code = jknService.saveOrder(order);
         order = null;
         return SUCCESS;

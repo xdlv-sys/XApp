@@ -115,5 +115,5 @@ insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('sett
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_two','0.09','二代分成比例',0);
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_three','0.11','三代分成比例',0);
 
-insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_period','60000','预算期时长（单位毫秒）',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_period','10000','预算期时长（单位毫秒）',0);
 

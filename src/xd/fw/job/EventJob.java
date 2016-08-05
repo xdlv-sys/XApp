@@ -1,7 +1,6 @@
 package xd.fw.job;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
@@ -36,9 +35,9 @@ public abstract class EventJob extends BaseJob {
         }
         logger.info("end to process event:" + Arrays.toString(processType()));
     }
-    protected abstract Byte process(JknEvent event);
+    protected abstract byte process(JknEvent event);
 
-    protected abstract Byte[] processType();
+    protected abstract byte[] processType();
 
     protected List<JknEvent> getEvent() {
         return jknService.getTriggeringEvent(processType(), 0, maxLimit());

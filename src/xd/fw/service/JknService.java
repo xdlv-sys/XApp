@@ -18,17 +18,19 @@ public interface JknService extends BaseService {
 
     void triggerEvent(JknEvent event);
 
-    void upgradeJknUser(List<JknEvent> eventList);
+    void upgradeUsers(List<JknEvent> eventList);
 
     List<JknUser> getMemberUser(int start, int limit);
 
     //void saveUserCount(JknUser user);
 
-    void saveSettlement(OrderSettlement orderSettlement, List<JknUser> impactedUsers);
+    void saveSettlement(OrderSettlement orderSettlement);
 
-    List<JknEvent> getTriggeringEvent(Byte[] eventType, int start, int limit);
+    List<JknEvent> getTriggeringEvent(byte[] eventType, int start, int limit);
 
-    Byte applySettlement(Integer dbKey);
+    byte applySettlement(Integer dbKey);
 
-    void updateJknUser(JknUser user);
+    void updateUserCount(Integer userId, int count, int countOne, int countTwo, int countThree);
+
+    void updateUserProsForProcessOrder(JknUser modifyUser);
 }

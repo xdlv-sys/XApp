@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 class UserDesc {
-    UserDesc(JknUser user) {
-        this.user = user;
+    UserDesc(int userId) {
+        this.userId = userId;
     }
 
-    JknUser user;
+    int userId;
     UserDesc parent;
     List<UserDesc> children = new LinkedList<>();
 
