@@ -15,7 +15,7 @@ public class FwUtil {
 
 	public static String UTF8 = "UTF-8";
     //static int[] months = new int[]{0,31,29,31,30,31,30,31,31,30,31,30,31};
-    static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public static String getValidateCode(){
         return String.format("%04d",Math.abs(new Random().nextInt(9999)));
@@ -23,7 +23,7 @@ public class FwUtil {
 
     public static Object getBean(String name){
         WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-        return wac.getBean(name);
+        return wac == null ? null : wac.getBean(name);
     }
 
     // sdf is not thread safe so we need add synchronized

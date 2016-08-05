@@ -1,6 +1,7 @@
 package xd.fw;
 
 import org.apache.http.*;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -29,9 +30,14 @@ public class HttpClientTpl {
     static CloseableHttpClient httpclient = createHttpClient();
 
     private static CloseableHttpClient createHttpClient() {
-        return HttpClients.custom().setConnectionManager(
-                (HttpClientConnectionManager) FwUtil.getBean("httpClientConnectionManager")
-        ).build();
+        HttpClientConnectionManager httpClientConnectionManager = (HttpClientConnectionManager) FwUtil.getBean("httpClientConnectionManager");
+        if (httpClientConnectionManager != null){
+            return HttpClients.custom().setConnectionManager(
+                    httpClientConnectionManager
+            ).build();
+        }
+
+        return HttpClients.createDefault();
     }
 
 
