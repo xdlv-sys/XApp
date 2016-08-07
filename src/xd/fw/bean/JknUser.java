@@ -1,16 +1,15 @@
 package xd.fw.bean;
 
-import org.hibernate.annotations.Tables;
-
-import javax.persistence.*;
-import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "t_jkn_user")
 public class JknUser {
     @Id
     private int userId;
-
     private String userName;
     private Integer referrer;
     private String telephone;
@@ -22,8 +21,7 @@ public class JknUser {
     private int countOne;
     private int countTwo;
     private int countThree;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date regDate;
+    private Timestamp regDate;
 
     public int getUserId() {
         return userId;
@@ -81,16 +79,20 @@ public class JknUser {
         this.areaLevel = areaLevel;
     }
 
+    public int getConsumedCount() {
+        return consumedCount;
+    }
+
+    public void setConsumedCount(int consumedCount) {
+        this.consumedCount = consumedCount;
+    }
+
     public int getCount() {
         return count;
     }
 
     public void setCount(int count) {
         this.count = count;
-    }
-
-    public void addCount(int count){
-        this.count += count;
     }
 
     public int getCountOne() {
@@ -117,20 +119,12 @@ public class JknUser {
         this.countThree = countThree;
     }
 
-    public Date getRegDate() {
+    public Timestamp getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(Date regDate) {
+    public void setRegDate(Timestamp regDate) {
         this.regDate = regDate;
-    }
-
-    public int getConsumedCount() {
-        return consumedCount;
-    }
-
-    public void setConsumedCount(int consumedCount) {
-        this.consumedCount = consumedCount;
     }
 
     @Override
@@ -138,22 +132,23 @@ public class JknUser {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JknUser user = (JknUser) o;
+        JknUser jknUser = (JknUser) o;
 
-        if (userId != user.userId) return false;
-        if (vip != user.vip) return false;
-        if (userLevel != user.userLevel) return false;
-        if (areaLevel != user.areaLevel) return false;
-        if (consumedCount != user.consumedCount) return false;
-        if (count != user.count) return false;
-        if (countOne != user.countOne) return false;
-        if (countTwo != user.countTwo) return false;
-        if (countThree != user.countThree) return false;
-        if (userName != null ? !userName.equals(user.userName) : user.userName != null) return false;
-        if (referrer != null ? !referrer.equals(user.referrer) : user.referrer != null) return false;
-        if (telephone != null ? !telephone.equals(user.telephone) : user.telephone != null) return false;
-        return regDate != null ? regDate.equals(user.regDate) : user.regDate == null;
+        if (userId != jknUser.userId) return false;
+        if (vip != jknUser.vip) return false;
+        if (userLevel != jknUser.userLevel) return false;
+        if (areaLevel != jknUser.areaLevel) return false;
+        if (consumedCount != jknUser.consumedCount) return false;
+        if (count != jknUser.count) return false;
+        if (countOne != jknUser.countOne) return false;
+        if (countTwo != jknUser.countTwo) return false;
+        if (countThree != jknUser.countThree) return false;
+        if (userName != null ? !userName.equals(jknUser.userName) : jknUser.userName != null) return false;
+        if (referrer != null ? !referrer.equals(jknUser.referrer) : jknUser.referrer != null) return false;
+        if (telephone != null ? !telephone.equals(jknUser.telephone) : jknUser.telephone != null) return false;
+        if (regDate != null ? !regDate.equals(jknUser.regDate) : jknUser.regDate != null) return false;
 
+        return true;
     }
 
     @Override

@@ -68,7 +68,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
             return 201;
         }
         // 若取现，则必须余额足够
-        if (order.getTradeType().equals(TR_TYPE_MONEY)){
+        if (order.getTradeType()== TR_TYPE_MONEY){
             if (order.getTotalFee() > load(JknUser.class, order.getUserId()).getCount()){
                 return 202;
             }
@@ -124,7 +124,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public synchronized void updateUserProsForProcessOrder(JknUser modifyUser) {
+    public void updateUserProsForProcessOrder(JknUser modifyUser) {
         JknUser user = load(JknUser.class, modifyUser.getUserId());
 
         user.setConsumedCount(user.getConsumedCount() + modifyUser.getConsumedCount());
@@ -147,7 +147,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
         for (JknEvent event : eventList) {
             user = load(JknUser.class, event.getDbKey());
             if (user.getUserLevel() < event.getDbInt()){
-                user.setUserLevel((byte) event.getDbInt().intValue());
+                user.setUserLevel((byte) event.getDbInt());
                 update(user);
                 //trigger notification for mall
                 triggerEvent(event);
@@ -161,17 +161,17 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
         save(orderSettlement);
 
         JknUser user;
-        if (orderSettlement.getUserIdOne() != null){
+        if (orderSettlement.getUserIdOne() != 0){
             user = load(JknUser.class, orderSettlement.getUserIdOne());
             user.setCountOne(user.getCountOne() + orderSettlement.getCountOne());
             update(user);
         }
-        if (orderSettlement.getUserIdTwo() != null){
+        if (orderSettlement.getUserIdTwo() != 0){
             user = load(JknUser.class, orderSettlement.getUserIdTwo());
             user.setCountTwo(user.getCountTwo() + orderSettlement.getCountTwo());
             update(user);
         }
-        if (orderSettlement.getUserIdThree() != null){
+        if (orderSettlement.getUserIdThree() != 0){
             user = load(JknUser.class, orderSettlement.getUserIdThree());
             user.setCountThree(user.getCountThree() + orderSettlement.getCountThree());
             update(user);
@@ -185,20 +185,20 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public  byte applySettlement(Integer dbKey) {
+    public  byte applySettlement(int dbKey) {
         OrderSettlement orderSettlement = load(OrderSettlement.class, dbKey);
 
         JknUser userOne = load(JknUser.class, orderSettlement.getUserIdOne());
         JknUser userTwo = load(JknUser.class, orderSettlement.getUserIdTwo());
         JknUser userThree = load(JknUser.class, orderSettlement.getUserIdThree());
 
-        userOne.addCount(orderSettlement.getCountOne());
+        userOne.setCount(orderSettlement.getCountOne() + userOne.getCount());
         userOne.setCountOne(userOne.getCountOne() - orderSettlement.getCountOne());
 
-        userTwo.addCount(orderSettlement.getCountTwo());
+        userTwo.setCount(orderSettlement.getCountTwo() + userTwo.getCount());
         userTwo.setCountTwo(userTwo.getCountTwo() - orderSettlement.getCountTwo());
 
-        userThree.addCount(orderSettlement.getCountThree());
+        userThree.setCount(orderSettlement.getCountThree() + userThree.getCount());
         userThree.setCountThree(userThree.getCountThree() - orderSettlement.getCountThree());
 
         orderSettlement.setSettlementStatus(SS_DONE);

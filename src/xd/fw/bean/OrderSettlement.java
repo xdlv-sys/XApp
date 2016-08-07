@@ -5,19 +5,18 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-
 @Entity
 @Table(name = "t_jkn_order_settlement")
 public class OrderSettlement {
     @Id
     private int orderId;
     private int userId;
-    private Integer userIdOne;
-    private Integer countOne;
-    private Integer userIdTwo;
-    private Integer countTwo;
-    private Integer userIdThree;
-    private Integer countThree;
+    private int userIdOne;
+    private int countOne;
+    private int userIdTwo;
+    private int countTwo;
+    private int userIdThree;
+    private int countThree;
     private byte settlementStatus;
     private Timestamp lastDate;
 
@@ -37,52 +36,60 @@ public class OrderSettlement {
         this.userId = userId;
     }
 
-    public Integer getUserIdOne() {
+    public int getUserIdOne() {
         return userIdOne;
     }
 
-    public void setUserIdOne(Integer userIdOne) {
+    public void setUserIdOne(int userIdOne) {
         this.userIdOne = userIdOne;
     }
 
-    public Integer getCountOne() {
+    public int getCountOne() {
         return countOne;
     }
 
-    public void setCountOne(Integer countOne) {
+    public void setCountOne(int countOne) {
         this.countOne = countOne;
     }
 
-    public Integer getUserIdTwo() {
+    public int getUserIdTwo() {
         return userIdTwo;
     }
 
-    public void setUserIdTwo(Integer userIdTwo) {
+    public void setUserIdTwo(int userIdTwo) {
         this.userIdTwo = userIdTwo;
     }
 
-    public Integer getCountTwo() {
+    public int getCountTwo() {
         return countTwo;
     }
 
-    public void setCountTwo(Integer countTwo) {
+    public void setCountTwo(int countTwo) {
         this.countTwo = countTwo;
     }
 
-    public Integer getUserIdThree() {
+    public int getUserIdThree() {
         return userIdThree;
     }
 
-    public void setUserIdThree(Integer userIdThree) {
+    public void setUserIdThree(int userIdThree) {
         this.userIdThree = userIdThree;
     }
 
-    public Integer getCountThree() {
+    public int getCountThree() {
         return countThree;
     }
 
-    public void setCountThree(Integer countThree) {
+    public void setCountThree(int countThree) {
         this.countThree = countThree;
+    }
+
+    public byte getSettlementStatus() {
+        return settlementStatus;
+    }
+
+    public void setSettlementStatus(byte settlementStatus) {
+        this.settlementStatus = settlementStatus;
     }
 
     public Timestamp getLastDate() {
@@ -91,14 +98,6 @@ public class OrderSettlement {
 
     public void setLastDate(Timestamp lastDate) {
         this.lastDate = lastDate;
-    }
-
-    public void setSettlementStatus(byte settlementStatus) {
-        this.settlementStatus = settlementStatus;
-    }
-
-    public byte getSettlementStatus() {
-        return settlementStatus;
     }
 
     @Override
@@ -110,12 +109,13 @@ public class OrderSettlement {
 
         if (orderId != that.orderId) return false;
         if (userId != that.userId) return false;
-        if (userIdOne != null ? !userIdOne.equals(that.userIdOne) : that.userIdOne != null) return false;
-        if (countOne != null ? !countOne.equals(that.countOne) : that.countOne != null) return false;
-        if (userIdTwo != null ? !userIdTwo.equals(that.userIdTwo) : that.userIdTwo != null) return false;
-        if (countTwo != null ? !countTwo.equals(that.countTwo) : that.countTwo != null) return false;
-        if (userIdThree != null ? !userIdThree.equals(that.userIdThree) : that.userIdThree != null) return false;
-        if (countThree != null ? !countThree.equals(that.countThree) : that.countThree != null) return false;
+        if (userIdOne != that.userIdOne) return false;
+        if (countOne != that.countOne) return false;
+        if (userIdTwo != that.userIdTwo) return false;
+        if (countTwo != that.countTwo) return false;
+        if (userIdThree != that.userIdThree) return false;
+        if (countThree != that.countThree) return false;
+        if (settlementStatus != that.settlementStatus) return false;
         if (lastDate != null ? !lastDate.equals(that.lastDate) : that.lastDate != null) return false;
 
         return true;
@@ -125,12 +125,13 @@ public class OrderSettlement {
     public int hashCode() {
         int result = orderId;
         result = 31 * result + userId;
-        result = 31 * result + (userIdOne != null ? userIdOne.hashCode() : 0);
-        result = 31 * result + (countOne != null ? countOne.hashCode() : 0);
-        result = 31 * result + (userIdTwo != null ? userIdTwo.hashCode() : 0);
-        result = 31 * result + (countTwo != null ? countTwo.hashCode() : 0);
-        result = 31 * result + (userIdThree != null ? userIdThree.hashCode() : 0);
-        result = 31 * result + (countThree != null ? countThree.hashCode() : 0);
+        result = 31 * result + userIdOne;
+        result = 31 * result + countOne;
+        result = 31 * result + userIdTwo;
+        result = 31 * result + countTwo;
+        result = 31 * result + userIdThree;
+        result = 31 * result + countThree;
+        result = 31 * result + (int) settlementStatus;
         result = 31 * result + (lastDate != null ? lastDate.hashCode() : 0);
         return result;
     }

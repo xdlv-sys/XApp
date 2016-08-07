@@ -8,19 +8,19 @@ public interface IConst {
 
     int DEFAULT_REFERRER = 3;
 
-    Byte VIP = 1, NON_VIP = 0;
+    byte VIP = 1, NON_VIP = 0;
     // user level: 0 非会员，1 会员，2黄金，3白金，4钻石
     byte UL_NON = 0, UL_NORMAL = 1, UL_GOLD = 2, UL_WHITE = 3, UL_DIAMOND = 4;
     //area level: 0 无效，5区代，6市代，7省代
-    Byte AL_NON = 0, AL_ARE = 5, AL_CITY = 6, AL_PROVINCE = 7;
+    byte AL_NON = 0, AL_ARE = 5, AL_CITY = 6, AL_PROVINCE = 7;
 
     // 交易状态 2已付款，4退货成功，5 己收货，6己分销
-    Byte TR_PAY = 2, TR_REJECT = 4, TR_RECEIVED = 5, TR_COMPLETE = 6;
+    byte TR_PAY = 2, TR_REJECT = 4, TR_RECEIVED = 5, TR_COMPLETE = 6;
 
     //交易类型: 0 消费 1 提现
-    Byte TR_TYPE_CONSUME = 0, TR_TYPE_MONEY = 1;
+    byte TR_TYPE_CONSUME = 0, TR_TYPE_MONEY = 1;
     //event status
-    Byte ES_INI = 0, ES_PROCESSING = 1, ES_DONE = 2, ES_FAIL = 3,
+    byte ES_INI = 0, ES_PROCESSING = 1, ES_DONE = 2, ES_FAIL = 3,
     /*4: 消费额为负*/
     ES_FAIL_TF_NEGATIVE = 4, ES_FAIL_BALANCE_NEGATIVE = 5;
 
@@ -30,5 +30,5 @@ public interface IConst {
             , EV_USER_SETTLEMENT_APPLY = 14, EV_USER_NOTIFY_COUNT = 15;
 
     //结算明细状态 0 未结算 1 己结算
-    Byte SS_INI = 0, SS_DONE = 1;
+    byte SS_INI = 0, SS_DONE = 1;
 }

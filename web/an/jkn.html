@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>接口测试</title>
     <script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+    <script src="//cdn.bootcss.com/angular-md5/0.1.10/angular-md5.min.js"></script>
 </head>
 
 <style>
@@ -32,6 +33,12 @@
         margin-left: auto;
         margin-right: auto;
         margin-top: 20px;
+    }
+    .current_sign{
+        width: 800px;
+        height: 60px;
+        margin-bottom: 20px;
+        overflow: scroll;
     }
 
     .test_input {
@@ -65,6 +72,20 @@
                 -order.balanceFee-余额消费
                 -order.lastUpdateS-交易时间">
 </input-form>
+
+<input-form action="userDetail.cmd"
+            title="用户详情userDetail"
+            params="jknUser.userId-用户ID
+            -start-开始记录
+            -limit-记录条数">
+</input-form>
+<input-form action="settlementDetail.cmd"
+            title="佣金详情"
+            params="jknUser.userId-用户ID
+            -start-开始记录
+            -limit-记录条数">
+</input-form>
+
 
 </body>
 <script src="jkn.js">

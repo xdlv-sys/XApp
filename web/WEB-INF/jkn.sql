@@ -4,28 +4,28 @@ create table t_jkn_user(
   user_name varchar(60) not null,
   referrer int,
   telephone varchar(16),
-  vip tinyint,
-  user_level tinyint,
-  area_level tinyint,
-  consumed_count int default 0,
-  count int default 0,
-  count_one int default 0,
-  count_two int default 0,
-  count_three int default 0,
+  vip tinyint not null,
+  user_level tinyint not null,
+  area_level tinyint not null,
+  consumed_count int not null default 0,
+  count int not null,
+  count_one int not null,
+  count_two int not null,
+  count_three int not null,
   reg_date timestamp default now()
 )ENGINE = INNODB;
 
 drop table IF EXISTS t_jkn_order;
 create table t_jkn_order(
-  order_id int primary key,
+  order_id int not null primary key,
   user_id int not null,
-  year smallint,
-  month tinyint,
-  pay_type tinyint,
-  trade_type tinyint,
-  total_fee int,
-  balance_fee int,
-  trade_status tinyint,
+  year smallint not null,
+  month tinyint not null,
+  pay_type tinyint not null,
+  trade_type tinyint not null,
+  total_fee int not null,
+  balance_fee int not null,
+  trade_status tinyint not null,
   last_date timestamp default now()
 )ENGINE = INNODB;
 
@@ -38,15 +38,15 @@ create table t_jkn_order_item(
 
 drop table IF EXISTS t_jkn_order_settlement;
 create table t_jkn_order_settlement(
-  order_id int  primary key,
+  order_id int not null primary key,
   user_id int not null,
-  user_id_one int,
-  count_one int,
-  user_id_two int,
-  count_two int,
-  user_id_three int,
-  count_three int,
-  settlement_status tinyint,
+  user_id_one int not null,
+  count_one int not null,
+  user_id_two int not null,
+  count_two int not null,
+  user_id_three int not null,
+  count_three int not null,
+  settlement_status tinyint not null,
   last_date timestamp default now()
 )ENGINE = INNODB;
 
@@ -61,10 +61,10 @@ drop table IF EXISTS t_jkn_account_item;
 create table t_jkn_account_item(
   item_id int primary key,
   order_id int not null,
-  user_one int,
-  user_two int,
-  user_three int,
-  item_status tinyint,
+  user_one int not null,
+  user_two int not null,
+  user_three int not null,
+  item_status tinyint not null,
   last_update TIMESTAMP default now()
 )ENGINE = INNODB;
 
@@ -78,11 +78,11 @@ drop table IF EXISTS t_jkn_event;
 create table t_jkn_event(
   event_id int auto_increment primary key,
   event_type tinyint not null,
-  db_key int,
-  db_int int,
+  db_key int not null,
+  db_int int not null,
   db_content varchar(32),
-  event_status tinyint,
-  try_count tinyint,
+  event_status tinyint not null,
+  try_count tinyint not null,
   trigger_date DATETIME not null
 )ENGINE = INNODB;
 

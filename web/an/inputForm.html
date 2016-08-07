@@ -2,12 +2,15 @@
     <div class="title">{{title}}</div>
     <div class="url">{{url}}</div>
         <table border="0">
-            <tr  ng-repeat="t in inputs">
+            <tr ng-repeat="t in inputs">
                 <td>{{t.label}}:</td>
-                <td width="400px"><input class="input_v" type="text" name="{{t.name}}"/></td>
+                <td width="400px">
+                    <input class="input_v" type="text" ng-model="$parent.conf[$index]"
+                           ng-change="change()" ng-readonly="$parent.inputs[$index].name === 'sign'"/></td>
                 <td>{{t.comment}}</td>
             </tr>
         </table>
     <hr>
+    <div class="current_sign">{{currentSign}}</div>
     <button type="button" ng-click="submitForm()">提交</button>
 </form>

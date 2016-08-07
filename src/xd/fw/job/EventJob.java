@@ -30,7 +30,7 @@ public abstract class EventJob extends BaseJob {
                 logger.error("",e);
             }
             event.setEventStatus(eventStatus);
-            event.setTryCount((byte)(event.getTryCount().byteValue() + 1));
+            event.setTryCount((byte)(event.getTryCount() + 1));
             jknService.update(event);
         }
         logger.info("end to process event:" + Arrays.toString(processType()));

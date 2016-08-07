@@ -7,42 +7,34 @@ import java.sql.Timestamp;
 @Table(name = "t_jkn_event")
 public class JknEvent {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Integer eventId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int eventId;
     private byte eventType;
-    private Integer dbKey;
-    private Integer dbInt;
+    private int dbKey;
+    private int dbInt;
     private String dbContent;
-    private Byte eventStatus;
-    private Byte tryCount;
+    private byte eventStatus;
+    private byte tryCount;
     private Timestamp triggerDate;
 
-    public JknEvent() {
-    }
+    public JknEvent(){}
 
-    public JknEvent(Byte eventType, Integer dbKey, String dbContent) {
+    public JknEvent(byte eventType, int dbKey, int dbInt) {
+        this.eventType = eventType;
+        this.dbKey = dbKey;
+        this.dbInt = dbInt;
+    }
+    public JknEvent(byte eventType, int dbKey, String dbContent) {
         this.eventType = eventType;
         this.dbKey = dbKey;
         this.dbContent = dbContent;
     }
 
-    public JknEvent(Byte eventType, Integer dbKey, int dbInt) {
-        this.eventType = eventType;
-        this.dbKey = dbKey;
-        this.dbInt = dbInt;
-    }
-
-    public JknEvent(Byte eventType, Byte eventStatus) {
-        this.eventType = eventType;
-        this.eventStatus = eventStatus;
-    }
-
-
-    public Integer getEventId() {
+    public int getEventId() {
         return eventId;
     }
 
-    public void setEventId(Integer eventId) {
+    public void setEventId(int eventId) {
         this.eventId = eventId;
     }
 
@@ -54,19 +46,19 @@ public class JknEvent {
         this.eventType = eventType;
     }
 
-    public Integer getDbKey() {
+    public int getDbKey() {
         return dbKey;
     }
 
-    public void setDbKey(Integer dbKey) {
+    public void setDbKey(int dbKey) {
         this.dbKey = dbKey;
     }
 
-    public Integer getDbInt() {
+    public int getDbInt() {
         return dbInt;
     }
 
-    public void setDbInt(Integer dbInt) {
+    public void setDbInt(int dbInt) {
         this.dbInt = dbInt;
     }
 
@@ -78,12 +70,20 @@ public class JknEvent {
         this.dbContent = dbContent;
     }
 
-    public Byte getEventStatus() {
+    public byte getEventStatus() {
         return eventStatus;
     }
 
-    public void setEventStatus(Byte eventStatus) {
+    public void setEventStatus(byte eventStatus) {
         this.eventStatus = eventStatus;
+    }
+
+    public byte getTryCount() {
+        return tryCount;
+    }
+
+    public void setTryCount(byte tryCount) {
+        this.tryCount = tryCount;
     }
 
     public Timestamp getTriggerDate() {
@@ -94,39 +94,35 @@ public class JknEvent {
         this.triggerDate = triggerDate;
     }
 
-    public void setTryCount(Byte tryCount) {
-        this.tryCount = tryCount;
-    }
-
-    public Byte getTryCount() {
-        return tryCount;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JknEvent event = (JknEvent) o;
+        JknEvent jknEvent = (JknEvent) o;
 
-        if (eventId != event.eventId) return false;
-        if (eventType != event.eventType) return false;
-        if (dbKey != null ? !dbKey.equals(event.dbKey) : event.dbKey != null) return false;
-        if (dbInt != null ? !dbInt.equals(event.dbInt) : event.dbInt != null) return false;
-        if (dbContent != null ? !dbContent.equals(event.dbContent) : event.dbContent != null) return false;
-        if (eventStatus != null ? !eventStatus.equals(event.eventStatus) : event.eventStatus != null) return false;
-        return triggerDate != null ? triggerDate.equals(event.triggerDate) : event.triggerDate == null;
+        if (eventId != jknEvent.eventId) return false;
+        if (eventType != jknEvent.eventType) return false;
+        if (dbKey != jknEvent.dbKey) return false;
+        if (dbInt != jknEvent.dbInt) return false;
+        if (eventStatus != jknEvent.eventStatus) return false;
+        if (tryCount != jknEvent.tryCount) return false;
+        if (dbContent != null ? !dbContent.equals(jknEvent.dbContent) : jknEvent.dbContent != null) return false;
+        if (triggerDate != null ? !triggerDate.equals(jknEvent.triggerDate) : jknEvent.triggerDate != null)
+            return false;
 
+        return true;
     }
 
     @Override
     public int hashCode() {
         int result = eventId;
         result = 31 * result + (int) eventType;
-        result = 31 * result + (dbKey != null ? dbKey.hashCode() : 0);
-        result = 31 * result + (dbInt != null ? dbInt.hashCode() : 0);
+        result = 31 * result + dbKey;
+        result = 31 * result + dbInt;
         result = 31 * result + (dbContent != null ? dbContent.hashCode() : 0);
-        result = 31 * result + (eventStatus != null ? eventStatus.hashCode() : 0);
+        result = 31 * result + (int) eventStatus;
+        result = 31 * result + (int) tryCount;
         result = 31 * result + (triggerDate != null ? triggerDate.hashCode() : 0);
         return result;
     }

@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 @Results({
         @Result(type = "json", params = {"ignoreHierarchy", "false", "excludeNullProperties", "true"}),
         @Result(name = "error", type = "chain", location = "result"),
+        @Result(name = "input", type = "chain", location = "result"),
         @Result(name = "finish", type = "chain", location = "result"),
         @Result(name = "login", location = "www/index.html"),
         @Result(name = "xml", location = "xml.jsp"),

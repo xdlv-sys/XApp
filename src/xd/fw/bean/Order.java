@@ -1,66 +1,73 @@
 package xd.fw.bean;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Entity
 @Table(name = "t_jkn_order")
 public class Order {
     @Id
-    private Integer orderId;
-    private Integer userId;
-    private Short year;
-    private Byte month;
-    private Byte payType;
-    private Byte tradeType;
+    private int orderId;
+    private int userId;
+    private short year;
+    private byte month;
+    private byte payType;
+    private byte tradeType;
     private int totalFee;
     private int balanceFee;
-    private Byte tradeStatus;
+    private byte tradeStatus;
+    private Timestamp lastDate;
 
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastDate;
-
-    public Integer getOrderId() {
+    public int getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Integer orderId) {
+    public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
 
-    public Integer getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public Short getYear() {
+    public short getYear() {
         return year;
     }
 
-    public void setYear(Short year) {
+    public void setYear(short year) {
         this.year = year;
     }
 
-    public Byte getMonth() {
+    public byte getMonth() {
         return month;
     }
 
-    public void setMonth(Byte month) {
+    public void setMonth(byte month) {
         this.month = month;
     }
 
-    public Byte getPayType() {
+    public byte getPayType() {
         return payType;
     }
 
-    public void setPayType(Byte payType) {
+    public void setPayType(byte payType) {
         this.payType = payType;
+    }
+
+    public byte getTradeType() {
+        return tradeType;
+    }
+
+    public void setTradeType(byte tradeType) {
+        this.tradeType = tradeType;
     }
 
     public int getTotalFee() {
@@ -71,40 +78,33 @@ public class Order {
         this.totalFee = totalFee;
     }
 
-    public Byte getTradeStatus() {
-        return tradeStatus;
-    }
-
-    public void setTradeStatus(Byte tradeStatus) {
-        this.tradeStatus = tradeStatus;
-    }
-
-    public void setLastDate(Date lastDate) {
-        this.lastDate = lastDate;
-    }
-
-    public Date getLastDate() {
-        return lastDate;
-    }
-
-    public void setLastUpdateS(String s) throws ParseException {
-        this.lastDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
-    }
-
-    public Byte getTradeType() {
-        return tradeType;
-    }
-
-    public void setTradeType(Byte tradeType) {
-        this.tradeType = tradeType;
-    }
-
     public int getBalanceFee() {
         return balanceFee;
     }
 
     public void setBalanceFee(int balanceFee) {
         this.balanceFee = balanceFee;
+    }
+
+    public byte getTradeStatus() {
+        return tradeStatus;
+    }
+
+    public void setTradeStatus(byte tradeStatus) {
+        this.tradeStatus = tradeStatus;
+    }
+
+    public Timestamp getLastDate() {
+        return lastDate;
+    }
+
+    public void setLastDate(Timestamp lastDate) {
+        this.lastDate = lastDate;
+    }
+
+    public void setLastUpdateS(String s) throws ParseException {
+        this.lastDate = new Timestamp(new
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s).getTime());
     }
 
     @Override
@@ -114,30 +114,31 @@ public class Order {
 
         Order order = (Order) o;
 
+        if (orderId != order.orderId) return false;
+        if (userId != order.userId) return false;
+        if (year != order.year) return false;
+        if (month != order.month) return false;
+        if (payType != order.payType) return false;
+        if (tradeType != order.tradeType) return false;
         if (totalFee != order.totalFee) return false;
         if (balanceFee != order.balanceFee) return false;
-        if (orderId != null ? !orderId.equals(order.orderId) : order.orderId != null) return false;
-        if (userId != null ? !userId.equals(order.userId) : order.userId != null) return false;
-        if (year != null ? !year.equals(order.year) : order.year != null) return false;
-        if (month != null ? !month.equals(order.month) : order.month != null) return false;
-        if (payType != null ? !payType.equals(order.payType) : order.payType != null) return false;
-        if (tradeType != null ? !tradeType.equals(order.tradeType) : order.tradeType != null) return false;
-        if (tradeStatus != null ? !tradeStatus.equals(order.tradeStatus) : order.tradeStatus != null) return false;
-        return lastDate != null ? lastDate.equals(order.lastDate) : order.lastDate == null;
+        if (tradeStatus != order.tradeStatus) return false;
+        if (lastDate != null ? !lastDate.equals(order.lastDate) : order.lastDate != null) return false;
 
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = orderId != null ? orderId.hashCode() : 0;
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (year != null ? year.hashCode() : 0);
-        result = 31 * result + (month != null ? month.hashCode() : 0);
-        result = 31 * result + (payType != null ? payType.hashCode() : 0);
-        result = 31 * result + (tradeType != null ? tradeType.hashCode() : 0);
+        int result = orderId;
+        result = 31 * result + userId;
+        result = 31 * result + (int) year;
+        result = 31 * result + (int) month;
+        result = 31 * result + (int) payType;
+        result = 31 * result + (int) tradeType;
         result = 31 * result + totalFee;
         result = 31 * result + balanceFee;
-        result = 31 * result + (tradeStatus != null ? tradeStatus.hashCode() : 0);
+        result = 31 * result + (int) tradeStatus;
         result = 31 * result + (lastDate != null ? lastDate.hashCode() : 0);
         return result;
     }

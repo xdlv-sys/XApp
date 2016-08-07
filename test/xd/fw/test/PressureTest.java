@@ -30,6 +30,7 @@ public class PressureTest extends BasicTest {
     public void testTransactional2() throws Exception{
         int thread = 100;
         int each = 100;
+        int totalFee = 10000;
         int start = 30000;
         Thread[] threads = new Thread[thread];
 
@@ -40,7 +41,7 @@ public class PressureTest extends BasicTest {
                     try {
                         logger.info("start:" + (count + j));
                         assertAddUser(count + j, 3);
-                        assertAddTrade(count + j, count + j, TR_TYPE_CONSUME, 10000);
+                        assertAddTrade(count + j, count + j, TR_TYPE_CONSUME, totalFee);
                     } catch (Exception e) {
                         logger.error("", e);
                     }
@@ -53,5 +54,14 @@ public class PressureTest extends BasicTest {
         for (Thread t : threads){
             t.join();
         }
+
+        sleep(20 * 1000);
+
+        assertTrue(checkUser((j)-> j.getInt("userId") == 1
+                && j.getInt("count") == thread * each * totalFee * 0.11));
+        assertTrue(checkUser((j)-> j.getInt("userId") == 2
+                && j.getInt("count") == thread * each * totalFee * 0.09));
+        assertTrue(checkUser((j)-> j.getInt("userId") == 3
+                && j.getInt("count") == thread * each * totalFee * 0.07));
     }
 }

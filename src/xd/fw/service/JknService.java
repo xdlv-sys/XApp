@@ -28,7 +28,7 @@ public interface JknService extends BaseService {
 
     List<JknEvent> getTriggeringEvent(byte[] eventType, int start, int limit);
 
-    byte applySettlement(Integer dbKey);
+    byte applySettlement(int dbKey);
 
     void modifyUserCount(int userId, int count, int countOne, int countTwo, int countThree);
 
