@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import xd.fw.FwUtil;
 import xd.fw.bean.PrimaryKey;
 import xd.fw.service.BaseService;
+import xd.fw.service.SetParameters;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -131,6 +132,37 @@ public class HibernateServiceImpl implements BaseService{
                     query.setMaxResults(limit);
                 }
                 return query.list();
+            }
+        });
+    }
+    public <T> List<T> getLists(String hsql,SetParameters setParameters){
+        return htpl.execute(new HibernateCallback<List<T>>() {
+            @Override
+            public List<T> doInHibernate(Session session) throws HibernateException {
+                Query query = session.createQuery(hsql);
+                if (setParameters != null){
+                    setParameters.process(query);
+                }
+                return query.list();
+            }
+        });
+    }
+
+    public int update(String sql, SetParameters setParameters, boolean original){
+        return htpl.execute(new HibernateCallback<Integer>() {
+            @Override
+            public Integer doInHibernate(Session session) throws HibernateException {
+                Query query;
+                if (original){
+                    query = session.createSQLQuery(sql);
+                } else {
+                    query = session.createQuery(sql);
+                }
+
+                if (setParameters != null){
+                    setParameters.process(query);
+                }
+                return query.executeUpdate();
             }
         });
     }

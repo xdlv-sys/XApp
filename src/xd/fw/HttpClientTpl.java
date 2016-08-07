@@ -30,14 +30,16 @@ public class HttpClientTpl {
     static CloseableHttpClient httpclient = createHttpClient();
 
     private static CloseableHttpClient createHttpClient() {
-        HttpClientConnectionManager httpClientConnectionManager = (HttpClientConnectionManager) FwUtil.getBean("httpClientConnectionManager");
-        if (httpClientConnectionManager != null){
-            return HttpClients.custom().setConnectionManager(
-                    httpClientConnectionManager
-            ).build();
+        HttpClientConnectionManager manager = (HttpClientConnectionManager) FwUtil.getBean("manager");
+        if (manager == null){
+            PoolingHttpClientConnectionManager m = new PoolingHttpClientConnectionManager();
+            m.setMaxTotal(100);
+            m.setDefaultMaxPerRoute(50);
+            manager = m;
         }
-
-        return HttpClients.createDefault();
+        return HttpClients.custom().setConnectionManager(
+                manager
+        ).build();
     }
 
 
