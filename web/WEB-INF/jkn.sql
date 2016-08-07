@@ -76,7 +76,7 @@ create table t_jkn_config(
 
 drop table IF EXISTS t_jkn_event;
 create table t_jkn_event(
-  event_id int primary key,
+  event_id int auto_increment primary key,
   event_type tinyint not null,
   db_key int,
   db_int int,
@@ -115,5 +115,5 @@ insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('sett
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_two','0.09','二代分成比例',0);
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_three','0.11','三代分成比例',0);
 
-insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_period','10000','预算期时长（单位毫秒）',0);
+insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_period','100','预算期时长（单位毫秒）',0);
 

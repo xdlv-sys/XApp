@@ -23,7 +23,7 @@ public class UserProcessOrder implements UserHandler {
 
         //若是提现，则修改用户余额无须通知
         if (order.getTradeType().equals(TR_TYPE_MONEY)) {
-            jknService.updateUserCount(user.getUserId(), totalFee, 0, 0, 0);
+            jknService.modifyUserCount(user.getUserId(), totalFee * -1, 0, 0, 0);
             return ES_DONE;
         }
 

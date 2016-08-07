@@ -1,12 +1,15 @@
 package xd.fw.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
 import xd.fw.bean.JknUser;
 import xd.fw.bean.Order;
 import xd.fw.bean.OrderSettlement;
+import xd.fw.bean.mapper.JknUserMapper;
 import xd.fw.service.JknService;
 
 import java.sql.Timestamp;
@@ -15,6 +18,9 @@ import java.util.List;
 
 @Service
 public class JknServiceImpl extends HibernateServiceImpl implements JknService {
+
+    @Autowired
+    JknUserMapper jknUserMapper;
 
     @Override
     @Transactional
@@ -81,7 +87,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
     @Override
     @Transactional
     public void triggerEvent(JknEvent event) {
-        event.setEventId(getPrimaryKey(JknEvent.class));
+        //event.setEventId(getPrimaryKey(JknEvent.class));
         event.setEventStatus(ES_INI);
         event.setTryCount((byte) 0);
         if (event.getTriggerDate() == null) {
@@ -111,21 +117,9 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public synchronized void updateUserCount(Integer userId, int count, int countOne, int countTwo, int countThree) {
-        JknUser user = load(JknUser.class, userId);
-        if (count > 0){
-            user.setCount(user.getCount() + count);
-        }
-        if (countOne > 0){
-            user.setCountOne(user.getCountOne() + countOne);
-        }
-        if (countTwo > 0){
-            user.setCountTwo(user.getCountTwo() + countTwo);
-        }
-        if (countThree > 0){
-            user.setCountThree(user.getCountThree() + countThree);
-        }
-        update(user);
+    public void modifyUserCount(int userId, int count
+            , int countOne, int countTwo, int countThree) {
+        jknUserMapper.modifyUserCount(userId, count, countOne,countTwo, countThree);
     }
 
     @Override
@@ -148,7 +142,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public synchronized void upgradeUsers(List<JknEvent> eventList) {
+    public  void upgradeUsers(List<JknEvent> eventList) {
         JknUser user;
         for (JknEvent event : eventList) {
             user = load(JknUser.class, event.getDbKey());
@@ -163,7 +157,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public synchronized void saveSettlement(OrderSettlement orderSettlement) {
+    public  void saveSettlement(OrderSettlement orderSettlement) {
         save(orderSettlement);
 
         JknUser user;
@@ -191,7 +185,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public synchronized byte applySettlement(Integer dbKey) {
+    public  byte applySettlement(Integer dbKey) {
         OrderSettlement orderSettlement = load(OrderSettlement.class, dbKey);
 
         JknUser userOne = load(JknUser.class, orderSettlement.getUserIdOne());

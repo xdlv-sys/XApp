@@ -3,7 +3,7 @@ package xd.fw.service;
 import java.io.Serializable;
 import java.util.List;
 
-public interface BaseService extends IConst{
+public interface BaseService extends IConst {
 
     <T> int getAllCount(Class<T> cls);
 
@@ -13,23 +13,27 @@ public interface BaseService extends IConst{
 
     <T> List<T> getList(Class<T> cls, String orderBy, int start, int limit);
 
-	int getPrimaryKey(Class<?> cls);
+    int getPrimaryKey(Class<?> cls);
 
-	void saveOrUpdate(Object entity);
+    void saveOrUpdate(Object entity);
 
-	<T> T get(Class<T> tClass,Serializable id);
+    <T> T get(Class<T> tClass, Serializable id);
 
-	//<T> T load(Class<T> tClass,Serializable id);
+    //<T> T load(Class<T> tClass,Serializable id);
 
-	void update(Object entity);
+    void update(Object entity);
 
-	void save(Object entity);
+    void save(Object entity);
 
-	Object merge(Object entity);
+    Object merge(Object entity);
 
-	void delete (Object entity);
+    void delete(Object entity);
 
-	void delete(Class<?> obj, Serializable id);
+    void delete(Class<?> obj, Serializable id);
+
+    <T> List<T> getLists(String hsql, SetParameters setParameters);
+
+    int update(String hsql, SetParameters setParameters, boolean original);
 
 	<T> List<T> getLists(String hsql,T param, SetParameters setParameters, ConstructHql<T> constructHql, int start, int limit);
 

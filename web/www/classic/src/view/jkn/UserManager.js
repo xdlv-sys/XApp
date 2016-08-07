@@ -49,7 +49,8 @@ Ext.define("XApp.view.jkn.UserManager",{
                 switch(v){
                     case 1 : return '会员';
                     case 2 : return '黄金';
-                    case 3: return '钻石';
+                    case 3: return '白金';
+                    case 4: return '钻石';
                     default : return '顾客'
                 }
             }

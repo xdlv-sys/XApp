@@ -22,7 +22,7 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
 
-        <javaModelGenerator targetPackage="xd.fw.bean" targetProject="THIS_CONFIGURATION_IS_NOT_REQUIRED">
+        <javaModelGenerator targetPackage="xd.fw.bean.mapper" targetProject="THIS_CONFIGURATION_IS_NOT_REQUIRED">
             <!-- This property is used to select whether MyBatis Generator will generate different Java packages for
       the objects based on the catalog and schema of the introspected table -->
             <property name="enableSubPackages" value="false"/>
@@ -53,7 +53,7 @@
                enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" domainObjectName="Role" />-->
 
-        <table tableName="T_Mod" enableCountByExample="false"
+        <table tableName="t_jkn_user" enableCountByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                enableUpdateByExample="false" domainObjectName="Mod" />
 

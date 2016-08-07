@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xd.fw.bean.mapper.JknUserMapper">
+
+    <update id="modifyUserCount" parameterType="int">
+        update t_jkn_user
+        <set>
+            <if test="count != 0">
+                count = count + #{count,jdbcType=INTEGER},
+            </if>
+            <if test="countTwo != 0">
+                count_two = count_two + #{countTwo,jdbcType=INTEGER},
+            </if>
+            <if test="countThree != 0">
+                count_three = count_three + #{countThree,jdbcType=INTEGER},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+
+</mapper>

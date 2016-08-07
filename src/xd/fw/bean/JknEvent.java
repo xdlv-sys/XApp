@@ -1,14 +1,13 @@
 package xd.fw.bean;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "t_jkn_event")
 public class JknEvent {
     @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer eventId;
     private byte eventType;
     private Integer dbKey;

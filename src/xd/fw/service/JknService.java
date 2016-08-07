@@ -30,7 +30,7 @@ public interface JknService extends BaseService {
 
     byte applySettlement(Integer dbKey);
 
-    void updateUserCount(Integer userId, int count, int countOne, int countTwo, int countThree);
+    void modifyUserCount(int userId, int count, int countOne, int countTwo, int countThree);
 
     void updateUserProsForProcessOrder(JknUser modifyUser);
 }

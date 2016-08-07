@@ -43,6 +43,18 @@ public class JknAction extends BaseAction{
         return SUCCESS;
     }
 
+    @Action("testTransactional")
+    public String testTransactional(){
+        JknUser jknUser2 = new JknUser();
+        jknUser2.setConsumedCount(1);
+        jknUser2.setCount(1);
+        jknUser2.setUserId(1);
+        jknService.updateUserProsForProcessOrder(jknUser2);
+
+        jknService.modifyUserCount(2,1,0,0,0);
+        return SUCCESS;
+    }
+
     public JknUser getJknUser() {
         return jknUser;
     }

@@ -1,12 +1,7 @@
 package xd.fw.test;
 
 
-import net.sf.json.JSONObject;
 import org.testng.annotations.Test;
-import xd.fw.FwUtil;
-
-import java.util.Date;
-import java.util.Iterator;
 
 import static java.lang.Thread.sleep;
 import static org.testng.Assert.assertTrue;
@@ -14,121 +9,99 @@ import static org.testng.Assert.fail;
 
 
 public class UserTest extends BasicTest {
-    String addUserUrl = "http://localhost:8080/an/syncUser.cmd";
-    String addTrade = "http://localhost:8080/an/addTrade.cmd";
-
-    String getUserUrl = "http://localhost:8080/an/jkn_user!obtainUsers.cmd?start=0&limit=20";
-    int userId = 10000;
 
     @Test
     public void userRegistry() throws Exception {
-
-        boolean add = sendF(addUserUrl, new String[][]{
-                {"jknUser.userId", String.valueOf(userId)},
-                {"jknUser.userName", "a"},
-                {"jknUser.referrer", "3"},
-                {"jknUser.telephone", "15951928975"}
-        });
-        if (!add) {
-            fail();
-        }
+        int userId = 100;
+        assertAddUser(userId,3);
         //check user
-        assertTrue(checkUser(getUserUrl,(j)-> j.getInt("userId") == userId));
+        assertTrue(checkUser((j)-> j.getInt("userId") == userId));
     }
 
-    @Test(dependsOnMethods = "userRegistry")
+    @Test
     public void userUpgrade() throws Exception {
-        int tradeId = 10001;
+        int userId = 200001;
+        int tradeId = 100001;
         int totalFeeOne = 5900, totalFeeTwo = 60000;
         int totalFee = totalFeeOne + totalFeeTwo;
-
+        assertAddUser(userId,3);
         assertAddTrade(tradeId,userId,TR_TYPE_CONSUME,totalFeeOne);
 
-        sleep(10 * 1000);
+        sleep(5 * 1000);
         //check user
-        assertTrue(checkUser(getUserUrl,(j)-> j.getInt("userId") == userId
+        assertTrue(checkUser((j)-> j.getInt("userId") == userId
                 && j.getInt("userLevel") == UL_NORMAL));
 
         //check parent is gold
-        assertTrue(checkUser(getUserUrl,(j)-> j.getInt("userId") == 2
+        assertTrue(checkUser((j)-> j.getInt("userId") == 2
                 && j.getInt("userLevel") == UL_GOLD));
 
         //vip
         assertAddTrade(tradeId + 1,userId, TR_TYPE_CONSUME,totalFeeTwo);
-        sleep(15 * 1000);
+        sleep(5 * 1000);
         //check user
-        assertTrue(checkUser(getUserUrl,(j)-> j.getInt("userId") == userId
+        assertTrue(checkUser((j)-> j.getInt("userId") == userId
                 && j.getInt("vip") == VIP));
 
+        // 用户 3取现
+        //check cash 取现
+        int cash = 200;
+        assertAddTrade(tradeId + 2, 3,TR_TYPE_MONEY, cash);
+        sleep(5 * 1000);
+
         //check settlement
-        assertTrue(checkUser(getUserUrl,(j)-> (j.getInt("userId") == 1
+        assertTrue(checkUser((j)-> (j.getInt("userId") == 1
                 && j.getInt("count") == (int)(totalFee * 0.11)) ));
-        assertTrue(checkUser(getUserUrl,(j)-> (j.getInt("userId") == 2
+        assertTrue(checkUser((j)-> (j.getInt("userId") == 2
                 && j.getInt("count") == (int)(totalFee * 0.09)) ));
-        assertTrue(checkUser(getUserUrl,(j)-> (j.getInt("userId") == 3
-                && j.getInt("count") == (int)(totalFee * 0.07)) ));
+        assertTrue(checkUser((j)-> (j.getInt("userId") == 3
+                && j.getInt("count") == (int)(totalFee * 0.07 - cash)) ));
+
     }
 
-    @Test
+    @Test(dependsOnMethods = "userUpgrade")
     public void userUpgrade2() throws Exception {
+        /**
+         * 首先创建根用户 300，然后在下面直推10人，302，
+         * 再加312下加10个人 达到钻石标准
+         */
+        final int userId = 300;
+        final int tradeId = 200;
 
-        int userId = 20000;
-        int tradeId = 20000;
+        //add root user
+        assertAddUser(userId, 3);
+        assertAddTrade(tradeId,userId,0,5900);
+        sleep(2 * 1000);
 
         // referrer = default
-        for (int i=0;i<10; i++){
-            userId++;
-            boolean add = sendF(addUserUrl, new String[][]{
-                    {"jknUser.userId", String.valueOf(userId)},
-                    {"jknUser.userName", "a"},
-                    {"jknUser.referrer", "3"},
-                    {"jknUser.telephone", "15951928975"}
-            });
-            if (!add) {
-                fail();
-            }
+        for (int i=1;i<=10; i++){
+            assertAddUser(userId + i, userId);
             //became to membership
-            assertAddTrade(tradeId++,userId,TR_TYPE_CONSUME,5900);
-
-            sleep(5 * 1000);
+            assertAddTrade(tradeId + i,userId + i,TR_TYPE_CONSUME,5900);
+            sleep(2 * 1000);
         }
-        // check user
-        checkUser(getUserUrl,(j)-> j.getInt("userId") == 3
+        // check user for white
+        checkUser((j)-> j.getInt("userId") == userId
                 && j.getInt("userLevel") == UL_WHITE);
 
-        for (int i=0;i<10; i++){
-
-            boolean add = sendF(addUserUrl, new String[][]{
-                    {"jknUser.userId", String.valueOf(userId++)},
-                    {"jknUser.userName", "a"},
-                    {"jknUser.referrer", String.valueOf(20001)},
-                    {"jknUser.telephone", "15951928975"}
-            });
-            if (!add) {
-                fail();
-            }
+        //
+        for (int i=11;i<=20; i++){
+            assertAddUser(userId + i, userId + 2);
             //became to membership
-            assertAddTrade(tradeId,userId,TR_TYPE_CONSUME,5900);
+            assertAddTrade(tradeId + i,userId + i,TR_TYPE_CONSUME,5900);
+            sleep(2 * 1000);
+        }
 
+        for (int i=21;i<=30; i++){
+            assertAddUser(userId + i, userId + 10 +2);
+            //became to membership
+            assertAddTrade(tradeId + i,userId + i,TR_TYPE_CONSUME,5900);
             sleep(2 * 1000);
         }
         // check user
-        checkUser(getUserUrl,(j)-> j.getInt("userId") == 3
+        checkUser((j)-> j.getInt("userId") == 3
                 && j.getInt("userLevel") == UL_DIAMOND);
     }
 
-    private void assertAddTrade(int tradeId, int userId,int tradeType, int totalFee) throws Exception {
-        boolean add = sendF(addTrade, new String[][]{
-                {"order.orderId", String.valueOf(tradeId)},
-                {"order.userId", String.valueOf(userId)},
-                {"order.payType", String.valueOf(1)},
-                {"order.tradeType", String.valueOf(tradeType)},
-                {"order.totalFee", String.valueOf(totalFee)},
-                {"order.balanceFee", String.valueOf(0)},
-                {"order.lastUpdateS", FwUtil.sdf.format(new Date())}
-        });
-        if (!add) {
-            fail();
-        }
-    }
+
 }
