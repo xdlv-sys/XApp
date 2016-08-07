@@ -1,6 +1,7 @@
 package xd.fw.action;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.sun.javafx.image.impl.IntArgb;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import xd.fw.FwException;
@@ -15,9 +16,11 @@ public class ResultAction extends BaseAction{
     String msg = "操作成功";
     boolean success = true;
     boolean needLogin = false;
+    Integer code = 200;
 
     public String execute(){
         HttpServletRequest request = ServletActionContext.getRequest();
+        code = (Integer)request.getAttribute("code");
         Throwable exception = (Throwable) request.getAttribute("exception");
         Throwable temp = exception;
         int deep = 10;
@@ -63,5 +66,9 @@ public class ResultAction extends BaseAction{
 
     public void setNeedLogin(boolean needLogin) {
         this.needLogin = needLogin;
+    }
+
+    public Integer getCode() {
+        return code;
     }
 }

@@ -1,5 +1,6 @@
 package xd.fw;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -7,9 +8,7 @@ import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Random;
+import java.util.*;
 
 public class FwUtil {
 
@@ -75,6 +74,40 @@ public class FwUtil {
             return;
         }
         list.forEach(p::process);
+    }
+
+    public static boolean verify(Map<String, Object> params, String key){
+        List<String> list = new ArrayList<String>();
+        String sign = null;
+        String value;
+        for (Map.Entry<String,Object> entry : params.entrySet()){
+            if (entry.getValue() instanceof String[]){
+                value = ((String[])entry.getValue())[0];
+            } else {
+                value = String.valueOf(entry.getValue());
+            }
+            if (entry.getKey().equals("sign")){
+                sign = value;
+                continue;
+            }
+            if (StringUtils.isBlank(value)){
+                continue;
+            }
+            list.add(entry.getKey() + "=" + value+ "&");
+        }
+        return getSign(list, key).equals(sign);
+    }
+
+    public static String getSign(List<String> params, String key){
+        int size = params.size();
+        String[] arrayToSort = params.toArray(new String[size]);
+        Arrays.sort(arrayToSort, String.CASE_INSENSITIVE_ORDER);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            sb.append(arrayToSort[i]);
+        }
+        sb.append("key=").append(key);
+        return MD5.MD5Encode(sb.toString());
     }
 
     public static void main(String[] args){
