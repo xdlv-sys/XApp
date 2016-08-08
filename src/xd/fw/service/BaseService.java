@@ -31,4 +31,8 @@ public interface BaseService extends IConst{
 
 	void delete(Class<?> obj, Serializable id);
 
+	<T> List<T> getLists(String hsql,T param, SetParameters setParameters, ConstructHql<T> constructHql, int start, int limit);
+
+	<T> int getAllCount(T param, SetParameters setParameters, ConstructHql<T> constructHql);
+
 }

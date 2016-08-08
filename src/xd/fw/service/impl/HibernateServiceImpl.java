@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import xd.fw.FwUtil;
 import xd.fw.bean.PrimaryKey;
 import xd.fw.service.BaseService;
+import xd.fw.service.ConstructHql;
 import xd.fw.service.SetParameters;
 
 import java.io.Serializable;
@@ -58,12 +59,12 @@ public class HibernateServiceImpl implements BaseService{
         htpl.saveOrUpdate(entity);
     }
 
-    private <T> String constructHsql(String prefix, Class<T> cls, T parms, String orderBy){
+    private <T> String constructHsql(String prefix, Class<T> cls, T params, String orderBy){
         StringBuffer hsql = new StringBuffer(prefix).append("from ").append(cls.getSimpleName());
-        if (parms != null){
+        if (params != null){
             final boolean[] appendWhere = new boolean[]{false};
             try {
-                FwUtil.invokeBeanFields(parms, (f, o) -> {
+                FwUtil.invokeBeanFields(params, (f, o) -> {
                     if (o != null && StringUtils.isNotBlank(o.toString())) {
                         if (!appendWhere[0]) {
                             hsql.append(" where ");
@@ -135,17 +136,34 @@ public class HibernateServiceImpl implements BaseService{
             }
         });
     }
-    public <T> List<T> getLists(String hsql,SetParameters setParameters){
+
+    public <T> List<T> getLists(String hsql,T param, SetParameters setParameters, ConstructHql<T> constructHql, int start, int limit){
         return htpl.execute(new HibernateCallback<List<T>>() {
             @Override
             public List<T> doInHibernate(Session session) throws HibernateException {
-                Query query = session.createQuery(hsql);
-                if (setParameters != null){
-                    setParameters.process(query);
+                String hsql2 = hsql + constructHql.process(param);
+                Query query = session.createQuery(hsql2);
+                setParameters.process(query);
+                if (start > -1){
+                    query.setFirstResult(start);
+                }
+                if (limit > 0){
+                    query.setMaxResults(limit);
                 }
                 return query.list();
             }
         });
+    }
+    public <T> int getAllCount(T param, SetParameters setParameters, ConstructHql<T> constructHql){
+        return htpl.execute(new HibernateCallback<List<Long>>() {
+            @Override
+            public List<Long> doInHibernate(Session session) throws HibernateException {
+                String hsql2 = "select count(*) " + constructHql.process(param);
+                Query query = session.createQuery(hsql2);
+                setParameters.process(query);
+                return query.list();
+            }
+        }).get(0).intValue();
     }
 
     public int update(String sql, SetParameters setParameters, boolean original){

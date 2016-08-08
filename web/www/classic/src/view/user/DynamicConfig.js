@@ -12,7 +12,7 @@ Ext.define("XApp.view.user.DynamicConfig", {
     },
 
     layout: {
-        type: 'fit',
+        type: 'fit'
         //align: 'stretch'
     },
     items: [{
