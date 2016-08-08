@@ -40,5 +40,11 @@ public class JKN extends Conf {
 
     public static int settlement_period = 60000;
 
+    public static int vip_discount = 80;
+
+    public static String user_notify_url;
+
+    public static String security_key;
+
 
 }

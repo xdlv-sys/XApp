@@ -35,7 +35,7 @@ public abstract class EventJob extends BaseJob {
         }
         logger.info("end to process event:" + Arrays.toString(processType()));
     }
-    protected abstract byte process(JknEvent event);
+    protected abstract byte process(JknEvent event) throws Exception;
 
     protected abstract byte[] processType();
 

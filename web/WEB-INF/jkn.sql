@@ -116,4 +116,9 @@ insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('sett
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_three','0.11','三代分成比例',0);
 
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_period','100','预算期时长（单位毫秒）',0);
+-- ---
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('user_notify_url','http://114.55.129.254/api/updateUsers.php','用户信息通知地址（VIP，用户等级变更等）',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('vip_discount','80','VIP用户打折比例（百分比）',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('security_key','jkn@igecono.com0516','电商接口密钥',0);
+
 
