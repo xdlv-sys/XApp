@@ -66,6 +66,11 @@ public class JknAction extends BaseAction {
     }
 
     List<OrderSettlement> orderSettlements;
+
+    public List<OrderSettlement> getOrderSettlements() {
+        return orderSettlements;
+    }
+
     @Action("settlementDetail")
     public String settlementDetail(){
         orderSettlements = jknService.getLists("from OrderSettlement " +

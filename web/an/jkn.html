@@ -35,10 +35,20 @@
         margin-top: 20px;
     }
     .current_sign{
-        width: 800px;
+        width: 700px;
         height: 60px;
         margin-bottom: 20px;
+        color: #67a0ff;
         overflow: scroll;
+        margin-left: 100px;
+    }
+    .result{
+        width: 700px;
+        height: 60px;
+        margin-bottom: 20px;
+        color: #1c24ff;
+        overflow: scroll;
+        margin-left: 100px;
     }
 
     .test_input {
@@ -49,6 +59,11 @@
         margin-left: 10px;
         width: 90%;
         line-height: 26px;
+    }
+    .title_v{
+        float: left;
+        width: 100px;
+        font-size: 20px;
     }
 
 </style>
@@ -70,31 +85,24 @@
                 -order.tradeType-交易类型(0:消费；1:提现)
                 -order.totalFee-金额
                 -order.balanceFee-余额消费
-                -order.lastUpdateS-交易时间">
+                -order.lastUpdateS-交易时间(格式: 2016-10-12 12:00:00)">
 </input-form>
 
 <input-form action="userDetail.cmd"
             title="用户详情userDetail"
             params="jknUser.userId-用户ID
             -start-开始记录
-            -limit-记录条数">
+            -limit-记录条数" result="sons">
 </input-form>
 <input-form action="settlementDetail.cmd"
             title="佣金详情"
             params="jknUser.userId-用户ID
             -start-开始记录
-            -limit-记录条数">
+            -limit-记录条数" result="orderSettlements">
 </input-form>
 
 
 </body>
-<script src="jkn.js">
-</script>
-<script language="javascript">
-    if (!app){
-        var app=angular.module("interfaceTest",["angular-md5"]).config(["$httpProvider",function(d){d.defaults.transformRequest=function(d){var e=[],a;for(a in d)e.push(encodeURIComponent(a)+"="+encodeURIComponent(d[a]));return e.join("&")};d.defaults.headers.post={"Content-Type":"application/x-www-form-urlencoded"}}]).controller("interfaceCtrl",["$scope","md5",function(d,g){}]).directive("inputForm",["$http","md5","$rootScope",function(d,g,e){return{templateUrl:"inputForm.html",replace:!0,scope:{},link:function(a,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      b,c){a.signKey="jkn@igecono.com0516";a.inputs=[];a.conf=[];a.getHttpParams=function(){var b={};angular.forEach(a.inputs,function(c,d,e){a.conf[d]&&(b[c.name]=a.conf[d])});return b};a.change=function(){var b=a.getHttpParams(),c="",d=[],e;for(e in b)"sign"!=e&&d.push(e);d=d.sort();angular.forEach(d,function(a,d){c+=a+"="+b[a]+"&"});c+="key="+a.signKey;a.currentSign=c;angular.forEach(a.inputs,function(b,d,e){"sign"===b.name&&(a.conf[d]=g.createHash(c))})};a.submitForm=function(){var b=a.getHttpParams();
-            d.post(a.action,b).success(function(a){alert((200===a.code?"OK:":"Fail:")+a.code)})};a.action=c.action;b=window.location.href;b=b.substring(0,b.lastIndexOf("/"));a.url=b+"/"+a.action;a.title=c.title;c=c.params.split("-");for(b=0;b<c.length;b+=2){var e="",h=c[b+1],f=c[b+1].indexOf("(");-1<f&&(h=c[b+1].substring(0,f),e=c[b+1].substring(f,c[b+1].length-1));a.inputs.push({label:h,name:c[b],comment:e})}a.inputs.push({label:"Sign",name:"sign",comment:"key:"+a.signKey})}}}]);}
-
+<script src="jkn-min.js">
 </script>
 </html>

@@ -137,7 +137,21 @@ public class HibernateServiceImpl implements BaseService{
         });
     }
 
-    public <T> List<T> getLists(String hsql,T param, SetParameters setParameters, ConstructHql<T> constructHql, int start, int limit){
+    @Override
+    public <T> List<T> getLists(String hsql, SetParameters setParameters) {
+        return htpl.execute(new HibernateCallback<List<T>>() {
+            @Override
+            public List<T> doInHibernate(Session session) throws HibernateException {
+                Query query = session.createQuery(hsql);
+                if (setParameters != null){
+                    setParameters.process(query);
+                }
+                return query.list();
+            }
+        });
+    }
+
+    public <T> List<T> getLists(String hsql, T param, SetParameters setParameters, ConstructHql<T> constructHql, int start, int limit){
         return htpl.execute(new HibernateCallback<List<T>>() {
             @Override
             public List<T> doInHibernate(Session session) throws HibernateException {

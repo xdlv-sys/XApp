@@ -11,6 +11,12 @@
             </tr>
         </table>
     <hr>
+    <div class="title_v">参数列表</div>
     <div class="current_sign">{{currentSign}}</div>
+
+    <div ng-show="resultKey">
+        <div class="title_v">返回结果</div>
+        <div class="result">{{result | json}}</div>
+    </div>
     <button type="button" ng-click="submitForm()">提交</button>
 </form>

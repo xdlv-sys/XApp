@@ -17,6 +17,27 @@ Ext.define("XApp.view.jkn.UserManager",{
         align: 'stretch'
     },
     items: [{
+        xtype: 'form',
+        layout: 'hbox',
+        defaults: {
+            xtype: 'textfield',
+            flex: 1,
+            labelWidth: 60,
+            margin: 5
+        },
+        items: [{
+            fieldLabel: '用户名',
+            name: 'jknUser.userName',
+        },{
+            fieldLabel : '推荐人',
+            name: 'jknUser.referrer',
+        },{
+            xtype: 'button',
+            text: '查询',
+            flex: 0,
+            handler: 'queryUser'
+        }]
+    },{
         xtype: 'cduGrid',
         modelName: '用户',
         hiddenButtons: ['add','mod','del'],
