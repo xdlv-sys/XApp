@@ -62,6 +62,18 @@ public class FwUtil {
             p.process(f, v);
         }
     }
+    public static void invokeBeanFieldsWidthConditions(Object o, BeanFieldProcess p, BeanFieldCondition condition)throws IllegalAccessException{
+        invokeBeanFields(o,(f,v)->{
+            if (condition.accept(f,v)){
+                p.process(f,v);
+            }
+        });
+    }
+
+    public interface BeanFieldCondition{
+        boolean accept(Field f, Object o);
+    }
+
     public interface BeanFieldProcess{
         void process(Field f, Object o);
     }
