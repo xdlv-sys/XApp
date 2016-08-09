@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
+import xd.fw.bean.JknUser;
 import xd.fw.bean.Order;
 import xd.fw.bean.OrderSettlement;
 import xd.fw.service.JknService;
@@ -29,22 +30,29 @@ public class UserSettlement implements UserHandler {
 
         int fee;
         UserDesc target = user.parent;
+        JknUser targetUser;
         if (target != null) {
-            fee = (int) (totalFee * JKN.settlement_one);
-            orderSettlement.setCountOne(fee);
-            orderSettlement.setUserIdOne(target.userId);
+            if (jknService.get(JknUser.class, target.userId).getUserLevel() >= UL_GOLD){
+                fee = (int) (totalFee * JKN.settlement_one);
+                orderSettlement.setCountOne(fee);
+                orderSettlement.setUserIdOne(target.userId);
+            }
 
             target = target.parent;
             if (target != null) {
-                fee = (int) (totalFee * JKN.settlement_two);
-                orderSettlement.setCountTwo(fee);
-                orderSettlement.setUserIdTwo(target.userId);
+                if (jknService.get(JknUser.class, target.userId).getUserLevel() >= UL_WHITE){
+                    fee = (int) (totalFee * JKN.settlement_two);
+                    orderSettlement.setCountTwo(fee);
+                    orderSettlement.setUserIdTwo(target.userId);
+                }
 
                 target = target.parent;
                 if (target != null) {
-                    fee = (int) (totalFee * JKN.settlement_three);
-                    orderSettlement.setCountThree(fee);
-                    orderSettlement.setUserIdThree(target.userId);
+                    if (jknService.get(JknUser.class, target.userId).getUserLevel() >= UL_DIAMOND){
+                        fee = (int) (totalFee * JKN.settlement_three);
+                        orderSettlement.setCountThree(fee);
+                        orderSettlement.setUserIdThree(target.userId);
+                    }
                 }
             }
         }

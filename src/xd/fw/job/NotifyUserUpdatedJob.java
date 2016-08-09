@@ -23,6 +23,8 @@ public class NotifyUserUpdatedJob extends EventJob {
                 {"vip", String.valueOf(user.getVip())},
                 {"userLevelOne", String.valueOf(user.getUserLevel())},
                 {"userLevelTwo", String.valueOf(user.getAreaLevel())},
+                {"count", String.valueOf(user.getCount())},
+                {"unApplyCount", String.valueOf(user.getCountOne() + user.getCountTwo() + user.getCountThree())},
                 {"discount", String.valueOf(user.getVip() == VIP ? JKN.vip_discount : 100)},
                 {"sign",""}
         };
@@ -42,6 +44,6 @@ public class NotifyUserUpdatedJob extends EventJob {
 
     @Override
     protected byte[] processType() {
-        return new byte[]{EV_USER_NOTIFY};
+        return new byte[]{EV_USER_NOTIFY, EV_USER_NOTIFY_COUNT};
     }
 }

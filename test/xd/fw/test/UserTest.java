@@ -51,9 +51,9 @@ public class UserTest extends BasicTest {
 
         //check settlement
         assertTrue(checkUser((j)-> (j.getInt("userId") == 1
-                && j.getInt("count") == (int)(totalFee * 0.11)) ));
+                && j.getInt("count") == 0) ));
         assertTrue(checkUser((j)-> (j.getInt("userId") == 2
-                && j.getInt("count") == (int)(totalFee * 0.09)) ));
+                && j.getInt("count") == 0) ));
         assertTrue(checkUser((j)-> (j.getInt("userId") == 3
                 && j.getInt("count") == (int)(totalFee * 0.07 - cash)) ));
 
@@ -62,7 +62,7 @@ public class UserTest extends BasicTest {
     @Test(dependsOnMethods = "userUpgrade")
     public void userUpgrade2() throws Exception {
         /**
-         * 首先创建根用户 300，然后在下面直推10人，302，
+         * 首先创建根用户 300，然后在下面直推10人，302 下再推10人，
          * 再加312下加10个人 达到钻石标准
          */
         final int userId = 300;
@@ -73,13 +73,12 @@ public class UserTest extends BasicTest {
         assertAddTrade(tradeId,userId,0,5900);
         sleep(2 * 1000);
 
-        // referrer = default
         for (int i=1;i<=10; i++){
             assertAddUser(userId + i, userId);
             //became to membership
             assertAddTrade(tradeId + i,userId + i,TR_TYPE_CONSUME,5900);
-            sleep(2 * 1000);
         }
+        sleep(2 * 1000);
         // check user for white
         checkUser((j)-> j.getInt("userId") == userId
                 && j.getInt("userLevel") == UL_WHITE);
@@ -89,18 +88,16 @@ public class UserTest extends BasicTest {
             assertAddUser(userId + i, userId + 2);
             //became to membership
             assertAddTrade(tradeId + i,userId + i,TR_TYPE_CONSUME,5900);
-            sleep(2 * 1000);
         }
 
         for (int i=21;i<=30; i++){
             assertAddUser(userId + i, userId + 10 +2);
-            //became to membership
             assertAddTrade(tradeId + i,userId + i,TR_TYPE_CONSUME,5900);
-            sleep(2 * 1000);
         }
+        sleep(10 * 1000);
         // check user
-        checkUser((j)-> j.getInt("userId") == 3
-                && j.getInt("userLevel") == UL_DIAMOND);
+        checkUser((j)-> j.getInt("userId") == userId && j.getInt("userLevel") == UL_DIAMOND
+        && j.getInt("count") == 10 * 5900 * 0.07 + 10 * 5900 * 0.09 + 5900 * 0.11);
     }
 
 
