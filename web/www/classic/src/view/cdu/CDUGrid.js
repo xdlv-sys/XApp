@@ -10,20 +10,20 @@ Ext.define("XApp.view.cdu.CDUGrid", {
             items: [{
                 xtype: 'button',
                 text: '增加' + config.modelName,
-                handler: 'add' + config.model,
+                handler: config.addText? config.addText : ('add' + config.model),
                 hidden: config.hiddenButtons && Ext.Array.contains(config.hiddenButtons,'add')
             }, {
                 margin: '0 0 0 10',
                 xtype: 'button',
                 disabled: true,
-                text: '修改' + config.modelName,
+                text: config.modText ? config.modText : ('修改' + config.modelName),
                 handler: 'mod' + config.model,
                 hidden: config.hiddenButtons && Ext.Array.contains(config.hiddenButtons,'mod')
             }, {
                 margin: '0 0 0 10',
                 xtype: 'button',
                 disabled: true,
-                text: '删除' + config.modelName,
+                text: config.delText ? config.delText : ('删除' + config.modelName),
                 handler: 'del' + config.model,
                 hidden: config.hiddenButtons && Ext.Array.contains(config.hiddenButtons,'del')
             }]
