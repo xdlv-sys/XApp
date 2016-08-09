@@ -23,7 +23,7 @@ public class NotifyUserUpdatedJob extends EventJob {
                 {"vip", String.valueOf(user.getVip())},
                 {"userLevelOne", String.valueOf(user.getUserLevel())},
                 {"userLevelTwo", String.valueOf(user.getAreaLevel())},
-                {"discount", String.valueOf(user.getVip() == VIP ? JKN.vip_cost : 100)},
+                {"discount", String.valueOf(user.getVip() == VIP ? JKN.vip_discount : 100)},
                 {"sign",""}
         };
         List<String> paramList = new ArrayList<>(params.length);

@@ -121,4 +121,6 @@ insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('use
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('vip_discount','80','VIP用户打折比例（百分比）',0);
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('security_key','jkn@igecono.com0516','电商接口密钥',0);
 
+-- -----
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('sms_telephones','13813904510,15951928975','故障短信接收人',0);
 

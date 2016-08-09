@@ -51,11 +51,13 @@ public class PressureTest extends BasicTest {
             tmpThread.start();
         }
 
+        long startTIme = System.currentTimeMillis();
         for (Thread t : threads){
             t.join();
         }
+        logger.info("consumed:" + (System.currentTimeMillis() -startTIme));
 
-        sleep(20 * 1000);
+        sleep(3 * 60 * 1000);
 
         assertTrue(checkUser((j)-> j.getInt("userId") == 1
                 && j.getInt("count") == thread * each * totalFee * 0.11));

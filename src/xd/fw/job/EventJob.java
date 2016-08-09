@@ -23,11 +23,16 @@ public abstract class EventJob extends BaseJob {
         }
         logger.info("start to process event:" + Arrays.toString(processType()));
         byte eventStatus = ES_FAIL;
+        boolean serious = false;
         for (JknEvent event : events){
             try{
                 eventStatus = process(event);
             } catch (Throwable e){
                 logger.error("",e);
+                serious = true;
+            }
+            if (eventStatus == ES_FAIL){
+                jknService.triggerSmsEvent(event.getEventType(),serious);
             }
             event.setEventStatus(eventStatus);
             event.setTryCount((byte)(event.getTryCount() + 1));

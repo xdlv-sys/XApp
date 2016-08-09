@@ -85,15 +85,20 @@
                 -order.tradeType-交易类型(0:消费；1:提现)
                 -order.totalFee-金额
                 -order.balanceFee-余额消费
-                -order.lastUpdateS-交易时间(格式: 2016-10-12 12:00:00)">
+                -order.lastUpdateS-交易时间">
 </input-form>
 
-<input-form action="userDetail.cmd"
-            title="用户详情userDetail"
+<input-form action="userGeneration.cmd"
+            title="用户后代userGeneration"
             params="jknUser.userId-用户ID
             -start-开始记录
             -limit-记录条数" result="sons">
 </input-form>
+<input-form action="userGenerationCount.cmd"
+            title="用户后代数量userGenerationCount"
+            params="jknUser.userId-用户ID" result="userCount">
+</input-form>
+
 <input-form action="settlementDetail.cmd"
             title="佣金详情"
             params="jknUser.userId-用户ID

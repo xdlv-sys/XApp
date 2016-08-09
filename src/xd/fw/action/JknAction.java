@@ -9,6 +9,9 @@ import xd.fw.FwUtil;
 import xd.fw.bean.JknUser;
 import xd.fw.bean.Order;
 import xd.fw.bean.OrderSettlement;
+import xd.fw.bean.UserCount;
+import xd.fw.bean.mapper.JknUserMapper;
+import xd.fw.service.ConstructHql;
 import xd.fw.service.JknService;
 import xd.fw.service.SetParameters;
 
@@ -21,12 +24,16 @@ public class JknAction extends BaseAction {
     String md5Key;
     @Autowired
     JknService jknService;
+    @Autowired
+    JknUserMapper jknUserMapper;
 
     JknUser jknUser;
     Order order;
     String sign;
 
     int code = 200;
+
+    UserCount userCount;
 
     @Override
     public void validate() {
@@ -99,34 +106,71 @@ public class JknAction extends BaseAction {
         return grandGrandSons;
     }
 
-    @Action("userDetail")
-    public String userDetail() {
+    @Action("userGeneration")
+    public String userGeneration() {
         if (jknUser.getUserId() == 0) {
             code = 201;
             return SUCCESS;
         }
-        sons = querySons(jknUser.getUserId());
+        sons = querySons(jknUser.getUserId(), start, limit);
+        return SUCCESS;
+    }
 
-        /*grandSons = new LinkedList<>();
-        FwUtil.safeEach(sons, new FwUtil.SafeEachProcess<JknUser>() {
+    public UserCount getUserCount() {
+        return userCount;
+    }
+
+    @Action("userGenerationCount")
+    public String userGenerationCount() {
+        if (jknUser.getUserId() == 0) {
+            code = 201;
+            return SUCCESS;
+        }
+        userCount = new UserCount();
+        jknUser = jknService.get(JknUser.class, jknUser.getUserId());
+        userCount.setGenerationOne(querySonsCount(jknUser));
+
+        FwUtil.safeEach(querySons(jknUser.getUserId(), 0, userCount.getGenerationOne()), new FwUtil.SafeEachProcess<JknUser>() {
             @Override
-            public void process(JknUser user) {
-                grandSons.addAll(querySons(user.getUserId()));
+            public void process(JknUser son) {
+                userCount.setGenerationTwo(userCount.getGenerationTwo() + querySonsCount(son));
+                FwUtil.safeEach(querySons(son.getUserId(), 0, -1), new FwUtil.SafeEachProcess<JknUser>() {
+                    @Override
+                    public void process(JknUser grandSon) {
+                        userCount.setGenerationThree(userCount.getGenerationThree() + querySonsCount(grandSon));
+                    }
+                });
             }
         });
 
-        grandGrandSons = new LinkedList<>();
-        FwUtil.safeEach(grandSons, new FwUtil.SafeEachProcess<JknUser>() {
-            @Override
-            public void process(JknUser user) {
-                grandGrandSons.addAll(querySons(user.getUserId()));
-            }
-        });*/
+        Integer sumOne = jknUserMapper.sumFeeFromGeneration(1, jknUser.getUserId());
+
+        Integer sumTwo = jknUserMapper.sumFeeFromGeneration(2, jknUser.getUserId());;
+
+        Integer sumThree = jknUserMapper.sumFeeFromGeneration(3, jknUser.getUserId());;;
+
+        userCount.setSumOne(sumOne == null ? 0 : sumOne);
+        userCount.setSumTwo(sumTwo == null ? 0 : sumTwo);
+        userCount.setSumThree(sumThree == null ? 0 : sumThree);
 
         return SUCCESS;
     }
 
-    List<JknUser> querySons(Integer userId){
+    private int querySonsCount(JknUser user){
+        return jknService.getAllCount(user, new SetParameters() {
+            @Override
+            public void process(Query query) {
+                query.setInteger("userId", user.getUserId());
+            }
+        }, new ConstructHql<JknUser>() {
+            @Override
+            public String process(JknUser user) {
+                return "from JknUser where referrer=:userId ";
+            }
+        });
+    }
+
+    List<JknUser> querySons(Integer userId, int start, int limit){
         return jknService.getLists("from JknUser where referrer=:userId", new SetParameters() {
             @Override
             public void process(Query query) {
@@ -136,7 +180,6 @@ public class JknAction extends BaseAction {
             }
         });
     }
-
 
     public JknUser getJknUser() {
         return jknUser;

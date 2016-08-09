@@ -3,6 +3,7 @@ package xd.fw.bean;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.sql.Timestamp;
 
 @Entity
@@ -126,6 +127,7 @@ public class JknUser {
     public void setRegDate(Timestamp regDate) {
         this.regDate = regDate;
     }
+
 
     @Override
     public boolean equals(Object o) {

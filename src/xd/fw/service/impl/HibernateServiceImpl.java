@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.orm.hibernate4.HibernateTemplate;
@@ -21,6 +23,7 @@ import java.util.Map;
 
 @Transactional(readOnly = true)
 public class HibernateServiceImpl implements BaseService{
+    Logger logger = LoggerFactory.getLogger(getClass());
     static Map<String, int[]> primaryKeyMap = new HashMap<String, int[]>();
     final static int PRE_OCCUPY_MAX = 10;
 

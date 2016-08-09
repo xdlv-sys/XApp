@@ -25,9 +25,11 @@ public interface IConst {
     ES_FAIL_TF_NEGATIVE = 4, ES_FAIL_BALANCE_NEGATIVE = 5;
 
     //event type 1 用户属性更新 2 新交易 11 用户升级（等级，VIP) 12 用户余额发生变化
-    byte EV_USER_UPDATE = 1, EV_ADD_ORDER = 2, EV_USER_PROCESS_ORDER = 3,
+    byte EV_USER_UPDATE = 1, EV_ADD_ORDER = 2, EV_USER_PROCESS_ORDER = 3, EV_SMS_SEND = 4,
     /*sub event*/EV_USER_UPGRADE = 11, EV_USER_SETTLEMENT = 12, EV_USER_NOTIFY = 13
             , EV_USER_SETTLEMENT_APPLY = 14, EV_USER_NOTIFY_COUNT = 15;
+
+    byte SERIOUS = 1, NORMAL = 2;
 
     //结算明细状态 0 未结算 1 己结算
     byte SS_INI = 0, SS_DONE = 1;

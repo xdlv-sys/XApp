@@ -8,4 +8,7 @@ public interface JknUserMapper {
                         @Param("countOne") int countOne,
                         @Param("countTwo") int countTwo,
                         @Param("countThree") int countThree);
+
+    Integer sumFeeFromGeneration(@Param("generation") int generation,
+                        @Param("userId") int userId);
 }

@@ -46,5 +46,7 @@ public class JKN extends Conf {
 
     public static String security_key;
 
+    public static String sms_telephones;
+
 
 }

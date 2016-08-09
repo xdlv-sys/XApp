@@ -17,8 +17,10 @@ Ext.define("XApp.view.jkn.EventManager", {
     },
     items: [{
         xtype: 'cduGrid',
+        padding: '5 0 0 0',
         modelName: '事件',
-        hiddenButtons: ['add', 'mod', 'del'],
+        hiddenButtons: ['add', 'mod'],
+        delText: '重新触发',
         model: 'JknEvent',
         flex: 1,
         columns: [{
@@ -38,6 +40,9 @@ Ext.define("XApp.view.jkn.EventManager", {
                         break;
                     case 3 :
                         tmp = '新交易';
+                        break;
+                    case 4 :
+                        tmp = '紧急短信';
                         break;
                     case 11 :
                         tmp = '用户升级';
