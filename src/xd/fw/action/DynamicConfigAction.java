@@ -15,7 +15,7 @@ public class DynamicConfigAction extends BaseAction{
     DynamicConf dynamicConfig;
 
     public String obtainDynamicConfigs() throws Exception {
-        total = fwService.getAllCount(Mod.class);
+        total = fwService.getAllCount(DynamicConf.class);
         dynamicConfigs = fwService.getList(DynamicConf.class,null,start, limit);
         return SUCCESS;
     }
