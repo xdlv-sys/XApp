@@ -28,6 +28,9 @@ Ext.define("XApp.view.cdu.CDUGrid", {
                 hidden: config.hiddenButtons && Ext.Array.contains(config.hiddenButtons,'del')
             }]
         };
+        Ext.each(config.tbarButtons, function(v,i){
+            config.tbar.items.push(v);
+        });
         config.bind= {
             columns : config.columns,
             store : '{'+config.model+'}'
