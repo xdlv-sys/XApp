@@ -26,15 +26,12 @@ public class OutJob implements SendRequest {
         final boolean[] hasCurrentSequence = new boolean[]{false};
 
         jdbcTemplate.query("select currentIndex from DCurrentSequence where currentDate=?"
-                , new Object[]{new Date(System.currentTimeMillis())}, new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                //check if has current data record
-                hasCurrentSequence[0] = true;
-                current = rs.getInt(1);
-                logger.info("current:" + current);
-            }
-        });
+                , new Object[]{new Date(System.currentTimeMillis())}, rs -> {
+                    //check if has current data record
+                    hasCurrentSequence[0] = true;
+                    current = rs.getInt(1);
+                    logger.info("current:" + current);
+                });
         if (!hasCurrentSequence[0]){
             int success = jdbcTemplate.update("insert into DCurrentSequence values(?,?)",new Date(System.currentTimeMillis()),current);
             logger.info("insert new current date successfully:" + success);

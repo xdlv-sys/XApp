@@ -10,7 +10,7 @@ import xd.fw.service.ParkService;
 import java.util.List;
 
 @Service
-public class ParkServiceImpl extends BaseServiceImpl implements ParkService {
+public class ParkServiceImpl extends HibernateServiceImpl implements ParkService {
 
     @Autowired
     EnterOrOutRecordMapper enterOrOutRecordMapper;
