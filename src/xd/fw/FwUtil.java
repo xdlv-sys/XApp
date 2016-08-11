@@ -122,8 +122,21 @@ public class FwUtil {
         return MD5.MD5Encode(sb.toString());
     }
 
-    public static void main(String[] args){
-        for (int i=1; i< 13;i++)
-        System.out.println(i + " = " + getLastDayInMonth(2015,i));
+    public static void main(String[] args) throws Exception {
+        Map<String,Object> params = new HashMap<>();
+        params.put("jknUser.userId","17");
+        params.put("jknUser.userName","许月芬");
+        params.put("jknUser.referrer","3");
+        params.put("jknUser.telephone","13868273086");
+        params.put("sign","fe30415f518a25ba3ff58f081efeb8ef");
+        System.out.println(verify(params,"jkn@igecono.com0516"));
+
+        HttpClientTpl.post("http://localhost:8080/an/syncUser.cmd",new String[][]{
+                {"jknUser.userId","17"},
+                {"jknUser.userName","许月芬"},
+                {"jknUser.referrer","3"},
+                {"jknUser.telephone","13868273086"},
+                {"sign","fe30415f518a25ba3ff58f081efeb8ef"}
+        });
     }
 }
