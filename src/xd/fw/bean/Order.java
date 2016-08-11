@@ -1,5 +1,7 @@
 package xd.fw.bean;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -84,6 +86,14 @@ public class Order {
 
     public void setBalanceFee(int balanceFee) {
         this.balanceFee = balanceFee;
+    }
+    public void setBalanceFee(String balanceFee) {
+        if (StringUtils.isNotBlank(balanceFee)){
+            try{
+                this.balanceFee = Integer.parseInt(balanceFee);
+            }catch (NumberFormatException e){
+            }
+        }
     }
 
     public byte getTradeStatus() {

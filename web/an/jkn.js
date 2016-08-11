@@ -7,9 +7,10 @@ var app = angular.module("interfaceTest", ['angular-md5']
             }
             return str.join("&");
         }
+        $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
         $httpProvider.defaults.headers.post = {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+        };
     }]
 ).controller('interfaceCtrl', ['$scope', 'md5', function ($scope, md5) {
         //$scope.signKey = 'jkn@igecono.com0516';

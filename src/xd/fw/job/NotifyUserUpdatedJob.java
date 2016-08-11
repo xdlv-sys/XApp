@@ -8,6 +8,7 @@ import xd.fw.HttpClientTpl;
 import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
 import xd.fw.bean.JknUser;
+import xd.fw.bean.OrderSettlement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,25 @@ public class NotifyUserUpdatedJob extends EventJob {
 
     @Override
     protected byte process(JknEvent event) throws Exception {
-        JknUser user = jknService.get(JknUser.class, event.getDbKey());
+        if (event.getEventType() == EV_USER_NOTIFY){
+            return notifyUser(event.getDbKey()) ? ES_DONE : ES_FAIL;
+        }
+        OrderSettlement orderSettlement = jknService.get(OrderSettlement.class, event.getDbKey());
+
+        if (orderSettlement.getCountOne() > 0){
+            notifyUser(orderSettlement.getUserIdOne());
+        }
+        if (orderSettlement.getCountTwo() > 0){
+            notifyUser(orderSettlement.getUserIdTwo());
+        }
+        if (orderSettlement.getCountThree() > 0){
+            notifyUser(orderSettlement.getUserIdThree());
+        }
+        return ES_DONE ;
+    }
+
+    private boolean notifyUser(int userId) throws Exception {
+        JknUser user = jknService.get(JknUser.class, userId);
         String[][] params = {
                 {"userId", String.valueOf(user.getUserId())},
                 {"vip", String.valueOf(user.getVip())},
@@ -39,7 +58,7 @@ public class NotifyUserUpdatedJob extends EventJob {
         logger.info("notify user:" + ArrayUtils.toString(params));
         String ret = HttpClientTpl.post(JKN.user_notify_url, params);
         logger.info("return:" + ret);
-        return JSONObject.fromObject(ret).getInt("code") == 200 ? ES_DONE : ES_FAIL;
+        return JSONObject.fromObject(ret).getInt("code") == 200;
     }
 
     @Override
