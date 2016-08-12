@@ -15,7 +15,7 @@ import xd.fw.job.BaseJob;
 
 import java.net.InetSocketAddress;
 
-public abstract class ReversedProxy extends BaseJob {
+public abstract class ReversedProxy extends BaseJob implements IMinaConst{
 
     private SocketConnector connector;
     IoProcessor<NioSession> pool;
@@ -46,9 +46,8 @@ public abstract class ReversedProxy extends BaseJob {
     public void doExecute() throws Exception {
         logger.info("start to send heart beat message");
         checkSession();
-        String messageId = String.valueOf(System.currentTimeMillis());
 
-        TLVMessage registryMessage = new TLVMessage(messageId);
+        TLVMessage registryMessage = new TLVMessage(REGISTRY);
         constructRegistryMessage(registryMessage);
 
         session.write(registryMessage);

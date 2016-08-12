@@ -5,10 +5,7 @@ import org.apache.mina.core.session.IoSession;
 
 import java.util.*;
 
-public class ReversedHandler extends TLVHandler {
-
-    static final byte NULL_MSG = 0, REGISTRY = 1;
-    final String ID_KEY = "ID_KEY";
+public class ReversedHandler extends TLVHandler implements IMinaConst{
 
     static List<String> discardRequests = new LinkedList<>();
 
@@ -33,13 +30,10 @@ public class ReversedHandler extends TLVHandler {
         if (logger.isDebugEnabled()) {
             logger.debug("receive:" + message);
         }
-        //messageId->code->Id
         TLVMessage msg = (TLVMessage) message;
-        String messageId = (String) msg.getValue();
-        byte code = (byte) msg.getNextValue(0);
-
+        byte code = (byte) msg.getValue();
         if (code == REGISTRY) {
-            String id = (String) msg.getNextValue(1);
+            String id = (String) msg.getNextValue(0);
             synchronized (sessionMap) {
                 IoSession proxySession = sessionMap.get(id);
                 if (session != proxySession) {
@@ -50,9 +44,16 @@ public class ReversedHandler extends TLVHandler {
                 }
             }
             session.setAttribute(ID_KEY, id);
-            handlerRegistry(msg.getNext(1));
+            handlerRegistry(msg, session);
             return;
         }
+
+        // message is handled already
+        if (handlerMessage(msg,session)){
+            return;
+        }
+
+        String messageId = (String)msg.getNextValue(1);
 
         boolean discard;
         synchronized (discardRequests) {
@@ -63,10 +64,13 @@ public class ReversedHandler extends TLVHandler {
         } else {
             session.setAttribute(messageId, msg.getNext());
         }
-
     }
 
-    protected void handlerRegistry(TLVMessage msg) {
+    protected boolean handlerMessage(TLVMessage msg, IoSession session){
+        return false;
+    }
+
+    protected void handlerRegistry(TLVMessage msg, IoSession session) {
     }
 
     @Override
@@ -75,7 +79,19 @@ public class ReversedHandler extends TLVHandler {
         removeSession(session);
     }
 
-    void removeSession(IoSession session) {
+
+    protected TLVMessage createRequest(Object ... objs){
+        TLVMessage message = new TLVMessage(objs[0]);
+        // add timestamp after code
+        TLVMessage next = message.setNext(String.valueOf(System.currentTimeMillis()));
+        int i = 0;
+        while (objs.length > ++i){
+            next = next.setNext(objs[i]);
+        }
+        return message;
+    }
+
+    private void removeSession(IoSession session) {
         String id = (String) session.getAttribute(ID_KEY);
         if (StringUtils.isNotBlank(id)) {
             synchronized (sessionMap) {
@@ -100,10 +116,9 @@ public class ReversedHandler extends TLVHandler {
         if (session == null) {
             return null;
         }
-        String messageId = String.valueOf(System.currentTimeMillis());
-        TLVMessage sendMessage = new TLVMessage(messageId);
-        sendMessage.setNext(message);
-        session.write(sendMessage);
+        // timestamp is just behind code
+        String messageId = (String)message.getNextValue(1);
+        session.write(message);
 
         TLVMessage ret;
         int count = 0;
@@ -125,6 +140,7 @@ public class ReversedHandler extends TLVHandler {
             logger.debug("add discard message:" + messageId);
             return null;
         }
-        return (byte) ret.getValue() == NULL_MSG ? null : ret;
+        /*remove code adn timestamp*/
+        return (byte) ret.getValue() == NULL_MSG ? null : ret.getNext(1);
     }
 }
