@@ -1,8 +1,7 @@
 package xd.fw.derby;
 
 import org.apache.derby.tools.ij;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -26,7 +25,7 @@ import java.sql.SQLException;
 @Service
 public class DerbyInit {
 
-    static Logger logger = LoggerFactory.getLogger(DerbyInit.class);
+    static Logger logger = Logger.getLogger(DerbyInit.class);
 
     String name;
     @Autowired

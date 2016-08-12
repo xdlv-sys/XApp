@@ -26,19 +26,28 @@ Ext.define('XApp.controller.Root', {
             }
     	});
     },
-    showUi: function(user,records){
+    showUi: function(user){
         var root = {
             expanded: true,
             children:[]
         };
         var map={0 : root};
-        Ext.each(records, function(v,i,a){
-            var id = v.get('id');
-            var routerId = v.get('routerid');
+        var mods = [];
+        Ext.each(user.data.roles, function(role){
+            Ext.each(role.mods, function(v){
+                mods.push(v);
+            });
+        });
+        Ext.Array.sort(mods, function(a,b){
+            return a.id - b.id;
+        });
+        Ext.each(mods, function(v){
+            var id = v.id;
+            var routerId = v.routerId;
             var viewId;
             map[id] = Ext.applyIf(map[id] || {}, {
-                text: v.get('name'),
-                iconCls: v.get('addition'),
+                text: v.name,
+                iconCls: v.addition,
                 children:[]
             });
             if (!Ext.isEmpty(routerId)){
@@ -48,14 +57,15 @@ Ext.define('XApp.controller.Root', {
                 map[id].routeId = routerId;
                 map[id].leaf = true;
             }
-            var parent = map[v.get('parentid')];
+            var parent = map[v.parentId];
             if (!parent){
-                parent = map[v.get('parentid')]={
+                parent = map[v.parentId]={
                     children:[]
                 };
             }
             parent.children.push(map[id]);
         });
+
         Ext.create('XApp.view.main.Main',{
             session: this.session,
             viewModel: {
@@ -74,13 +84,6 @@ Ext.define('XApp.controller.Root', {
     onLogin: function(view,user){
     	this.login.destroy();
         var me = this;
-        user.mods().load({
-            url: 'mod!obtainUserMods.cmd',
-            callback: function(records, operation, success){
-                if (success){
-                    me.showUi(user,records);
-                }
-            }
-        });
+        me.showUi(user);
     }
 });

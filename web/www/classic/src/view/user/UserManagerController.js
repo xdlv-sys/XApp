@@ -103,7 +103,7 @@ Ext.define('XApp.view.user.UserManagerController', {
         var params = Ext.apply({}, btn.up('form').getValues());
 
         Ext.each(mods, function (v, i) {
-            params['role.mods[' + i + '].id'] = v.get('modId');
+            params['role.modsL[' + i + '].id'] = v.get('modId');
         });
 
         XApp.Util.ajax({

@@ -10,8 +10,7 @@
                      http://www.springframework.org/schema/aop 
                      http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean
-            class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="fileEncoding" value="UTF-8"/>
         <property name="locations">
             <list>
@@ -20,16 +19,6 @@
                 <value>classpath:/app.properties</value>
             </list>
         </property>
-    </bean>
-
-    <bean id="dataSource" destroy-method="close"
-          class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="${jdbc.driverClassName}"/>
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
-        <property name="validationQuery" value="${jdbc.validate}"></property>
-        <property name="maxActive" value="20"></property>
     </bean>
     <bean id="vendorProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
@@ -45,7 +34,6 @@
         <property name="properties" ref="vendorProperties"/>
     </bean>
 
-    <!-- SqlSessionFactory -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="databaseIdProvider" ref="databaseIdProvider"/>
@@ -55,17 +43,21 @@
         <property name="basePackage" value="xd.fw.bean.mapper"/>
     </bean>
 
-    <bean name="transactionManager"
-          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"></property>
+    <bean id="dataSource" destroy-method="close"
+          class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="validationQuery" value="${jdbc.validate}"></property>
+        <property name="maxActive" value="20"></property>
     </bean>
+
 
     <context:component-scan base-package="xd.fw">
         <context:exclude-filter type="annotation"
                                 expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
-
-    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!--Hibernate -->
     <bean id="sessionFactory"
@@ -74,6 +66,11 @@
         <property name="mappingLocations">
             <list>
                 <value>classpath:xd/fw/bean/*.hbm.xml</value>
+            </list>
+        </property>
+        <property name="packagesToScan">
+            <list>
+                <value>xd.fw.bean</value>
             </list>
         </property>
         <property name="hibernateProperties">
@@ -86,9 +83,8 @@
                 <!--<prop key="hibernate.search.default.directory_provider">filesystem</prop>
                 <prop key="hibernate.search.default.indexBase">${hibernate.search.default.indexBase}</prop>-->
                 <prop key="hibernate.show_sql">true</prop>
+                <prop key="format_sql">true</prop>
                 <prop key="hibernate.dialect">${jdbc_dialect}</prop>
-                <prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/xapp</prop>
-                <prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
             </props>
         </property>
         <property name="namingStrategy">
@@ -96,7 +92,7 @@
         </property>
     </bean>
 
-    <bean id="transactionManager2"
+    <bean id="transactionManager"
           class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
@@ -104,7 +100,7 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <tx:annotation-driven transaction-manager="transactionManager2"/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!--quartz jobs-->
     <bean id="baseJobDetail" abstract="true"
@@ -120,19 +116,18 @@
         </property>
     </bean>
 
-    <bean id="memoryCheckJobDetail" parent="baseJobDetail">
-        <property name="targetObject">
-            <ref bean="memoryJob"/>
-        </property>
-    </bean>
 
     <bean id="memoryCheckDoTime"
           class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail">
-            <ref bean="memoryCheckJobDetail"/>
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="memoryJob"/>
+                </property>
+            </bean>
         </property>
         <property name="cronExpression">
-            <value>0/30 * * * * ?</value>
+            <value>0/10 * * * * ?</value>
         </property>
     </bean>
     <bean id="httpClientConnectionManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">

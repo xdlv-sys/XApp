@@ -8,7 +8,7 @@ Ext.define('XApp.store.ModTree', {
     },
     proxy: {
         type: 'ajax',
-        url: 'mod!obtainUserMods.cmd',
+        url: 'mod!obtainMods.cmd',
         reader: {
             type: 'json',
             transform: function(data){
@@ -16,9 +16,12 @@ Ext.define('XApp.store.ModTree', {
                     children:[]
                 };
                 var map={0 : root};
-                Ext.each(data.mods, function(v,i,a){
+                var mods = Ext.Array.sort(data.mods, function (a,b) {
+                    return a.id - b.id;
+                });
+                Ext.each(mods, function(v,i,a){
                     var id = v.id;
-                    var routerId = v.routerid;
+                    var routerId = v.routerId;
                     map[id] = Ext.applyIf(map[id] || {}, {
                         text: v.name,
                         checked: false,
@@ -30,9 +33,9 @@ Ext.define('XApp.store.ModTree', {
                     if (!Ext.isEmpty(routerId)){
                         map[id].leaf = true;
                     }
-                    var parent = map[v.parentid];
+                    var parent = map[v.parentId];
                     if (!parent){
-                        parent = map[v.parentid]={
+                        parent = map[v.parentId]={
                             children:[]
                         };
                     }

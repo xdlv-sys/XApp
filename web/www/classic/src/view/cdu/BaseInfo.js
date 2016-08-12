@@ -1,19 +1,19 @@
 Ext.define("XApp.view.cdu.BaseInfo", {
     extend: "Ext.window.Window",
 
-    bind: {title: '增加/删除{title}'},
+    //bind: {title: '增加/删除'},
     width: 350,
     modal: true,
     layout: 'fit',
     items: [{
         xtype: 'form',
         layout: 'form',
-        margin: '10',
+        //margin: '2',
         items: [{
             xtype: 'fieldset',
             defaults: {anchor: '100%'},
             bind: {
-                title: '{title}'
+                //title: '{title}'
             }
         }],
         buttons: [{

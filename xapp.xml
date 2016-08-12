@@ -16,7 +16,9 @@
     <target name="sencha-www">
         <delete dir="${output}/www"/>
         <mkdir dir="${output}/www"/>
-        <exec dir="web/www" command="sencha app build --destination ${output}/www"/>
+        <delete dir="web/www/build"/>
+        <exec dir="web/www" command="sencha app build classic"/>
+        <copydir src="web/www/build/production/XApp" dest="${output}/www"/>
     </target>
 
     <target name="sencha">

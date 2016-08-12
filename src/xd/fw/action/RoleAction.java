@@ -7,7 +7,9 @@ import xd.fw.bean.Role;
 import xd.fw.bean.User;
 import xd.fw.service.FwService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class RoleAction extends BaseAction {
     @Autowired
@@ -17,20 +19,23 @@ public class RoleAction extends BaseAction {
 
     User user;
 
-    public String obtainRoles() {
-        total = fwService.getRolesCount();
-        roles = fwService.getRoles(start, limit);
+    public String obtainUserRoles(){
+        Set<Role> roles = fwService.get(User.class,user.getId()).getRoles();
+        this.roles = new ArrayList<>(roles.size());
+        this.roles.addAll(roles);
         return SUCCESS;
     }
 
-    public String obtainUserRoles() {
-        roles = fwService.getUserRoles(user.getId());
+    public String obtainRoles() {
+        total = fwService.getAllCount(Role.class);
+        roles = fwService.getList(Role.class,null,start, limit);
         return SUCCESS;
     }
 
     public String deleteRole() {
+
         for (int i=0; roles != null && i<roles.size();i++){
-            fwService.deleteRoleById(roles.get(i).getId());
+            fwService.delete(Role.class,roles.get(i).getId());
         }
         return FINISH;
     }

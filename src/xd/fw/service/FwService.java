@@ -11,31 +11,9 @@ import java.util.List;
 
 public interface FwService extends BaseService{
 
-    User userLogin(String name, String pwd);
+    User userLogin(User user) throws Exception;
 
-    List<User> getUsers(int start, int limit);
-
-    int getUsersCount();
-
-    void saveOrUpdateUser(User user);
-
-    void deleteUserById(Integer id);
-
-    List<Mod> getUserMods(Integer userId);
-
-    int getRolesCount();
-
-    List<Role> getRoles(int start, int limit);
-
-    void deleteRoleById(Integer id);
+    void saveOrUpdateUser(User user) throws Exception;
 
     void saveOrUpdateRole(Role role);
-
-    void saveOrUpdateMod(Mod mod);
-
-    List<Mod> getModsByRole(Integer roleId);
-
-    List<Role> getUserRoles(Integer userId);
-
-    void deleteMods(List<Mod> mods);
 }

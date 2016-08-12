@@ -10,21 +10,27 @@ Ext.define("XApp.view.cdu.CDUGrid", {
             items: [{
                 xtype: 'button',
                 text: '增加' + config.modelName,
-                handler: 'add' + config.model
+                handler: config.addText? config.addText : ('add' + config.model),
+                hidden: config.hiddenButtons && Ext.Array.contains(config.hiddenButtons,'add')
             }, {
                 margin: '0 0 0 10',
                 xtype: 'button',
                 disabled: true,
-                text: '修改' + config.modelName,
-                handler: 'mod' + config.model
+                text: config.modText ? config.modText : ('修改' + config.modelName),
+                handler: 'mod' + config.model,
+                hidden: config.hiddenButtons && Ext.Array.contains(config.hiddenButtons,'mod')
             }, {
                 margin: '0 0 0 10',
                 xtype: 'button',
                 disabled: true,
-                text: '删除' + config.modelName,
-                handler: 'del' + config.model
+                text: config.delText ? config.delText : ('删除' + config.modelName),
+                handler: 'del' + config.model,
+                hidden: config.hiddenButtons && Ext.Array.contains(config.hiddenButtons,'del')
             }]
         };
+        Ext.each(config.tbarButtons, function(v,i){
+            config.tbar.items.push(v);
+        });
         config.bind= {
             columns : config.columns,
             store : '{'+config.model+'}'
@@ -34,7 +40,7 @@ Ext.define("XApp.view.cdu.CDUGrid", {
         var delButtonSelector = 'button[handler=' + config.tbar.items[2].handler + ']';
         config.selModel= {
             type : 'checkboxmodel',
-                listeners : {
+            listeners : {
                 selectionchange : function(model,records,obj){
                     var modButton = grid.down(modButtonSelector);
                     var delButton = grid.down(delButtonSelector);
@@ -54,8 +60,8 @@ Ext.define("XApp.view.cdu.CDUGrid", {
 
         config.bbar ={
             xtype : "pagingtoolbar",
-                displayInfo : true,
-                bind: '{'+config.model+'}'
+            displayInfo : true,
+            bind: '{'+config.model+'}'
         };
         this.callParent(arguments);
     }

@@ -1,8 +1,8 @@
 package xd.fw.mbean;
 
 import org.apache.derby.tools.ij;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -19,7 +19,7 @@ import java.io.InputStream;
 @Service
 @ManagedResource(objectName = "xapp:name=DbOperation", description = "derby db operations")
 public class DbOperation {
-    Logger logger = LoggerFactory.getLogger(DbOperation.class);
+    Logger logger = Logger.getLogger(DbOperation.class);
 
     @Autowired
     JdbcTemplate derbyTpl;

@@ -1,5 +1,6 @@
 package xd.fw;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -7,14 +8,13 @@ import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Random;
+import java.util.*;
 
 public class FwUtil {
 
 	public static String UTF8 = "UTF-8";
     //static int[] months = new int[]{0,31,29,31,30,31,30,31,31,30,31,30,31};
-    static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public static String getValidateCode(){
         return String.format("%04d",Math.abs(new Random().nextInt(9999)));
@@ -22,7 +22,7 @@ public class FwUtil {
 
     public static Object getBean(String name){
         WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
-        return wac.getBean(name);
+        return wac == null ? null : wac.getBean(name);
     }
 
     // sdf is not thread safe so we need add synchronized
@@ -62,12 +62,81 @@ public class FwUtil {
             p.process(f, v);
         }
     }
+    public static void invokeBeanFieldsWidthConditions(Object o, BeanFieldProcess p, BeanFieldCondition condition)throws IllegalAccessException{
+        invokeBeanFields(o,(f,v)->{
+            if (condition.accept(f,v)){
+                p.process(f,v);
+            }
+        });
+    }
+
+    public interface BeanFieldCondition{
+        boolean accept(Field f, Object o);
+    }
+
     public interface BeanFieldProcess{
         void process(Field f, Object o);
     }
+    public interface SafeEachProcess<T>{
+        void process(T t);
+    }
 
-    public static void main(String[] args){
-        for (int i=1; i< 13;i++)
-        System.out.println(i + " = " + getLastDayInMonth(2015,i));
+    public static <T> void safeEach(Collection<T> list, SafeEachProcess<T> p){
+        if (list == null || list.size() < 1){
+            return;
+        }
+        list.forEach(p::process);
+    }
+
+    public static boolean verify(Map<String, Object> params, String key){
+        List<String> list = new ArrayList<String>();
+        String sign = null;
+        String value;
+        for (Map.Entry<String,Object> entry : params.entrySet()){
+            if (entry.getValue() instanceof String[]){
+                value = ((String[])entry.getValue())[0];
+            } else {
+                value = String.valueOf(entry.getValue());
+            }
+            if (entry.getKey().equals("sign")){
+                sign = value;
+                continue;
+            }
+            if (StringUtils.isBlank(value)){
+                continue;
+            }
+            list.add(entry.getKey() + "=" + value+ "&");
+        }
+        return getSign(list, key).equals(sign);
+    }
+
+    public static String getSign(List<String> params, String key){
+        int size = params.size();
+        String[] arrayToSort = params.toArray(new String[size]);
+        Arrays.sort(arrayToSort, String.CASE_INSENSITIVE_ORDER);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            sb.append(arrayToSort[i]);
+        }
+        sb.append("key=").append(key);
+        return MD5.MD5Encode(sb.toString());
+    }
+
+    public static void main(String[] args) throws Exception {
+        Map<String,Object> params = new HashMap<>();
+        params.put("jknUser.userId","17");
+        params.put("jknUser.userName","许月芬");
+        params.put("jknUser.referrer","3");
+        params.put("jknUser.telephone","13868273086");
+        params.put("sign","fe30415f518a25ba3ff58f081efeb8ef");
+        System.out.println(verify(params,"jkn@igecono.com0516"));
+
+        HttpClientTpl.post("http://localhost:8080/an/syncUser.cmd",new String[][]{
+                {"jknUser.userId","17"},
+                {"jknUser.userName","许月芬"},
+                {"jknUser.referrer","3"},
+                {"jknUser.telephone","13868273086"},
+                {"sign","fe30415f518a25ba3ff58f081efeb8ef"}
+        });
     }
 }
