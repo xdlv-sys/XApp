@@ -35,7 +35,7 @@ public class ProxyJob extends ReversedProxy {
 
     @Override
     protected void constructRegistryMessage(TLVMessage registryMessage) {
-        registryMessage.setNext(REGISTRY).setNext(parkId).setNext(parkName).setNext(100);
+        registryMessage.setNext(parkId).setNext(parkName).setNext(100);
     }
 
     @Override
