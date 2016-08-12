@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="5 seconds">
+<configuration scan="true" scanPeriod="60 seconds">
 
-    <property name="DEV_HOME" value="../logs" />
+    <property name="DEV_HOME" value="." />
     <property name="FORMAT" value="%d{yyyy-MM-dd HH:mm:ss} [%logger{0}] %-5level %msg%n"/>
-
     <property name="MAX_HISTROY" value="50"/>
     <property name="MAX_SIZE" value="10MB"/>
 
@@ -63,11 +62,10 @@
 
     </appender>
 
-    <logger name="org.mybatis" level="error"/>
 
     <root level="info">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE-AUDIT" />
+        <!--<appender-ref ref="FILE-AUDIT" />-->
         <appender-ref ref="FILE-ERROR" />
     </root>
 

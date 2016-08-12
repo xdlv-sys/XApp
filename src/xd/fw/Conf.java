@@ -95,3 +95,4 @@ public class Conf {
 
     public static boolean appUpdating;
 }
+

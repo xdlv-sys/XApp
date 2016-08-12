@@ -18,7 +18,69 @@
         <property name="triggers">
             <list>
                 <!--<ref bean="memoryCheckDoTime"/>-->
+                <ref bean="userProcessDoTime"/>
+                <ref bean="notifyUserUpdateDoTime"/>
+                <ref bean="sendSmsDoTime"/>
+                <ref bean="removeEarlierEventDoTime"/>
             </list>
         </property>
     </bean>
+
+    <bean id="userProcessDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="userProcessorJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0/1 * * * * ?</value>
+        </property>
+    </bean>
+
+
+    <bean id="notifyUserUpdateDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="notifyUserUpdatedJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0/1 * * * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="sendSmsDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="sendSmsJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0/59 * * * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="removeEarlierEventDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="removeEarlierEvent"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 1 * * ?</value>
+        </property>
+    </bean>
+
 </beans>

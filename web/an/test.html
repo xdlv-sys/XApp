@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+</head>
+
+
+<body ng-app="app">
+
+<div ng-controller="mytest">
+    父：<input type="text" ng-model="data.name" />
+    <test></test>
+	
+	<test></test>
+	
+	<test></test>
+	
+	
+	<expander class='expander' ng-repeat='expander in expanders' expander-title='expander.title'>
+                {{expander.text}}
+            </expander>
+</div>
+
+</body>
+
+<script language="javascript">
+    var app = angular.module("app",[]);
+
+app.controller("mytest", function ($scope) {
+    $scope.data = {
+        name : "jack",
+        age : 25
+    };
+	$scope.expanders = [{
+        title : 'Click me to expand',
+        text : 'Hi there folks, I am the content that was hidden but is now shown.'
+    }, {
+        title : 'Click this',
+        text : 'I am even better text than you have seen previously'
+    }, {
+        title : 'Test',
+        text : 'test'
+    }];
+});
+
+app.directive('expander', function() {
+    return {
+        restrict : 'EA',
+        replace : true,
+        transclude : true,
+        require : '^?accordion',
+        scope : {
+            title : '=expanderTitle'
+        },
+        template : '<div>'
+                   + '<div class="title" ng-click="toggle()">{{title}}</div>'
+                   + '<div class="body" ng-show="showMe" ng-transclude></div>'
+                   + '</div>',
+        link : function(scope, element, attrs, mytest) {
+            scope.showMe = false;
+            mytest.addExpander(scope);
+            scope.toggle = function toggle() {
+                scope.showMe = !scope.showMe;
+                mytest.gotOpened(scope);
+            }
+        }
+    }
+});
+
+app.directive("test",function(){
+    return {
+        restrict : "E",
+        templateUrl : 'div.html',
+        replace : true,
+        scope : {
+            //data: {}
+        },
+        controller : function($scope){
+            console.log('controller:' + $scope.data);  //Object {name: "jack", age: 25}
+			$scope.change = function(){
+			    alert($scope.data.name);
+			};
+        },
+        link : function ($scope) {
+            console.log('link:' + $scope.data); //Object {name: "jack", age: 25}
+			$scope.data = {};
+			$scope.data.name=123;
+        }
+    }
+});
+
+</script>
+</html>

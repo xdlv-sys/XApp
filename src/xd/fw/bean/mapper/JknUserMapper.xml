@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xd.fw.bean.mapper.JknUserMapper">
+
+    <update id="modifyUserCount" parameterType="int">
+        update t_jkn_user
+        <set>
+            <if test="count != 0">
+                count = count + #{count,jdbcType=INTEGER},
+            </if>
+            <if test="countTwo != 0">
+                count_two = count_two + #{countTwo,jdbcType=INTEGER},
+            </if>
+            <if test="countThree != 0">
+                count_three = count_three + #{countThree,jdbcType=INTEGER},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+
+    <select id="sumFeeFromGeneration" resultType="java.lang.Integer" parameterType="int">
+        select sum(
+        <if test="generation ==1">count_one</if>
+        <if test="generation ==2">count_two</if>
+        <if test="generation ==3">count_three</if>) from t_jkn_order_settlement
+        where
+        <if test="generation ==1">user_id_one</if>
+        <if test="generation ==2">user_id_two</if>
+        <if test="generation ==3">user_id_three</if> = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteEarlierEvent">
+        delete from t_jkn_event where trigger_date &lt; subdate(curdate(),2) and event_status = 2
+    </delete>
+
+</mapper>

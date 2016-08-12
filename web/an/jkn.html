@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta charset="UTF-8">
+    <title>接口测试</title>
+    <script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+    <script src="//cdn.bootcss.com/angular-md5/0.1.10/angular-md5.min.js"></script>
+</head>
+
+<style>
+    .title {
+        margin: 0 auto;
+        font-weight: bold;
+        font-size: 24px;
+        color: #b30000;
+        width: 200px;
+        padding: 20px;
+    }
+    .url {
+        margin-left: 20px;
+        font-weight: bold;
+        font-size: 23px;
+        color: #0a50ba;
+        width: 600px;
+        padding: 20px;
+    }
+
+    form {
+        border: 1px solid #b30000;
+        padding: 10px;
+        width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
+    }
+    .current_sign{
+        width: 700px;
+        height: 60px;
+        margin-bottom: 20px;
+        color: #67a0ff;
+        overflow: scroll;
+        margin-left: 100px;
+    }
+    .result{
+        width: 700px;
+        height: 60px;
+        margin-bottom: 20px;
+        color: #1c24ff;
+        overflow: scroll;
+        margin-left: 100px;
+    }
+
+    .test_input {
+        margin: 10px;
+    }
+
+    .input_v {
+        margin-left: 10px;
+        width: 90%;
+        line-height: 26px;
+    }
+    .title_v{
+        float: left;
+        width: 100px;
+        font-size: 20px;
+    }
+
+</style>
+<body ng-app="interfaceTest" ng-controller="interfaceCtrl">
+
+<input-form action="syncUser.cmd"
+            title="用户同步syncUser"
+            params="jknUser.userId-用户ID
+                -jknUser.userName-用户名
+                -jknUser.referrer-推荐人ID
+                -jknUser.telephone-手机号码">
+</input-form>
+
+<input-form action="addTrade.cmd"
+            title="新增交易addTrade"
+            params="order.orderId-交易ID
+                -order.userId-用户ID
+                -order.payType-支付类型(0 微信,1 支付宝,2银行卡,3余额支付)
+                -order.tradeType-交易类型(0:消费；1:提现)
+                -order.totalFee-金额
+                -order.balanceFee-余额消费
+                -order.lastUpdateS-交易时间">
+</input-form>
+
+<input-form action="userGeneration.cmd"
+            title="用户后代userGeneration"
+            params="jknUser.userId-用户ID
+            -start-开始记录
+            -limit-记录条数" result="sons">
+</input-form>
+<input-form action="userGenerationCount.cmd"
+            title="用户后代数量userGenerationCount"
+            params="jknUser.userId-用户ID" result="userCount">
+</input-form>
+
+<input-form action="settlementDetail.cmd"
+            title="佣金详情"
+            params="jknUser.userId-用户ID
+            -start-开始记录
+            -limit-记录条数" result="orderSettlements">
+</input-form>
+
+
+</body>
+<script src="jkn-min.js">
+</script>
+</html>

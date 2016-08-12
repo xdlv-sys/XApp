@@ -1,0 +1,6 @@
+
+ip地址：114.55.129.254
+localhost：3306
+数据库名：igecono_js
+用户名：igecono_js
+密码：igecono_2016!
