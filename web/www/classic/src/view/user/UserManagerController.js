@@ -6,8 +6,8 @@ Ext.define('XApp.view.user.UserManagerController', {
         return btn.up('grid');
     },
     // user manager
-    openUserInfo: function (btn, user,saveCallback) {
-        Ext.create('XApp.view.user.UserInfo',{
+    openUserInfo: function (btn, user, saveCallback) {
+        Ext.create('XApp.view.user.UserInfo', {
             roleEditable: true,
             saveCallback: saveCallback,
             viewModel: {
@@ -19,13 +19,13 @@ Ext.define('XApp.view.user.UserManagerController', {
     },
 
     addUser: function (btn) {
-        this.openUserInfo(btn,null,function(){
+        this.openUserInfo(btn, null, function () {
             btn.up('grid').getStore().reload();
         });
     },
     modUser: function (btn) {
         var users = this.getGrid(btn).getSelection();
-        this.openUserInfo(btn, Ext.apply({}, users[0]),function(){
+        this.openUserInfo(btn, Ext.apply({}, users[0]), function () {
             btn.up('grid').getStore().reload();
         });
     },
@@ -74,26 +74,28 @@ Ext.define('XApp.view.user.UserManagerController', {
             if (!role) {
                 return;
             }
-            XApp.Util.ajax({
-                url: 'mod!obtainModsByRole.cmd',
-                params: {'role.id': role.id},
-                success: function (records) {
-                    win.down('modtree').getRootNode().cascadeBy({
-                        before: function (node) {
-                            Ext.each(records.mods, function (v, i) {
-                                if (node.get('modId') == v.id) {
-                                    var tempNode = node;
-                                    while (tempNode) {
-                                        tempNode.set('checked', true);
-                                        tempNode = tempNode.parentNode;
+            Ext.defer(function () {
+                XApp.Util.ajax({
+                    url: 'mod!obtainModsByRole.cmd',
+                    params: {'role.id': role.id},
+                    success: function (records) {
+                        win.down('modtree').getRootNode().cascadeBy({
+                            before: function (node) {
+                                Ext.each(records.mods, function (v, i) {
+                                    if (node.get('modId') == v.id) {
+                                        var tempNode = node;
+                                        while (tempNode) {
+                                            tempNode.set('checked', true);
+                                            tempNode = tempNode.parentNode;
+                                        }
                                     }
-                                }
-                            });
-                        }
-                    });
-                    return true;
-                }
-            });
+                                });
+                            }
+                        });
+                        return true;
+                    }
+                });
+            }, 500);
         });
     },
     saveRole: function (btn) {

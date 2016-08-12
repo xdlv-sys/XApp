@@ -78,6 +78,6 @@ Ext.define("XApp.view.user.UserInfo", {
                     return true;
                 }
             });
-        },200);
+        },500);
     }
 });
