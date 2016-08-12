@@ -65,4 +65,8 @@
         <property name="handler" ref="tlvHandler"/>
         <property name="filterChainBuilder" ref="filterChainBuilder"/>
     </bean>
+
+    <bean id="tlvHandler" class="xd.fw.mina.ParkHandler">
+
+    </bean>
 </beans>

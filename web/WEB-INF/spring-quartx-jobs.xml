@@ -31,7 +31,40 @@
         <property name="triggers">
             <list>
                 <!--<ref bean="memoryCheckDoTime"/>-->
+                <ref bean="freeJobDoTime"/>
+                <ref bean="proxyJobDoTime"/>
             </list>
         </property>
     </bean>
+
+    <!--free-->
+    <bean id="freeJobDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="freeJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0 5 * * * ?</value>
+        </property>
+    </bean>
+
+
+    <bean id="proxyJobDoTime"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean parent="baseJobDetail">
+                <property name="targetObject">
+                    <ref bean="proxyJob"/>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0/50 * * * * ?</value>
+        </property>
+    </bean>
+
 </beans>
