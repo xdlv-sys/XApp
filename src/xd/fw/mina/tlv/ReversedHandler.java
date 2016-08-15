@@ -53,7 +53,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
             return;
         }
 
-        String messageId = (String)msg.getNextValue(1);
+        String messageId = (String)msg.getNextValue(0);
 
         boolean discard;
         synchronized (discardRequests) {
@@ -62,7 +62,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
         if (discard) {
             logger.debug("discard message for timeout: " + messageId);
         } else {
-            session.setAttribute(messageId, msg.getNext());
+            session.setAttribute(messageId, msg);
         }
     }
 
@@ -117,7 +117,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
             return null;
         }
         // timestamp is just behind code
-        String messageId = (String)message.getNextValue(1);
+        String messageId = (String)message.getNextValue(0);
         session.write(message);
 
         TLVMessage ret;
