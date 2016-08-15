@@ -58,7 +58,7 @@
         <property name="jobDetail">
             <bean parent="baseJobDetail">
                 <property name="targetObject">
-                    <ref bean="proxyJob"/>
+                    <ref bean="parkProxy"/>
                 </property>
             </bean>
         </property>

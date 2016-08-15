@@ -10,7 +10,7 @@ import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
 
 @Service
-public class ProxyJob extends ReversedProxy {
+public class ParkProxy extends ReversedProxy {
 
     static final byte QUERY_CAR = 2, QUERY_CAR_RESP = 3,FREE = 4, FREE_RESP = 5, PAY_FEE = 6, PAY_FEE_RESP = 7;
 
@@ -45,9 +45,9 @@ public class ProxyJob extends ReversedProxy {
 
     @Override
     protected void handlerQuery(TLVMessage msg) throws Exception {
-        //code -> messageId ->Id
+        //2->1471225285910->苏A12345->001
         //reuse msg
-        byte code = (byte) msg.getNext().getValue();
+        byte code = (byte) msg.getValue();
         TLVMessage next = msg.getNext(0);
         switch (code){
             case QUERY_CAR:
