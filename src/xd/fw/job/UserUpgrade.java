@@ -25,7 +25,7 @@ public class UserUpgrade implements UserHandler {
             //user upgrade from customer to membership
             user = new UserDesc(self.getUserId());
             user.parent = userMap.get(self.getReferrer());
-            user.parent.children.add(user);
+            user.parent.addChild(user);
             userMap.put(self.getUserId(), user);
         } else {
             user.userId = self.getUserId();
@@ -49,8 +49,8 @@ public class UserUpgrade implements UserHandler {
 
     private void upgrade(UserDesc user, List<JknEvent> eventList) {
 
-        int childrenCount = user.children.size();
-        int allChildrenCount = user.allChildCount();
+        int childrenCount = user.childCount(jknService);
+        int allChildrenCount = user.allChildCount(jknService);
 
         byte shouldLevel = UL_NON;
         if (childrenCount >= JKN.gold_ucn && allChildrenCount >= JKN.gold_acn) {

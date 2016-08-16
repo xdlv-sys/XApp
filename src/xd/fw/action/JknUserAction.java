@@ -18,17 +18,21 @@ public class JknUserAction extends BaseAction {
     JknUser jknUser;
     List<JknUser> jknUsers;
 
+    String referrerName;
+
     public String obtainUsers(){
 
         ConstructHql<JknUser> constructHql = new ConstructHql<JknUser>() {
             @Override
             public String process(JknUser user) {
-                StringBuffer buffer = new StringBuffer("from JknUser where 1=1");
-                if (jknUser != null && StringUtils.isNotBlank(jknUser.getUserName())){
-                    buffer.append(" and userName like :userName ");
+                StringBuffer buffer = new StringBuffer("from JknUser a where 1=1");
+                if (StringUtils.isNotBlank(referrerName)){
+                    buffer = new StringBuffer("from JknUser a join JknUser b on " +
+                            "a.referrer=b.userId where b.userName like :referrerName");
                 }
-                if (jknUser != null && jknUser.getReferrer() != null){
-                    buffer.append(" and referrer=:referrer");
+
+                if (jknUser != null && StringUtils.isNotBlank(jknUser.getUserName())){
+                    buffer.append(" and a.userName like :userName ");
                 }
                 return buffer.toString();
             }
@@ -40,8 +44,8 @@ public class JknUserAction extends BaseAction {
                 if (jknUser != null && StringUtils.isNotBlank(jknUser.getUserName())){
                     query.setString("userName", "%" + jknUser.getUserName() + "%");
                 }
-                if (jknUser != null && jknUser.getReferrer() != null){
-                    query.setInteger("referrer", jknUser.getReferrer());
+                if (StringUtils.isNotBlank(referrerName)){
+                    query.setString("referrerName", "%" + referrerName + "%");
                 }
             }
         };
@@ -64,5 +68,9 @@ public class JknUserAction extends BaseAction {
 
     public void setJknUsers(List<JknUser> jknUsers) {
         this.jknUsers = jknUsers;
+    }
+
+    public void setReferrerName(String referrerName) {
+        this.referrerName = referrerName;
     }
 }

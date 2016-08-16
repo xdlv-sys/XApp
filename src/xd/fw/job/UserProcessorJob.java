@@ -55,7 +55,7 @@ public class UserProcessorJob extends EventJob {
         List<JknUser> users;
         UserDesc self, parent;
 
-        while ((users = jknService.getMemberUser(start, start += 100)).size() > 0) {
+        while ((users = jknService.getList(JknUser.class,null,start, start += 100)).size() > 0) {
             for (JknUser user : users) {
                 self = userMap.get(user.getUserId());
                 if (self == null) {
@@ -71,7 +71,7 @@ public class UserProcessorJob extends EventJob {
                         userMap.put(user.getReferrer(), parent);
                     }
                     self.parent = parent;
-                    parent.children.add(self);
+                    parent.addChild(self);
                 }
             }
         }
