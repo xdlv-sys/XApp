@@ -103,7 +103,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     public List<JknUser> getMemberUser(int start, int limit) {
-        return getList("from JknUser where userLevel > " + UL_NON, null, start, limit);
+        return getList("from JknUser where userLevel > " + UL_NON + " order by userId", null, start, limit);
     }
 
     @Override
@@ -129,20 +129,28 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public void updateUserProsForProcessOrder(JknUser modifyUser) {
-        JknUser user = load(JknUser.class, modifyUser.getUserId());
+    public byte[] updateUserProsForProcessOrder(Order order) {
+        JknUser jknUser = load(JknUser.class, order.getUserId());
 
-        user.setConsumedCount(user.getConsumedCount() + modifyUser.getConsumedCount());
-        user.setCount(user.getCount() + modifyUser.getCount());
+        //增加消费总额
+        jknUser.setConsumedCount(jknUser.getConsumedCount() + order.getTotalFee());
+        //余额支付
+        jknUser.setCount(jknUser.getCount() - order.getBalanceFee());
+        boolean upgrade = false;
 
-        if (user.getUserLevel() < modifyUser.getUserLevel()) {
-            user.setUserLevel(modifyUser.getUserLevel());
+        // 升级成正式会员,若消费总额达到59元
+        if (jknUser.getUserLevel() < UL_NORMAL && jknUser.getConsumedCount() >= JKN.membership_count) {
+            jknUser.setUserLevel(UL_NORMAL);
+            upgrade = true;
+        }
+        //升级成VIP，若消费总额达到590
+        if (jknUser.getVip() < VIP && jknUser.getConsumedCount() >= JKN.vip_cost) {
+            jknUser.setVip(VIP);
+            upgrade = true;
         }
 
-        if (user.getVip() < modifyUser.getVip()) {
-            user.setVip(modifyUser.getVip());
-        }
-        update(user);
+        update(jknUser);
+        return new byte[]{upgrade ? TRUE : FALSE, jknUser.getUserLevel()};
     }
 
     @Override

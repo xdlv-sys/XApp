@@ -23,28 +23,52 @@ public class UserUpgrade implements UserHandler {
 
         if (user == null) {
             //user upgrade from customer to membership
-            user = new UserDesc(self.getUserId());
-            user.parent = userMap.get(self.getReferrer());
-            user.parent.addChild(user);
+            user = new UserDesc(self.getUserId(),self.getUserLevel());
             userMap.put(self.getUserId(), user);
+            user.parent = userMap.get(self.getReferrer());
         } else {
+            //use level improved
             user.userId = self.getUserId();
-            //other properties..
         }
+        //notify user self
+        jknService.triggerEvent(new JknEvent(EV_USER_NOTIFY, user.userId, null));
 
+        //make sure three up generation exists
         //upgrade father ...
         List<JknEvent> eventList = new ArrayList<>();
-        upgrade(user.parent, eventList);
-        upgrade(user.parent.parent, eventList);
-        upgrade(user.parent.parent.parent, eventList);
+        UserDesc parent = checkParent(user, userMap);
+        if (parent != null){
+            upgrade(parent, eventList);
+            parent = checkParent(parent, userMap);
+            if (parent != null){
+                upgrade(parent,eventList);
+                parent = checkParent(parent,userMap);
+                if (parent != null){
+                    upgrade(parent,eventList);
+                }
+            }
+        }
 
         // update user level and trigger notify event, no need to trigger update event, since user in map already been
         // updated in above function upgrade
         jknService.upgradeUsers(eventList);
-        //notify user self
-        jknService.triggerEvent(new JknEvent(EV_USER_NOTIFY, user.userId, null));
 
         return ES_DONE;
+    }
+
+    UserDesc checkParent(UserDesc user, Map<Integer, UserDesc> userMap){
+        if (user.parent == null){
+            //load from db
+            JknUser self = jknService.get(JknUser.class,user.userId);
+            if (self.getReferrer() != null){
+                user.parent = new UserDesc(self.getReferrer());
+                userMap.put(self.getReferrer(), user.parent);
+                user.parent.addChild(user);
+            } else {
+                return null;
+            }
+        }
+        return user.parent;
     }
 
     private void upgrade(UserDesc user, List<JknEvent> eventList) {

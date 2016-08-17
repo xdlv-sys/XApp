@@ -8,13 +8,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 class UserDesc {
-    UserDesc(int userId) {
+
+    static UserDesc create(JknUser user){
+        return new UserDesc(user.getUserId(), user.getUserLevel());
+    }
+    void fill(JknUser user){
+        this.userId = user.getUserId();
+        this.userLevel = user.getUserLevel();
+    }
+    private UserDesc(int userId, byte userLevel) {
         this.userId = userId;
+        this.userLevel = userLevel;
     }
 
     int userId;
+    byte userLevel;
     UserDesc parent;
-    private List<UserDesc> children = new LinkedList<>();
+    List<UserDesc> children = new LinkedList<>();
     void addChild(UserDesc child){
         children.add(child);
     }

@@ -18,44 +18,21 @@ public class UserProcessOrder implements UserHandler {
     @Override
     public byte process(JknEvent event, Map<Integer, UserDesc> userMap) {
         Order order = jknService.get(Order.class, event.getDbKey());
-        int totalFee = order.getTotalFee();
-        JknUser user = jknService.get(JknUser.class, order.getUserId());
 
         //若是提现，则修改用户余额无须通知
         if (order.getTradeType() == TR_TYPE_MONEY) {
-            jknService.modifyUserCount(user.getUserId(), totalFee * -1, 0, 0, 0);
+            jknService.modifyUserCount(order.getUserId(), order.getTotalFee() * -1, 0, 0, 0);
             return ES_DONE;
         }
 
-        JknUser modifyUser = new JknUser();
-        modifyUser.setUserId(user.getUserId());
+        byte[] ret = jknService.updateUserProsForProcessOrder(order);
 
-        //增加消费总额
-        modifyUser.setConsumedCount(totalFee);
-        //余额支付
-        modifyUser.setCount(order.getBalanceFee() * -1);
-        boolean upgrade = false;
-        int allConsumedCount = user.getConsumedCount() + totalFee;
-
-        // 升级成正式会员,若消费总额达到59元
-        if (user.getUserLevel() < UL_NORMAL && allConsumedCount >= JKN.membership_count) {
-            modifyUser.setUserLevel(UL_NORMAL);
-            upgrade = true;
-        }
-        //升级成VIP，若消费总额达到590
-        if (user.getVip() < VIP && allConsumedCount >= JKN.vip_cost) {
-            modifyUser.setVip(VIP);
-            upgrade = true;
-        }
-
-        jknService.updateUserProsForProcessOrder(modifyUser);
-
-        if (upgrade){
-            jknService.triggerEvent(new JknEvent(EV_USER_UPGRADE,user.getUserId(),null));
+        if (ret[0] == TRUE){
+            jknService.triggerEvent(new JknEvent(EV_USER_UPGRADE,order.getUserId(),null));
         }
 
         //三级分销 当前用户是会员
-        if (upgrade || user.getUserLevel() > UL_NON){
+        if (ret[0] == TRUE || ret[1] > UL_NON){
             jknService.triggerEvent(new JknEvent(EV_USER_SETTLEMENT,order.getOrderId(),null));
         }
 

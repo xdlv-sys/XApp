@@ -6,6 +6,8 @@ public interface IConst {
 
     int OK = 200;
 
+    byte TRUE = 1, FALSE = 0;
+
     int DEFAULT_REFERRER = 3;
 
     byte VIP = 1, NON_VIP = 0;
