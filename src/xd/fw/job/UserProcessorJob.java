@@ -63,12 +63,12 @@ public class UserProcessorJob extends EventJob {
                     self = UserDesc.create(user);
                     userMap.put(user.getUserId(), self);
                 } else {
-                    self.userId = user.getUserId();
+                    self.fill(user);
                 }
                 if (user.getReferrer() != null) {
                     parent = userMap.get(user.getReferrer());
                     if (parent == null) {
-                        parent = new UserDesc(INVALIDATE_INT, UL_NON);
+                        parent = new UserDesc(INVALIDATE_INT);
                         userMap.put(user.getReferrer(), parent);
                     }
                     self.parent = parent;

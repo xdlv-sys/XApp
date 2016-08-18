@@ -23,12 +23,15 @@ public class UserUpgrade implements UserHandler {
 
         if (user == null) {
             //user upgrade from customer to membership
-            user = new UserDesc(self.getUserId(),self.getUserLevel());
+            user = UserDesc.create(self);
             userMap.put(self.getUserId(), user);
             user.parent = userMap.get(self.getReferrer());
+            if (user.parent != null){
+                user.parent.addChild(user);
+            }
         } else {
             //use level improved
-            user.userId = self.getUserId();
+            user.fill(self);
         }
         //notify user self
         jknService.triggerEvent(new JknEvent(EV_USER_NOTIFY, user.userId, null));
@@ -38,43 +41,52 @@ public class UserUpgrade implements UserHandler {
         List<JknEvent> eventList = new ArrayList<>();
         UserDesc parent = checkParent(user, userMap);
         if (parent != null){
-            upgrade(parent, eventList);
+            upgrade(parent, eventList,userMap);
             parent = checkParent(parent, userMap);
             if (parent != null){
-                upgrade(parent,eventList);
+                upgrade(parent,eventList,userMap);
                 parent = checkParent(parent,userMap);
                 if (parent != null){
-                    upgrade(parent,eventList);
+                    upgrade(parent,eventList,userMap);
                 }
             }
         }
 
-        // update user level and trigger notify event, no need to trigger update event, since user in map already been
-        // updated in above function upgrade
+        // update user level and trigger notify event
         jknService.upgradeUsers(eventList);
 
         return ES_DONE;
     }
 
     UserDesc checkParent(UserDesc user, Map<Integer, UserDesc> userMap){
+        if (user.referrer == null){
+            return null;
+        }
+
         if (user.parent == null){
-            //load from db
-            JknUser self = jknService.get(JknUser.class,user.userId);
-            if (self.getReferrer() != null){
-                user.parent = new UserDesc(self.getReferrer());
-                userMap.put(self.getReferrer(), user.parent);
-                user.parent.addChild(user);
+            //try to load in user map
+            user.parent = userMap.get(user.referrer);
+        }
+
+        if (user.parent == null || user.parent.userId == INVALIDATE_INT){
+            JknUser parent = jknService.get(JknUser.class, user.referrer);
+            if (user.parent == null){
+                user.parent = UserDesc.create(parent);
+                userMap.put(user.parent.userId, user.parent);
             } else {
-                return null;
+                user.parent.fill(parent);
             }
         }
+
+        user.parent.addChild(user);
+
         return user.parent;
     }
 
-    private void upgrade(UserDesc user, List<JknEvent> eventList) {
+    private void upgrade(UserDesc user, List<JknEvent> eventList, Map<Integer, UserDesc> userMap) {
 
-        int childrenCount = user.childCount(jknService);
-        int allChildrenCount = user.allChildCount(jknService);
+        int childrenCount = user.childCount();
+        int allChildrenCount = user.allChildCount();
 
         byte shouldLevel = UL_NON;
         if (childrenCount >= JKN.gold_ucn && allChildrenCount >= JKN.gold_acn) {
@@ -91,6 +103,7 @@ public class UserUpgrade implements UserHandler {
         if (dbUser.getUserLevel() < shouldLevel) {
             //upgrade user level and the record in db will be upgraded later
             eventList.add(new JknEvent(EV_USER_NOTIFY, user.userId, shouldLevel));
+            userMap.get(user.userId).userLevel = (byte)shouldLevel;
         }
     }
 }

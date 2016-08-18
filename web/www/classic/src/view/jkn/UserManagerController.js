@@ -4,7 +4,7 @@ Ext.define('XApp.view.jkn.UserManagerController', {
 
     queryUser: function (btn) {
         var form = btn.up('form');
-        this.getStore('JknUser').reload({
+        this.getStore('JknUser').loadPage(1,{
             params: form.getValues()
         });
     }

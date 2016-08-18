@@ -100,5 +100,34 @@ public class UserTest extends BasicTest {
         && j.getInt("count") == 10 * 5900 * 0.07 + 10 * 5900 * 0.09 + 5900 * 0.11);
     }
 
+    @Test(dependsOnMethods = "userUpgrade2")
+    public void userUpgrade3() throws Exception {
+
+        final int userId = 400;
+        final int tradeId = 300;
+
+        //create root user
+        assertAddUser(userId, 3);
+        sleep(2 * 1000);
+
+        // create 10 customer
+        for (int i=1;i<=10; i++){
+            assertAddUser(userId + i, userId);
+        }
+
+        assertAddUser(userId + 11, userId + 5);
+        assertAddTrade(tradeId ,userId + 11,TR_TYPE_CONSUME,5900);
+
+        sleep(5 * 1000);
+
+        checkUser((j)-> j.getInt("userId") == (userId + 11)
+                && j.getInt("userLevel") == UL_NORMAL);
+
+        checkUser((j)-> j.getInt("userId") == (userId + 5)
+                && j.getInt("userLevel") == UL_GOLD);
+        checkUser((j)-> j.getInt("userId") == (userId)
+                && j.getInt("userLevel") == UL_GOLD);
+    }
+
 
 }

@@ -27,10 +27,10 @@ Ext.define("XApp.view.jkn.UserManager",{
         },
         items: [{
             fieldLabel: '用户名',
-            name: 'jknUser.userName',
+            name: 'jknUser.userName'
         },{
             fieldLabel : '推荐人',
-            name: 'referrerName',
+            name: 'referrerName'
         },{
             xtype: 'button',
             text: '查询',

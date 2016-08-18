@@ -19,9 +19,9 @@
             <list>
                 <!--<ref bean="memoryCheckDoTime"/>-->
                 <ref bean="userProcessDoTime"/>
-                <!--<ref bean="notifyUserUpdateDoTime"/>
+                <ref bean="notifyUserUpdateDoTime"/>
                 <ref bean="sendSmsDoTime"/>
-                <ref bean="removeEarlierEventDoTime"/>-->
+                <ref bean="removeEarlierEventDoTime"/>
             </list>
         </property>
     </bean>
