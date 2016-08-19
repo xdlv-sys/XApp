@@ -20,8 +20,8 @@ public class UserTest extends BasicTest {
 
     @Test
     public void userUpgrade() throws Exception {
-        int userId = 200001;
-        int tradeId = 100001;
+        int userId = 200;
+        int tradeId = 100;
         int totalFeeOne = 5900, totalFeeTwo = 60000;
         int totalFee = totalFeeOne + totalFeeTwo;
         assertAddUser(userId,3);
@@ -103,6 +103,9 @@ public class UserTest extends BasicTest {
     @Test(dependsOnMethods = "userUpgrade2")
     public void userUpgrade3() throws Exception {
 
+        /**
+         * 1->2->3 , 3升级成会员后，2，3不成为黄金会员
+         */
         final int userId = 400;
         final int tradeId = 300;
 
@@ -124,10 +127,9 @@ public class UserTest extends BasicTest {
                 && j.getInt("userLevel") == UL_NORMAL);
 
         checkUser((j)-> j.getInt("userId") == (userId + 5)
-                && j.getInt("userLevel") == UL_GOLD);
+                && j.getInt("userLevel") == UL_NON);
         checkUser((j)-> j.getInt("userId") == (userId)
-                && j.getInt("userLevel") == UL_GOLD);
+                && j.getInt("userLevel") == UL_NON);
     }
-
 
 }

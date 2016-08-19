@@ -39,6 +39,7 @@ public class UserUpgrade implements UserHandler {
         //make sure three up generation exists
         //upgrade father ...
         List<JknEvent> eventList = new ArrayList<>();
+
         UserDesc parent = checkParent(user, userMap);
         if (parent != null){
             upgrade(parent, eventList,userMap);
@@ -84,6 +85,9 @@ public class UserUpgrade implements UserHandler {
     }
 
     private void upgrade(UserDesc user, List<JknEvent> eventList, Map<Integer, UserDesc> userMap) {
+        if (user.userLevel < UL_NORMAL){
+            return;
+        }
 
         int childrenCount = user.childCount();
         int allChildrenCount = user.allChildCount();

@@ -203,23 +203,29 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
         if (orderSettlement.getUserIdOne() != 0) {
             JknUser userOne = load(JknUser.class, orderSettlement.getUserIdOne());
-            userOne.setCount(orderSettlement.getCountOne() + userOne.getCount());
-            userOne.setCountOne(userOne.getCountOne() - orderSettlement.getCountOne());
-            update(userOne);
+            if (userOne.getCountOne() >= orderSettlement.getCountOne()){
+                userOne.setCount(orderSettlement.getCountOne() + userOne.getCount());
+                userOne.setCountOne(userOne.getCountOne() - orderSettlement.getCountOne());
+                update(userOne);
+            }
         }
 
         if (orderSettlement.getUserIdTwo() != 0) {
             JknUser userTwo = load(JknUser.class, orderSettlement.getUserIdTwo());
-            userTwo.setCount(orderSettlement.getCountTwo() + userTwo.getCount());
-            userTwo.setCountTwo(userTwo.getCountTwo() - orderSettlement.getCountTwo());
-            update(userTwo);
+            if (userTwo.getCountTwo() >= orderSettlement.getCountTwo()){
+                userTwo.setCount(orderSettlement.getCountTwo() + userTwo.getCount());
+                userTwo.setCountTwo(userTwo.getCountTwo() - orderSettlement.getCountTwo());
+                update(userTwo);
+            }
         }
 
         if (orderSettlement.getUserIdThree() != 0) {
             JknUser userThree = load(JknUser.class, orderSettlement.getUserIdThree());
-            userThree.setCount(orderSettlement.getCountThree() + userThree.getCount());
-            userThree.setCountThree(userThree.getCountThree() - orderSettlement.getCountThree());
-            update(userThree);
+            if (userThree.getCountThree() >= orderSettlement.getCountThree()){
+                userThree.setCount(orderSettlement.getCountThree() + userThree.getCount());
+                userThree.setCountThree(userThree.getCountThree() - orderSettlement.getCountThree());
+                update(userThree);
+            }
         }
         orderSettlement.setSettlementStatus(SS_DONE);
         update(orderSettlement);

@@ -27,12 +27,13 @@ public class UserProcessOrder implements UserHandler {
 
         byte[] ret = jknService.updateUserProsForProcessOrder(order);
 
-        if (ret[0] == TRUE){
+        /*if (ret[0] == TRUE){
             jknService.triggerEvent(new JknEvent(EV_USER_UPGRADE,order.getUserId(),null));
-        }
+        }*/
 
         //三级分销 当前用户是会员
         if (ret[0] == TRUE || ret[1] > UL_NON){
+            jknService.triggerEvent(new JknEvent(EV_USER_UPGRADE,order.getUserId(),null));
             jknService.triggerEvent(new JknEvent(EV_USER_SETTLEMENT,order.getOrderId(),null));
         }
 

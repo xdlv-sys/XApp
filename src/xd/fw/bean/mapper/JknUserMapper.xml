@@ -26,7 +26,7 @@
         where
         <if test="generation ==1">user_id_one</if>
         <if test="generation ==2">user_id_two</if>
-        <if test="generation ==3">user_id_three</if> = #{userId,jdbcType=INTEGER}
+        <if test="generation ==3">user_id_three</if> = #{userId,jdbcType=INTEGER} and settlement_status=0
     </select>
 
     <delete id="deleteEarlierEvent">

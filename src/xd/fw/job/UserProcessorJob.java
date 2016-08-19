@@ -90,6 +90,7 @@ public class UserProcessorJob extends EventJob {
                 throw new Error("recycle user relationship:" + child.userId);
             }
             ids.add(child.userId);
+
             checkUser(child,ids);
         }
     }
