@@ -1,8 +1,10 @@
 package xd.fw.mina;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import xd.fw.job.ParkNative;
 import xd.fw.mina.tlv.*;
 import xd.fw.service.ParkService;
 
@@ -12,10 +14,12 @@ import java.net.InetSocketAddress;
 @Service
 public class ParkProxy extends ReversedProxy {
 
-    static final byte QUERY_CAR = 2, QUERY_CAR_RESP = 3,FREE = 4, FREE_RESP = 5, PAY_FEE = 6, PAY_FEE_RESP = 7;
+    static final byte QUERY_CAR = 2, PAY_FEE = 3;
 
     @Autowired
-    ParkService parkService;
+    ParkNative parkNative;
+    @Autowired
+    ParkHandler parkHandler;
 
     @Value("${center_ip}")
     String host;
@@ -45,21 +49,23 @@ public class ParkProxy extends ReversedProxy {
 
     @Override
     protected void handlerQuery(TLVMessage msg) throws Exception {
-        //2->1471225285910->苏A12345->001
+        //2->1471225285910->苏A12345->001(parkId)->0(carType)
         //reuse msg
         byte code = (byte) msg.getValue();
         TLVMessage next = msg.getNext(0);
         switch (code){
             case QUERY_CAR:
-                String carNumber = (String)msg.getNext(1).getValue();
-                logger.debug("query for " + carNumber);
-
-                next.setNext("2016-1-1 18:30:20"
-                ).setNext("3小时20分钟").setNext(0.01f).setNext(carNumber);
-                response(msg);
-                break;
-            case FREE:
-                next.setNext(parkService.getFreeParkStation());
+                String carNumber = (String)msg.getNextValue(1);
+                String watchId = (String)msg.getNextValue(2);
+                ParkNative.ParkedInfo parkedInfo;
+                if (StringUtils.isNotBlank(watchId)){
+                    parkedInfo = parkHandler.queryCarInfo(QUERY_CAR,watchId,carNumber);
+                } else {
+                    byte carType = (byte)msg.getNextValue(3);
+                    parkedInfo = parkNative.getParkedInfo(carType, carNumber);
+                }
+                next.setNext(parkedInfo.fMoney
+                ).setNext(parkedInfo.sInTime).setNext(parkedInfo.iParkedTime);
                 response(msg);
                 break;
             case PAY_FEE:

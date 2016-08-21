@@ -1,6 +1,5 @@
 package xd.fw.job;
 
-import com.sun.org.glassfish.gmbal.ManagedObject;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoHandlerAdapter;
@@ -30,12 +29,12 @@ public class ParkTest extends IoHandlerAdapter {
         IoSession session = future.getSession();
 
         if ("1".equals(action)){
-            TLVMessage enter = new TLVMessage(1);
-            enter.setNext("À’A12345").setNext("20160530163322");
+            TLVMessage enter = new TLVMessage((byte)1);
+            enter.setNext("ËãèA12345").setNext("20160530163322");
             session.write(enter);
         } else {
-            TLVMessage out = new TLVMessage(2);
-            out.setNext("À’A12345").setNext(1.0f).setNext("20160530163322").setNext("20160530163323");
+            TLVMessage out = new TLVMessage((byte)2);
+            out.setNext("ËãèA12345").setNext(1.0f).setNext("20160530163322").setNext("20160530163323");
             session.write(out);
         }
         synchronized (this){
@@ -68,7 +67,9 @@ public class ParkTest extends IoHandlerAdapter {
     }
 
     public static void main(String[] args) throws Exception {
-        new ParkTest().sendDirectBuffer();
-        //new ParkTest().testPark("localhost,48011,1");
+        //new ParkTest().sendDirectBuffer();
+        new ParkTest().testPark("localhost,48011,1");
+
+        new ParkTest().testPark("localhost,48011,2");
     }
 }

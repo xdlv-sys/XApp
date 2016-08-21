@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xd.fw.HttpClientTpl;
 import xd.fw.job.IDongHui;
+import xd.fw.job.ParkNative;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
 
@@ -27,13 +28,13 @@ public class ParkHandler extends ReversedHandler {
 
     @Override
     protected boolean handlerMessage(TLVMessage msg, IoSession session) {
-        byte code = (byte)msg.getNextValue(0);
+        byte code = (byte)msg.getValue();
         if (code != 1 && code != 2){
             return false;
         }
         SendRequest sendRequest = code == 1 ? enterProcess : outProcess;
 
-        String[][] params = new String[0][];
+        String[][] params;
         try {
             params = sendRequest.constructParams(msg.getNext());
         } catch (Exception e) {
@@ -56,9 +57,22 @@ public class ParkHandler extends ReversedHandler {
         }
 
         TLVMessage ret = new TLVMessage(code);
-        ret.setNext(Integer.valueOf(jsonObject.getString("msg"))).setNext(msg.getNextValue(0));
+        ret.setNext(Integer.valueOf(jsonObject.getString("code"))).setNext(msg.getNextValue(0));
         session.write(ret);
 
         return true;
+    }
+
+    public ParkNative.ParkedInfo queryCarInfo(byte code,String watchId, String carNumber){
+        TLVMessage message = createRequest(code, carNumber);
+        TLVMessage ret = request(watchId, message);
+        ParkNative.ParkedInfo parkedInfo = new ParkNative.ParkedInfo();
+        if (ret != null){
+            parkedInfo.fMoney = (float)ret.getValue();
+            parkedInfo.sInTime = (String)ret.getNextValue(0);
+            parkedInfo.iParkedTime = (int)ret.getNextValue(1);
+            return parkedInfo;
+        }
+        return null;
     }
 }

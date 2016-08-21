@@ -19,6 +19,9 @@ public class FreeJob extends BaseJob implements IDongHui{
     @Value("${park_no}")
     String parkingNo;
 
+    @Value("${unique_key}")
+    String uniqueKey;
+
     @Override
     public void doExecute() throws Exception {
         logger.info("start to execute free job");
@@ -26,17 +29,18 @@ public class FreeJob extends BaseJob implements IDongHui{
 
         String timeStamp = getTimeStamp();
 
-        JSONObject tmp = post(svrAddress(), new String[][]{
+        String ret = HttpClientTpl.post(svrAddress(), new String[][]{
                 {"Parkingno", parkingNo},
                 {"Freenum", String.valueOf(freeParkPosition)},
                 {"Timestamp", timeStamp},
-                {"Token", md5(timeStamp, parkingNo, CODE)}
+                {"Uniquekey",uniqueKey},
+                {"Token", md5(timeStamp, parkingNo, uniqueKey)}
         });
-        logger.info("free result:" + tmp);
+        logger.info("free result:" + ret);
     }
 
     protected String svrAddress() {
-        return "http://" + serverHostName + "/mobile/index.php?act=user&op=spaces";
+        return "http://221.226.241.34:61158/mobile/index.php?v=2.0&act=thirdparking&op=spaces";
     }
 
 }

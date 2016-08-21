@@ -14,14 +14,18 @@ public class EnterProcess extends SendRequest{
         return new String[][]{
                 {"Parkingno", parkingNo},
                 {"Carnumber", carNumber},
+                {"CarPlateColorType","4"},
+                {"Uniquekey", uniqueKey},
+                {"DeviceNo",deviceNo},
+                {"Thumbname","default.jpg"},
                 {"Time1", time1},
                 {"Timestamp", timeStamp},
-                {"Token", md5(carNumber, timeStamp, parkingNo, CODE)}
+                {"Token", md5(carNumber, timeStamp, parkingNo, uniqueKey)}
         };
     }
 
     @Override
     public String svrAddress() {
-        return "http://" + serverHostName + "/mobile/index.php?act=user&op=approach";
+        return "http://221.226.241.34:61158/mobile/index.php?v=2.0&act=thirdparking&op=approach";
     }
 }

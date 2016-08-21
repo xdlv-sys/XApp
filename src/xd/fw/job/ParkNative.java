@@ -17,7 +17,7 @@ public class ParkNative {
 
     Logger logger = LoggerFactory.getLogger(ParkNative.class);
 
-    static class ParkedInfo {
+    public static class ParkedInfo {
         public String sInTime;
         public float fMoney;
         public int iParkedTime;
@@ -35,7 +35,7 @@ public class ParkNative {
     @Value("${db_pwd}")
     String pwd;
 
-    @PostConstruct
+    //@PostConstruct
     public void init() throws Exception {
         Class<?> cls = Class.forName("ParkNative");
         initialized = cls.getMethod("initialized", String.class, String.class, String.class, String.class);

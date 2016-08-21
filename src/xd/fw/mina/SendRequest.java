@@ -9,11 +9,13 @@ abstract class SendRequest implements IDongHui{
     @Value("${park_no}")
     String parkingNo;
 
+    @Value("${unique_key}")
+    String uniqueKey;
+
+    @Value("${device_no}")
+    String deviceNo;
+
     abstract String[][] constructParams(TLVMessage request) throws Exception;
 
     abstract String svrAddress();
-
-    String getCarNumber(TLVMessage request){
-        return (String)request.getValue();
-    }
 }
