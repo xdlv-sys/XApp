@@ -1,7 +1,5 @@
 package xd.fw.job;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @Service
@@ -35,7 +32,7 @@ public class ParkNative {
     @Value("${db_pwd}")
     String pwd;
 
-    //@PostConstruct
+    @PostConstruct
     public void init() throws Exception {
         Class<?> cls = Class.forName("ParkNative");
         initialized = cls.getMethod("initialized", String.class, String.class, String.class, String.class);

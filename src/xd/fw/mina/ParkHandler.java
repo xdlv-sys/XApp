@@ -28,7 +28,7 @@ public class ParkHandler extends ReversedHandler {
 
     @Override
     protected boolean handlerMessage(TLVMessage msg, IoSession session) {
-        byte code = (byte)msg.getValue();
+        int code = (int)msg.getValue();
         if (code != 1 && code != 2){
             return false;
         }
@@ -63,7 +63,7 @@ public class ParkHandler extends ReversedHandler {
         return true;
     }
 
-    public ParkNative.ParkedInfo queryCarInfo(byte code,String watchId, String carNumber){
+    public ParkNative.ParkedInfo queryCarInfo(int code,String watchId, String carNumber){
         TLVMessage message = createRequest(code, carNumber);
         TLVMessage ret = request(watchId, message);
         ParkNative.ParkedInfo parkedInfo = new ParkNative.ParkedInfo();
@@ -76,7 +76,7 @@ public class ParkHandler extends ReversedHandler {
         return null;
     }
 
-    public boolean payFee(byte code, String watchId, String carNumber, float money){
+    public boolean payFee(int code, String watchId, String carNumber, float money){
         TLVMessage message = createRequest(code, carNumber, money);
         TLVMessage ret = request(watchId, message);
         return ret != null && 200 == (int)ret.getValue();

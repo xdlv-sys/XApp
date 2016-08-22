@@ -14,7 +14,7 @@ import java.net.InetSocketAddress;
 @Service
 public class ParkProxy extends ReversedProxy {
 
-    static final byte QUERY_CAR = 2, PAY_FEE = 3;
+    static final int QUERY_CAR = 2, PAY_FEE = 3;
 
     @Autowired
     ParkNative parkNative;
@@ -51,7 +51,7 @@ public class ParkProxy extends ReversedProxy {
     protected void handlerQuery(TLVMessage msg) throws Exception {
         //2->1471225285910->苏A12345->001(parkId)->0(carType)
         //reuse msg
-        byte code = (byte) msg.getValue();
+        int code = (int) msg.getValue();
         TLVMessage next = msg.getNext(0);
         switch (code){
             case QUERY_CAR:

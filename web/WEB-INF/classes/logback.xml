@@ -64,7 +64,8 @@
 
     <logger name="org.mybatis" level="error"/>
 
-    <root level="info">
+    <root level="debug">
+        <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE-AUDIT" />
         <appender-ref ref="FILE-ERROR" />
     </root>
