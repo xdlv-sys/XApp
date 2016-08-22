@@ -31,7 +31,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
             logger.debug("receive:" + message);
         }
         TLVMessage msg = (TLVMessage) message;
-        byte code = (byte) msg.getValue();
+        int code = (int) msg.getValue();
         if (code == REGISTRY) {
             String id = (String) msg.getNextValue(0);
             synchronized (sessionMap) {
@@ -141,6 +141,6 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
             return null;
         }
         /*remove code adn timestamp*/
-        return (byte) ret.getValue() == NULL_MSG ? null : ret.getNext(1);
+        return (int) ret.getValue() == NULL_MSG ? null : ret.getNext(1);
     }
 }
