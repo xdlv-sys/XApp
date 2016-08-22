@@ -24,7 +24,7 @@ public class ParkNative {
         public int iReturn;
     }
 
-    Method initialized, unitialized, getParkedCarInfo;
+    Method initialized, unitialized, getParkedCarInfo, payParkCarFee;
 
     @Value("${db_host}")
     String host;
@@ -46,18 +46,27 @@ public class ParkNative {
 
         getParkedCarInfo = cls.getMethod("getParkedCarInfo", int.class, String.class);
         getParkedCarInfo.setAccessible(true);
+
+        payParkCarFee = cls.getMethod("payParkCarFee",String.class,String.class,float.class);
+        payParkCarFee.setAccessible(true);
     }
 
     public ParkedInfo getParkedInfo(int carType, String carNumber) {
-        try {
-            initialized.invoke(null, host, dbName, user, pwd);
+        return (ParkedInfo) executeTemplate(args -> {
             Object obj = getParkedCarInfo.invoke(null, carType, carNumber);
             ParkedInfo parkedInfo = new ParkedInfo();
             copyProperties(parkedInfo, obj);
             return parkedInfo;
+        }, carType, carNumber);
+    }
+
+    private Object executeTemplate(NativeProcess pro, Object... args){
+        try{
+            initialized.invoke(null, host, dbName, user, pwd);
+            return pro.process(args);
         } catch (Exception e) {
             logger.error("",e);
-        } finally {
+        } finally{
             try {
                 unitialized.invoke(null);
             } catch (Exception e) {
@@ -66,11 +75,21 @@ public class ParkNative {
         return null;
     }
 
+    public boolean payFee(String carNumber,String timeStamp, float totalFee){
+        return (boolean)executeTemplate(args->{
+            return ((int)payParkCarFee.invoke(null, carNumber, timeStamp, totalFee)) == 0;
+        });
+    }
+
     static class ParkedInfo2 {
         public String sInTime;
         public float fMoney;
         public int iParkedTime;
         public int iReturn;
+    }
+
+    static interface NativeProcess{
+        Object process(Object... args) throws Exception;
     }
 
     private static void copyProperties(Object dest, Object origin) throws Exception{

@@ -75,4 +75,10 @@ public class ParkHandler extends ReversedHandler {
         }
         return null;
     }
+
+    public boolean payFee(byte code, String watchId, String carNumber, float money){
+        TLVMessage message = createRequest(code, carNumber, money);
+        TLVMessage ret = request(watchId, message);
+        return ret != null && 200 == (int)ret.getValue();
+    }
 }
