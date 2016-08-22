@@ -2,6 +2,7 @@ package xd.fw;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.bean.DynamicConf;
 import xd.fw.service.FwService;
@@ -13,6 +14,8 @@ import java.util.List;
 
 @Service
 public class Conf {
+    @Value("${dynamic_config_load}")
+    boolean loadFromDb;
 
     static Logger logger = Logger.getLogger(Conf.class);
 
@@ -38,6 +41,9 @@ public class Conf {
 
     @PostConstruct
     public void readFromDb() {
+        if (!loadFromDb){
+            return;
+        }
         List<DynamicConf> dynamicConfigs = fwService.getList(DynamicConf.class, null, 0, -1);
         Field[] fields = this.getClass().getDeclaredFields();
         FwUtil.safeEach(dynamicConfigs, (config) -> {
