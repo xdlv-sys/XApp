@@ -11,11 +11,28 @@ public class OutProcess extends SendRequest{
         String price = String.valueOf(request.getNext(0).getValue());
         String time1 = (String) request.getNext(1).getValue();
         String time2 = (String) request.getNext(2).getValue();
+        int color = (int)request.getNextValue(3);
+        String deviceNo = (String)request.getNextValue(4);
+        String colorValue;
+        switch(color){
+            case 1:
+                colorValue = "blue";
+                break;
+            case 2:
+                colorValue = "yellow";
+                break;
+            case 3:
+                colorValue = "white";
+                break;
+            default:
+                colorValue = "black";
+        }
+
         String timeStamp = getTimeStamp();
         return new String[][]{
                 {"Parkingno", parkingNo},
                 {"Carnumber", carNumber},
-                {"CarPlateColor","blue"},
+                {"CarPlateColor",colorValue },
                 {"Uniquekey",uniqueKey},
                 {"DeviceNo",deviceNo},
                 {"Price", price},

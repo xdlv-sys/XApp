@@ -39,7 +39,7 @@ public abstract class ReversedProxy implements IMinaConst {
     public ReversedProxy() {
         connector = new NioSocketConnector(MinaWrapper.getPool());
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(
-                new TLVCodecFactory(FwUtil.UTF8)));
+                new TLVCodecFactory(charset())));
         connector.setHandler(new TLVHandler() {
             @Override
             public void messageReceived(IoSession session, Object message) throws Exception {
@@ -56,6 +56,9 @@ public abstract class ReversedProxy implements IMinaConst {
                 }
             }
         });
+    }
+    protected String charset(){
+        return FwUtil.UTF8;
     }
 
     private boolean processInnerMessage(TLVMessage msg) throws Exception {

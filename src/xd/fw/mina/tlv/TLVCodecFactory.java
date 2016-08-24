@@ -20,6 +20,7 @@ public class TLVCodecFactory implements ProtocolCodecFactory {
         encoder = new TLVEncoder();
         decoder = new TLVDecoder();
         this.charset = charset;
+        logger.info("user charset :" + charset);
     }
 
     public ProtocolEncoder getEncoder(IoSession ioSession) throws Exception {

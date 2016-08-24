@@ -1,0 +1,27 @@
+package xd.fw.mina;
+
+import org.springframework.stereotype.Service;
+import xd.fw.mina.tlv.TLVMessage;
+
+@Service
+public class SigIn extends SendRequest {
+
+    @Override
+    String[][] constructParams(TLVMessage request) throws Exception {
+        String deviceNo = (String)request.getValue();
+        String timeStamp = getTimeStamp();
+        return new String[][]{
+                {"Parkingno", parkingNo},
+                {"DeviceNo",deviceNo},
+                {"Uniquekey", uniqueKey},
+                {"SigninStatus","1"},
+                {"Timestamp", timeStamp},
+                {"Token", md5(timeStamp, parkingNo, uniqueKey)}
+        };
+    }
+
+    @Override
+    String svrAddress() {
+        return "http://221.226.241.34:61158/mobile/index.php?v=2.0&act=thirdparking&op=signin";
+    }
+}

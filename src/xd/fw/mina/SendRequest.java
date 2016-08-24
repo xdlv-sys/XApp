@@ -12,9 +12,6 @@ abstract class SendRequest implements IDongHui{
     @Value("${unique_key}")
     String uniqueKey;
 
-    @Value("${device_no}")
-    String deviceNo;
-
     abstract String[][] constructParams(TLVMessage request) throws Exception;
 
     abstract String svrAddress();

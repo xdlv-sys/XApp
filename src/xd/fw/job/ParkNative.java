@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -32,7 +33,7 @@ public class ParkNative {
     @Value("${db_pwd}")
     String pwd;
 
-    @PostConstruct
+    //@PostConstruct
     public void init() throws Exception {
         Class<?> cls = Class.forName("ParkNative");
         initialized = cls.getMethod("initialized", String.class, String.class, String.class, String.class);
@@ -46,6 +47,15 @@ public class ParkNative {
 
         payParkCarFee = cls.getMethod("payParkCarFee",String.class,String.class,float.class);
         payParkCarFee.setAccessible(true);
+
+        initialized.invoke(null, host, dbName, user, pwd);
+    }
+
+    @PreDestroy
+    public void destroy()throws Exception{
+        if (unitialized != null){
+            unitialized.invoke(null);
+        }
     }
 
     public ParkedInfo getParkedInfo(int carType, String carNumber) {
@@ -89,13 +99,15 @@ public class ParkNative {
         Object process(Object... args) throws Exception;
     }
 
-    private static void copyProperties(Object dest, Object origin) throws Exception{
+    private static void copyProperties(Object dest, Object origin)throws Exception{
         Field tmp;
         for (Field f: dest.getClass().getDeclaredFields()){
             tmp = origin.getClass().getDeclaredField(f.getName());
+            tmp.setAccessible(true);
             if (tmp == null || tmp.get(origin) == null){
                 continue;
             }
+            f.setAccessible(true);
             f.set(dest,tmp.get(origin));
         }
     }

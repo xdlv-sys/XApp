@@ -14,7 +14,7 @@ import java.net.InetSocketAddress;
 @Service
 public class ParkProxy extends ReversedProxy {
 
-    static final int QUERY_CAR = 2, PAY_FEE = 3;
+    static final int QUERY_CAR = 3, PAY_FEE = 4;
 
     @Autowired
     ParkNative parkNative;

@@ -19,20 +19,40 @@ public class ParkHandler extends ReversedHandler {
 
     @Autowired
     EnterProcess enterProcess;
+    @Autowired
+    SigIn sigIn;
+    @Autowired
+    SigOut sigOut;
+
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
-        //岗亭注册，直接返回
-        session.write(msg);
+        //岗亭注册，直接返回 0->200->watchId
+        TLVMessage ret = new TLVMessage(msg.getValue());
+        ret.setNext(200).setNext(msg.getNextValue(0));
+        session.write(ret);
     }
 
     @Override
     protected boolean handlerMessage(TLVMessage msg, IoSession session) {
         int code = (int)msg.getValue();
-        if (code != 1 && code != 2){
-            return false;
+        SendRequest sendRequest;
+        switch (code){
+            case 1:
+                sendRequest = enterProcess;
+                break;
+            case 2 :
+                sendRequest = outProcess;
+                break;
+            case 5:
+                sendRequest = sigIn;
+                break;
+            case 6:
+                sendRequest = sigOut;
+                break;
+            default:
+                return false;
         }
-        SendRequest sendRequest = code == 1 ? enterProcess : outProcess;
 
         String[][] params;
         try {
@@ -67,10 +87,10 @@ public class ParkHandler extends ReversedHandler {
         TLVMessage message = createRequest(code, carNumber);
         TLVMessage ret = request(watchId, message);
         ParkNative.ParkedInfo parkedInfo = new ParkNative.ParkedInfo();
-        if (ret != null){
-            parkedInfo.fMoney = (float)ret.getValue();
-            parkedInfo.sInTime = (String)ret.getNextValue(0);
-            parkedInfo.iParkedTime = (int)ret.getNextValue(1);
+        if (ret != null && 200 == (int)ret.getValue() ){
+            parkedInfo.fMoney = (float)ret.getNextValue(0);
+            parkedInfo.sInTime = (String)ret.getNextValue(1);
+            parkedInfo.iParkedTime = (int)ret.getNextValue(2);
             return parkedInfo;
         }
         return null;
