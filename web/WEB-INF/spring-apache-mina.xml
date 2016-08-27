@@ -18,7 +18,10 @@
             </bean>
         </constructor-arg>
     </bean>
-    <bean id="loggingFilter" class="xd.fw.mina.tlv.BufferLoggingFilter"/>
+    <bean id="loggingFilter" class="xd.fw.mina.tlv.BufferLoggingFilter">
+        <property name="messageSentLogLevel" value="DEBUG"/>
+        <property name="sessionIdleLogLevel" value="DEBUG"/>
+    </bean>
 
     <bean id="executor" class="org.apache.mina.filter.executor.ExecutorFilter">
         <!-- max size-->
