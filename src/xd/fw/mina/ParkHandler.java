@@ -23,6 +23,8 @@ public class ParkHandler extends ReversedHandler {
     SigIn sigIn;
     @Autowired
     SigOut sigOut;
+    @Autowired
+    Thumb thumb;
 
 
     @Override
@@ -49,6 +51,9 @@ public class ParkHandler extends ReversedHandler {
                 break;
             case 6:
                 sendRequest = sigOut;
+                break;
+            case 7 :
+                sendRequest = thumb;
                 break;
             default:
                 return false;

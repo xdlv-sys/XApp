@@ -33,7 +33,7 @@ public class ParkNative {
     @Value("${db_pwd}")
     String pwd;
 
-    //@PostConstruct
+    @PostConstruct
     public void init() throws Exception {
         Class<?> cls = Class.forName("ParkNative");
         initialized = cls.getMethod("initialized", String.class, String.class, String.class, String.class);
@@ -64,20 +64,14 @@ public class ParkNative {
             ParkedInfo parkedInfo = new ParkedInfo();
             copyProperties(parkedInfo, obj);
             return parkedInfo;
-        }, carType, carNumber);
+        });
     }
 
     private Object executeTemplate(NativeProcess pro, Object... args){
         try{
-            initialized.invoke(null, host, dbName, user, pwd);
             return pro.process(args);
         } catch (Exception e) {
             logger.error("",e);
-        } finally{
-            try {
-                unitialized.invoke(null);
-            } catch (Exception e) {
-            }
         }
         return null;
     }
@@ -95,7 +89,7 @@ public class ParkNative {
         public int iReturn;
     }
 
-    static interface NativeProcess{
+    interface NativeProcess{
         Object process(Object... args) throws Exception;
     }
 
