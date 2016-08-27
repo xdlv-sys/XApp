@@ -6,7 +6,8 @@ import xd.fw.FwUtil;
 import java.io.UnsupportedEncodingException;
 
 public class TLVMessage {
-    public static final byte BYTE_TYPE = 1, INT_TYPE = 2, LONG_TYPE = 3, FLOAT_TYPE = 4, DOUBLE_TYPE = 5, STRING_TYPE = 6, BOOLEAN_TYPE = 7;
+    public static final byte BYTE_TYPE = 1, INT_TYPE = 2, LONG_TYPE = 3, FLOAT_TYPE = 4, DOUBLE_TYPE = 5
+            , STRING_TYPE = 6, BOOLEAN_TYPE = 7, IMG_TYPE = 8;
     //byte type;
     Object value;
     TLVMessage next;
@@ -85,6 +86,12 @@ public class TLVMessage {
                 } catch (UnsupportedEncodingException e) {
                     throw new IllegalArgumentException(e);
                 }
+            case IMG_TYPE:
+                length = buffer.getInt();
+                bytes = new byte[length];
+                buffer.get(bytes);
+                return new TLVMessage(bytes);
+
         }
         throw new IllegalArgumentException("invalidate buffer:" + type);
     }
@@ -134,6 +141,12 @@ public class TLVMessage {
             }
             return;
         }
+        if (value instanceof byte[]){
+            byte[] bytes = (byte[])value;
+            buffer.put(IMG_TYPE);
+            buffer.putInt(bytes.length);
+            buffer.put(bytes);
+        }
         throw new IllegalArgumentException("invalidate object:" + value);
     }
 
@@ -150,7 +163,7 @@ public class TLVMessage {
 
     public static void main(String[] args){
         IoBuffer buffer = IoBuffer.wrap(new byte[]{
-                0x01,0x00,0x00,0x00,0x01,0x01,0x06,0x00,0x00,0x00,0x04,0x30,0x30,0x30,0x31,0x06,0x00,0x00,0x00,0x08,(byte)0xBD,(byte)0xF2,0x41,0x47,0x48,0x55,0x59,0x54,0x06,0x00,0x00,0x00,0x09,0x32,0x30,0x31,0x36,0x30,0x36,0x30,0x39,0x31
+                0x04, 0x00, 0x00, 0x00, 0x04, 0x3C, 0x23,(byte)0xD7,0x0A
         });
 
         while (buffer.hasRemaining()){

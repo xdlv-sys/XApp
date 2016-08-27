@@ -1,13 +1,17 @@
 package xd.fw;
 
 import org.apache.http.*;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -99,6 +103,46 @@ public class HttpClientTpl {
             entity = response.getEntity();
             Object res = processor.process(entity);
             logger.debug(res);
+            return res;
+        } finally {
+            if (entity != null) {
+                try {
+                    EntityUtils.consume(entity);
+                } catch (Exception e) {
+                }
+            }
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (Exception e) {
+                }
+            }
+            //httpclient.close();
+        }
+    }
+
+    public static String executeMulti(String url, Object[][] params) throws Exception{
+        CloseableHttpResponse response = null;
+        HttpEntity entity = null;
+        try {
+            HttpPost request = new HttpPost(url);
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            for (Object[] param : params) {
+                if (param[1] instanceof String){
+                    builder.addTextBody((String)param[0],(String)param[1]);
+                } else {
+                    builder.addBinaryBody((String)param[0],(byte[])param[1]);
+                }
+            }
+            request.setEntity(builder.build());
+
+            response = httpclient.execute(request);
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode()
+                    != HttpStatus.SC_OK) {
+                throw new Exception("http status is wrong:" + statusLine);
+            }
+            String res = (String)stringProcessor.process(entity);
             return res;
         } finally {
             if (entity != null) {
