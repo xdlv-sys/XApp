@@ -24,10 +24,12 @@ public class MinaWrapper {
     IoHandler handler;
     IoFilterChainBuilder filterChainBuilder;
     NioSocketAcceptor acceptor;
-    SimpleIoProcessorPool<NioSession> pool;
+    static SimpleIoProcessorPool<NioSession> pool;
+    static{
+        pool = new SimpleIoProcessorPool<NioSession>(NioProcessor.class);
+    }
 
     public void init() throws IOException {
-        pool = new SimpleIoProcessorPool<NioSession>(NioProcessor.class);
 
         acceptor = new NioSocketAcceptor(pool);
         acceptor.setDefaultLocalAddress(defaultLocalAddress);
@@ -72,7 +74,7 @@ public class MinaWrapper {
     public void setFilterChainBuilder(IoFilterChainBuilder filterChainBuilder) {
         this.filterChainBuilder = filterChainBuilder;
     }
-    public SimpleIoProcessorPool getPool(){
-        return this.pool;
+    public static SimpleIoProcessorPool getPool(){
+        return pool;
     }
 }

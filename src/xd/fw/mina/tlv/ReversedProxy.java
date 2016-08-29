@@ -10,27 +10,27 @@ import org.apache.mina.transport.socket.SocketConnector;
 import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSession;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import xd.fw.FwUtil;
 import xd.fw.job.BaseJob;
 
 import java.net.InetSocketAddress;
-
+@Service
 public abstract class ReversedProxy extends BaseJob implements IMinaConst{
 
     private SocketConnector connector;
-    IoProcessor<NioSession> pool;
     private IoSession session;
 
+
     public ReversedProxy() {
-        pool = new SimpleIoProcessorPool<NioSession>(NioProcessor.class);
-        connector = new NioSocketConnector(pool);
+        connector = new NioSocketConnector(MinaWrapper.getPool());
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(
                 new TLVCodecFactory(FwUtil.UTF8)));
         connector.setHandler(new TLVHandler() {
             @Override
             public void messageReceived(IoSession session, Object message) throws Exception {
                 TLVMessage msg = (TLVMessage) message;
-                logger.debug("message:" + msg);
                 handlerQuery(msg);
             }
         });
@@ -39,7 +39,6 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst{
     public void destroy() {
         super.destroy();
         connector.dispose();
-        pool.dispose();
     }
 
     @Override
