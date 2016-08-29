@@ -50,7 +50,7 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst{
         TLVMessage registryMessage = new TLVMessage(REGISTRY);
         constructRegistryMessage(registryMessage);
 
-        session.write(registryMessage);
+        session.write(registryMessage).awaitUninterruptibly();
     }
 
     protected abstract void constructRegistryMessage(TLVMessage registryMessage);

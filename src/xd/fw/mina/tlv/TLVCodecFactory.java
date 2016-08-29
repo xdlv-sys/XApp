@@ -54,34 +54,59 @@ public class TLVCodecFactory implements ProtocolCodecFactory {
         }
     }
 
+    class Parse{
+        boolean head = false;
+        int length;
+        void reset(){
+            head = false;
+        }
+    }
+    final String KEY = "PARSER";
+
     class TLVDecoder extends CumulativeProtocolDecoder {
         @Override
         protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
-            if (in.remaining() >= HEAD_LENGTH) {
-                if (in.get() == magic[0]
-                        && in.get() == magic[1]) {
-                    logger.debug("magic is right.");
-                } else {
-                    throw new Exception("wrong magic");
-                }
-                int length = in.getInt();
-                if (in.remaining() >= length) {
-                    TLVMessage message = null, tmp,currentMsg = null;
-                    int position = in.position();
-                    while (in.position() - position < length) {
-                        tmp = TLVMessage.parse(in, charset);
-                        if (message == null) {
-                            currentMsg = message = tmp;
+            Parse parse = (Parse)session.getAttribute(KEY);
+            if (parse == null){
+                parse = new Parse();
+                session.setAttribute(KEY,parse);
+            }
+
+            while(in.hasRemaining()){
+                if (!parse.head){
+                    if (in.remaining() >= HEAD_LENGTH){
+                        if (in.get() == magic[0]
+                                && in.get() == magic[1]) {
+                            logger.debug("magic is right.");
                         } else {
-                            currentMsg.setNext(tmp);
-                            currentMsg = tmp;
+                            throw new Exception("wrong magic");
                         }
+                        parse.length = in.getInt();
+                        parse.head = true;
+                    } else {
+                        return false;
                     }
-                    out.write(message);
-                    return true;
+                } else {
+                    if (in.remaining() >= parse.length){
+                        TLVMessage message = null, tmp,currentMsg = null;
+                        int position = in.position();
+                        while (in.position() - position < parse.length) {
+                            tmp = TLVMessage.parse(in, charset);
+                            if (message == null) {
+                                currentMsg = message = tmp;
+                            } else {
+                                currentMsg.setNext(tmp);
+                                currentMsg = tmp;
+                            }
+                        }
+                        out.write(message);
+                        parse.reset();
+                    } else {
+                        return false;
+                    }
                 }
             }
-            return false;
+            return true;
         }
     }
 }

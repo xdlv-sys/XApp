@@ -27,9 +27,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
-        if (logger.isDebugEnabled()) {
-            logger.debug("receive:" + message);
-        }
+        logger.info("receive:" + message);
         TLVMessage msg = (TLVMessage) message;
         int code = (int) msg.getValue();
         if (code == REGISTRY) {
@@ -114,6 +112,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
     protected TLVMessage request(String parkId, TLVMessage message) {
         IoSession session = getSession(parkId);
         if (session == null) {
+            logger.info("there is no park session:" + parkId);
             return null;
         }
         // timestamp is just behind code
@@ -137,10 +136,15 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
                 discardRequests.add(messageId);
             }
 
-            logger.debug("add discard message:" + messageId);
+            logger.info("add discard message:" + messageId);
             return null;
         }
         /*remove code adn timestamp*/
-        return (int) ret.getValue() == NULL_MSG ? null : ret.getNext(1);
+        ret = ret.getNext(1);
+        if (ret.getValue() instanceof Integer
+                && (int) ret.getValue() == NULL_MSG){
+            return null;
+        }
+        return ret;
     }
 }
