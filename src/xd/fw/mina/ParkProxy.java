@@ -49,6 +49,7 @@ public class ParkProxy extends ReversedProxy {
 
     @Override
     protected void handlerQuery(TLVMessage msg) throws Exception {
+        logger.info("receive:" + msg);
         //2->1471225285910->苏A12345->001(parkId)->0(carType)
         //reuse msg
         int code = (int) msg.getValue();
@@ -63,9 +64,10 @@ public class ParkProxy extends ReversedProxy {
                 } else {
                     byte carType = (byte)msg.getNextValue(3);
                     parkedInfo = parkNative.getParkedInfo(carType, carNumber);
+                    parkedInfo.carNumber = carNumber;
                 }
                 if (parkedInfo != null){
-                    next.setNext(parkedInfo.fMoney
+                    next.setNext(parkedInfo.carNumber).setNext(parkedInfo.fMoney
                     ).setNext(parkedInfo.sInTime).setNext(parkedInfo.iParkedTime);
                 } else {
                     //just return null

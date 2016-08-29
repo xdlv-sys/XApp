@@ -16,6 +16,7 @@ public class ParkNative {
     Logger logger = LoggerFactory.getLogger(ParkNative.class);
 
     public static class ParkedInfo {
+        public String carNumber;
         public String sInTime;
         public float fMoney;
         public int iParkedTime;
@@ -96,7 +97,12 @@ public class ParkNative {
     private static void copyProperties(Object dest, Object origin)throws Exception{
         Field tmp;
         for (Field f: dest.getClass().getDeclaredFields()){
-            tmp = origin.getClass().getDeclaredField(f.getName());
+            try{
+                tmp = origin.getClass().getDeclaredField(f.getName());
+            } catch (NoSuchFieldException e){
+                continue;
+            }
+
             tmp.setAccessible(true);
             if (tmp == null || tmp.get(origin) == null){
                 continue;

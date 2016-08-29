@@ -7,7 +7,6 @@ import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xd.fw.HttpClientTpl;
-import xd.fw.job.IDongHui;
 import xd.fw.job.ParkNative;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
@@ -26,7 +25,6 @@ public class ParkHandler extends ReversedHandler {
     @Autowired
     Thumb thumb;
 
-
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
         //岗亭注册，直接返回 0->200->watchId
@@ -37,13 +35,13 @@ public class ParkHandler extends ReversedHandler {
 
     @Override
     protected boolean handlerMessage(TLVMessage msg, IoSession session) {
-        int code = (int)msg.getValue();
+        int code = (int) msg.getValue();
         SendRequest sendRequest;
-        switch (code){
+        switch (code) {
             case 1:
                 sendRequest = enterProcess;
                 break;
-            case 2 :
+            case 2:
                 sendRequest = outProcess;
                 break;
             case 5:
@@ -52,7 +50,7 @@ public class ParkHandler extends ReversedHandler {
             case 6:
                 sendRequest = sigOut;
                 break;
-            case 7 :
+            case 7:
                 sendRequest = thumb;
                 break;
             default:
@@ -63,7 +61,7 @@ public class ParkHandler extends ReversedHandler {
         try {
             params = sendRequest.constructParams(msg.getNext());
         } catch (Exception e) {
-            logger.error("",e);
+            logger.error("", e);
             return true;
         }
 
@@ -75,10 +73,10 @@ public class ParkHandler extends ReversedHandler {
             json = HttpClientTpl.post(sendRequest.svrAddress(), params);
             jsonObject = JSONObject.fromObject(json);
         } catch (Exception e) {
-            logger.error("error json:" + json ,e);
+            logger.error("error json:" + json, e);
             jsonObject = new JSONObject();
-            jsonObject.put("state",false);
-            jsonObject.put("msg","-1");
+            jsonObject.put("state", false);
+            jsonObject.put("msg", "-1");
         }
 
         TLVMessage ret = new TLVMessage(code);
@@ -88,22 +86,23 @@ public class ParkHandler extends ReversedHandler {
         return true;
     }
 
-    public ParkNative.ParkedInfo queryCarInfo(int code,String watchId, String carNumber){
+    public ParkNative.ParkedInfo queryCarInfo(int code, String watchId, String carNumber) {
         TLVMessage message = createRequest(code, carNumber);
         TLVMessage ret = request(watchId, message);
         ParkNative.ParkedInfo parkedInfo = new ParkNative.ParkedInfo();
-        if (ret != null && 200 == (int)ret.getValue() ){
-            parkedInfo.fMoney = (float)ret.getNextValue(0);
-            parkedInfo.sInTime = (String)ret.getNextValue(1);
-            parkedInfo.iParkedTime = (int)ret.getNextValue(2);
+        if (ret != null && 200 == (int) ret.getValue()) {
+            parkedInfo.carNumber = (String) ret.getNextValue(0);
+            parkedInfo.fMoney = (float) ret.getNextValue(1);
+            parkedInfo.sInTime = (String) ret.getNextValue(2);
+            parkedInfo.iParkedTime = (int) ret.getNextValue(3);
             return parkedInfo;
         }
         return null;
     }
 
-    public boolean payFee(int code, String watchId, String carNumber, float money){
+    public boolean payFee(int code, String watchId, String carNumber, float money) {
         TLVMessage message = createRequest(code, carNumber, money);
         TLVMessage ret = request(watchId, message);
-        return ret != null && 200 == (int)ret.getValue();
+        return ret != null && 200 == (int) ret.getValue();
     }
 }
