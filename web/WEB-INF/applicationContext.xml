@@ -83,8 +83,8 @@
                 <!--<prop key="hibernate.cache.provider_configuration_file_resource_path">classpath:ehcache/ehcache.properties</prop>-->
                 <!--<prop key="hibernate.search.default.directory_provider">filesystem</prop>
                 <prop key="hibernate.search.default.indexBase">${hibernate.search.default.indexBase}</prop>-->
-                <prop key="hibernate.show_sql">true</prop>
-                <prop key="format_sql">true</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="format_sql">false</prop>
                 <prop key="hibernate.dialect">${jdbc_dialect}</prop>
             </props>
         </property>
