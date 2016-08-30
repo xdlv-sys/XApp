@@ -4,10 +4,14 @@ package xd.fw.action;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 import xd.fw.FwException;
 import xd.fw.FwUtil;
 import xd.fw.bean.Role;
 import xd.fw.bean.User;
+import xd.fw.scheduler.DeleteUserEvent;
 import xd.fw.service.FwService;
 
 import java.util.ArrayList;
@@ -16,6 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 public class UserAction extends BaseAction {
+    @Autowired
+    ApplicationContext applicationContext;
     @Autowired
     FwService fwService;
 
@@ -43,6 +49,8 @@ public class UserAction extends BaseAction {
     public String deleteUser() {
         for (int i=0; users != null && i<users.size();i++){
             fwService.delete(User.class,users.get(i).getId());
+            applicationContext.publishEvent(
+                    new DeleteUserEvent(users.get(i)));
         }
         return FINISH;
     }
