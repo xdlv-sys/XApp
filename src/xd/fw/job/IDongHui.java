@@ -1,10 +1,8 @@
 package xd.fw.job;
 
-import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xd.fw.FwUtil;
-import xd.fw.HttpClientTpl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

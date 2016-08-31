@@ -2,6 +2,8 @@ package xd.fw.action;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import xd.fw.FwUtil;
@@ -11,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class OrderAction extends BaseAction {
+    Logger logger = LoggerFactory.getLogger(OrderAction.class);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -45,6 +48,7 @@ public class OrderAction extends BaseAction {
 
     @Action("QueryOrder")
     public String queryOrder(){
+        logger.info("query order {}", carnumber);
         ParkNative.ParkedInfo parkedInfo = parkNative.getParkedInfo(carPlateColorType == 2 ? 1 : 0, carnumber);
 
         msg = fail;

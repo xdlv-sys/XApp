@@ -76,11 +76,12 @@ public class ParkHandler extends ReversedHandler {
             logger.error("error json:" + json, e);
             jsonObject = new JSONObject();
             jsonObject.put("state", false);
-            jsonObject.put("msg", "-1");
+            jsonObject.put("code", "-1");
         }
 
         TLVMessage ret = new TLVMessage(code);
-        ret.setNext(Integer.valueOf(jsonObject.getString("code"))).setNext(msg.getNextValue(0));
+        sendRequest.constructMessage(ret.setNext(
+                Integer.valueOf(jsonObject.getString("code"))),msg);
         session.write(ret);
 
         return true;

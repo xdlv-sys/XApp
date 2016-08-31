@@ -15,6 +15,7 @@ public class Thumb extends SendRequest {
 
     @Override
     String[][] constructParams(TLVMessage request) throws Exception {
+        logger.info("start to send to thumb");
         //首先上传到文件服务器
         String ret = HttpClientTpl.executeMulti("http://221.226.241.34:61170", new Object[][]{
                 {"Authorization","etc"},
@@ -39,6 +40,6 @@ public class Thumb extends SendRequest {
 
     @Override
     String svrAddress() {
-        return "http://221.226.241.34:61158/mobile/index.php?v=2.0&act=thirdparking&op=thumb";
+        return "http://"+dhHost+"/mobile/index.php?v=2.0&act=thirdparking&op=thumb";
     }
 }

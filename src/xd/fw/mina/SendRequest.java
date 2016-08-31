@@ -11,8 +11,14 @@ abstract class SendRequest implements IDongHui{
 
     @Value("${unique_key}")
     String uniqueKey;
+    @Value("${dh_host}")
+    String dhHost;
 
     abstract String[][] constructParams(TLVMessage request) throws Exception;
 
     abstract String svrAddress();
+
+    void constructMessage(TLVMessage ret,TLVMessage request){
+        ret.setNext(request.getNextValue(0));
+    }
 }

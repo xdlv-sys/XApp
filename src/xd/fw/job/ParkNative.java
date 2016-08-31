@@ -34,7 +34,7 @@ public class ParkNative {
     @Value("${db_pwd}")
     String pwd;
 
-    @PostConstruct
+    //@PostConstruct
     public void init() throws Exception {
         Class<?> cls = Class.forName("ParkNative");
         initialized = cls.getMethod("initialized", String.class, String.class, String.class, String.class);

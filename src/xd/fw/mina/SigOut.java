@@ -22,6 +22,6 @@ public class SigOut extends SendRequest {
 
     @Override
     String svrAddress() {
-        return "http://221.226.241.34:61158/mobile/index.php?v=2.0&act=thirdparking&op=signout";
+        return "http://"+dhHost+"/mobile/index.php?v=2.0&act=thirdparking&op=signout";
     }
 }

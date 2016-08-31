@@ -28,6 +28,6 @@ public class EnterProcess extends SendRequest{
 
     @Override
     public String svrAddress() {
-        return "http://221.226.241.34:61158/mobile/index.php?v=2.0&act=thirdparking&op=approach";
+        return "http://"+dhHost+"/mobile/index.php?v=2.0&act=thirdparking&op=approach";
     }
 }

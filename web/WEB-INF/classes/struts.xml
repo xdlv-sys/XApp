@@ -3,7 +3,7 @@
 
 <struts>
 
-	<constant name="struts.action.extension" value="cmd"/>
+	<constant name="struts.action.extension" value="cmd,"/>
     <constant name="struts.devMode" value="true"/>
     <!-- 开发模式 -->
     <constant name="struts.configuration.xml.reload" value="true" /> 	<!-- Web运用编码 -->
