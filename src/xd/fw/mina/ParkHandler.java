@@ -89,7 +89,9 @@ public class ParkHandler extends ReversedHandler {
 
     public ParkNative.ParkedInfo queryCarInfo(int code, String watchId, String carNumber) {
         TLVMessage message = createRequest(code, carNumber);
+        logger.info("start query car by wh: " + message);
         TLVMessage ret = request(watchId, message);
+        logger.info("end query car by wh: " + ret);
         ParkNative.ParkedInfo parkedInfo = new ParkNative.ParkedInfo();
         if (ret != null && 200 == (int) ret.getValue()) {
             parkedInfo.carNumber = (String) ret.getNextValue(0);
