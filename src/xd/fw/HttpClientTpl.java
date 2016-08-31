@@ -137,6 +137,7 @@ public class HttpClientTpl {
             request.setEntity(builder.build());
 
             response = httpclient.execute(request);
+            entity = request.getEntity();
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode()
                     != HttpStatus.SC_OK) {
