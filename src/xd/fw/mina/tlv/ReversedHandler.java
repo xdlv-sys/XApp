@@ -2,10 +2,13 @@ package xd.fw.mina.tlv;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.session.IoSession;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.*;
 
 public class ReversedHandler extends TLVHandler implements IMinaConst{
+    @Value("${mina_timeout}")
+    int minaTimeout;
 
     static List<String> discardRequests = new LinkedList<>();
 
@@ -117,16 +120,16 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
         }
         // timestamp is just behind code
         String messageId = (String)message.getNextValue(0);
-        session.write(message);
+        session.write(message).awaitUninterruptibly();
 
         TLVMessage ret;
         int count = 0;
         while ((ret = (TLVMessage) session.removeAttribute(messageId)) == null) {
-            if (count++ > 200) {
+            if (count++ > minaTimeout) {
                 break;
             }
             try {
-                Thread.sleep(10);
+                Thread.sleep(5);
             } catch (InterruptedException e) {
                 logger.error("", e);
             }

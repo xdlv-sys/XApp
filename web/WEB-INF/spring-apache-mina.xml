@@ -23,7 +23,7 @@
         <property name="sessionIdleLogLevel" value="DEBUG"/>
     </bean>
 
-    <bean id="executor" class="org.apache.mina.filter.executor.ExecutorFilter">
+    <bean id="minaExecutor" class="org.apache.mina.filter.executor.ExecutorFilter">
         <!-- max size-->
         <constructor-arg index="0" value="0"/>
         <constructor-arg index="1" value="${mina_pool_size}"/>
@@ -36,7 +36,7 @@
             <map>
                 <entry key="loggingFilter" value-ref="loggingFilter"/>
                 <entry key="codecFilter" value-ref="tlvCodecFilter"/>
-                <entry key="threadPool" value-ref="executor"/>
+                <entry key="threadPool" value-ref="minaExecutor"/>
             </map>
         </property>
     </bean>
