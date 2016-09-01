@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import xd.fw.FwUtil;
 import xd.fw.job.ParkNative;
+import xd.fw.mina.ParkHandler;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +21,9 @@ public class OrderAction extends BaseAction {
 
     @Autowired
     ParkNative parkNative;
+
+    @Autowired
+    ParkHandler parkHandler;
 
     String parkingno;
     String carnumber;
@@ -74,6 +78,9 @@ public class OrderAction extends BaseAction {
         if (ret){
             code = 200;
             msg = success;
+
+            //notify all watch house
+            parkHandler.notifyWatchIdPayFee(carnumber, parkingPrice);
         }
         return SUCCESS;
     }

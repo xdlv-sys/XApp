@@ -19,6 +19,6 @@ abstract class SendRequest implements IDongHui{
     abstract String svrAddress();
 
     void constructMessage(TLVMessage ret,TLVMessage request){
-        ret.setNext(request.getNextValue(0));
+        ret.setNext(request.getNextValue(0)).setNext(request.getNextValue(1));
     }
 }

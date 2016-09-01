@@ -33,9 +33,14 @@ public class ParkNative {
     String user;
     @Value("${db_pwd}")
     String pwd;
+    @Value("${init_park_jni}")
+    boolean initParkJni;
 
-    //@PostConstruct
+    @PostConstruct
     public void init() throws Exception {
+        if (!initParkJni){
+            return;
+        }
         Class<?> cls = Class.forName("ParkNative");
         initialized = cls.getMethod("initialized", String.class, String.class, String.class, String.class);
         initialized.setAccessible(true);

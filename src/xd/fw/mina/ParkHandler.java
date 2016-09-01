@@ -11,6 +11,8 @@ import xd.fw.job.ParkNative;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
 
+import java.util.List;
+
 @Service
 public class ParkHandler extends ReversedHandler {
     @Autowired
@@ -24,6 +26,8 @@ public class ParkHandler extends ReversedHandler {
     SigOut sigOut;
     @Autowired
     Thumb thumb;
+    @Autowired
+    AutoPay autoPay;
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
@@ -52,6 +56,9 @@ public class ParkHandler extends ReversedHandler {
                 break;
             case 7:
                 sendRequest = thumb;
+                break;
+            case 8:
+                sendRequest = autoPay;
                 break;
             default:
                 return false;
@@ -107,5 +114,17 @@ public class ParkHandler extends ReversedHandler {
         TLVMessage message = createRequest(code, carNumber, money);
         TLVMessage ret = request(watchId, message);
         return ret != null && 200 == (int) ret.getValue();
+    }
+
+    public void notifyWatchIdPayFee(String carNumber, float parkingPrice) {
+        TLVMessage message = createRequest(carNumber, parkingPrice);
+        List<TLVMessage> messages = notifyAllId(message);
+        for (TLVMessage m : messages){
+            if (m != null && 200 == (int)m.getNextValue(0)){
+                logger.info("notify wh successfully:", m);
+            } else {
+                logger.warn("fail to notify wh:", m);
+            }
+        }
     }
 }
