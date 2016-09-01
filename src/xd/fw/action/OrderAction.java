@@ -10,6 +10,7 @@ import xd.fw.FwUtil;
 import xd.fw.job.ParkNative;
 import xd.fw.mina.ParkHandler;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -47,6 +48,11 @@ public class OrderAction extends BaseAction {
     public void validate() {
         if (StringUtils.isBlank(carnumber)){
             addFieldError("carnumber", "is empty");
+        }
+        try {
+            carnumber = new String(carnumber.getBytes("iso-8859-1"), "utf8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -111,6 +117,10 @@ public class OrderAction extends BaseAction {
 
     public String getMsg() {
         return msg;
+    }
+
+    public void setParkingPrice(float parkingPrice) {
+        this.parkingPrice = parkingPrice;
     }
 
     public float getParkingPrice() {
