@@ -81,13 +81,13 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
     }
 
 
-    protected TLVMessage createRequest(Object ... objs){
-        TLVMessage message = new TLVMessage(objs[0]);
+    protected TLVMessage createRequest(Object ... args){
+        TLVMessage message = new TLVMessage(args[0]);
         // add timestamp after code
-        TLVMessage next = message.setNext(String.valueOf(System.currentTimeMillis()));
+        TLVMessage next = message.setNext(generateId());
         int i = 0;
-        while (objs.length > ++i){
-            next = next.setNext(objs[i]);
+        while (args.length > ++i){
+            next = next.setNext(args[i]);
         }
         return message;
     }
@@ -106,18 +106,48 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
         }
     }
 
-    private IoSession getSession(String parkId) {
+    private String generateId(){
+        return String.valueOf(System.currentTimeMillis());
+    }
+
+    private IoSession getSession(String id) {
         synchronized (sessionMap) {
-            return sessionMap.get(parkId);
+            return sessionMap.get(id);
         }
     }
 
-    protected TLVMessage request(String parkId, TLVMessage message) {
-        IoSession session = getSession(parkId);
+    protected List<TLVMessage> notifyAllId(TLVMessage message){
+        List<TLVMessage> messages = new ArrayList<>();
+        Collection<IoSession> sessions = new HashSet<>();
+        synchronized (sessionMap) {
+            sessions.addAll(sessionMap.values());
+        }
+        TLVMessage ret;
+        for (IoSession session : sessions){
+            ret = doSend(session, message);
+            if (ret == null){
+                logger.warn("fail to notify {}" , session.getAttribute(ID_KEY));
+            } else {
+                messages.add(ret);
+            }
+            //reset message id
+            message.getNext(0).setValue(generateId());
+        }
+
+        return messages;
+    }
+
+    protected TLVMessage request(String id, TLVMessage message) {
+        IoSession session = getSession(id);
         if (session == null) {
-            logger.info("there is no park session:" + parkId);
+            logger.info("there is no park session:" + id);
             return null;
         }
+        return doSend(session, message);
+    }
+
+    private TLVMessage doSend(IoSession session, TLVMessage message){
+
         // timestamp is just behind code
         String messageId = (String)message.getNextValue(0);
         session.write(message).awaitUninterruptibly();

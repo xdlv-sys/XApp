@@ -1,9 +1,10 @@
 package xd.fw.mina.tlv;
 
-import org.apache.log4j.Logger;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import xd.fw.service.IConst;
 
@@ -12,7 +13,7 @@ import xd.fw.service.IConst;
  */
 @Service("tlvHandler")
 public class TLVHandler extends IoHandlerAdapter implements IConst{
-    protected Logger logger = Logger.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
