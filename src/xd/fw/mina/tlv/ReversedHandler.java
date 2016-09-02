@@ -106,7 +106,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
         }
     }
 
-    private String generateId(){
+    protected String generateId(){
         return String.valueOf(System.currentTimeMillis());
     }
 

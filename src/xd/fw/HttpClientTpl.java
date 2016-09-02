@@ -121,11 +121,17 @@ public class HttpClientTpl {
         }
     }
 
-    public static String executeMulti(String url, Object[][] params) throws Exception{
+    public static String executeMulti(String url, String[][] headers, Object[][] params) throws Exception{
         CloseableHttpResponse response = null;
         HttpEntity entity = null;
         try {
             HttpPost request = new HttpPost(url);
+            if (headers != null){
+                for (String[] header : headers){
+                    request.setHeader(header[0], header[1]);
+                }
+            }
+
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             for (Object[] param : params) {
                 if (param[1] instanceof String){
@@ -137,7 +143,7 @@ public class HttpClientTpl {
             request.setEntity(builder.build());
 
             response = httpclient.execute(request);
-            entity = request.getEntity();
+            entity = response.getEntity();
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode()
                     != HttpStatus.SC_OK) {
