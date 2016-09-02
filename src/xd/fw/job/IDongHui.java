@@ -24,4 +24,14 @@ public interface IDongHui {
     default Logger logger(){
         return LoggerFactory.getLogger(getClass());
     }
+
+    default String getUserAgent(){
+        StringBuffer buffer = new StringBuffer();
+        String sdk = "SZFS/" + "1.0.0";
+        String javaVersion = "Java/" + System.getProperty("java.version");
+        buffer.append(sdk).append(" (").append(System.getProperty("os.name")).append(" ")
+                .append(System.getProperty("os.arch")).append(" ").append(System.getProperty("os.version"))
+                .append(") ").append(javaVersion);
+        return buffer.toString();
+    }
 }

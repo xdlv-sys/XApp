@@ -3,6 +3,7 @@ package xd.fw.mina;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.FwUtil;
 import xd.fw.HttpClientTpl;
@@ -11,20 +12,29 @@ import xd.fw.mina.tlv.TLVMessage;
 @Service
 public class Thumb extends SendRequest {
 
+    @Value("${file_server_url}")
+    String fileServerUrl;
+
     Logger logger = LoggerFactory.getLogger(Thumb.class);
+    String HEADER_AGENT = "User-Agent";
+    String AUTHORIZATION = "Authorization";
+    String NEW_FILE_NAME = "Filename";
 
     @Override
     String[][] constructParams(TLVMessage request) throws Exception {
         logger.info("start to send to thumb");
+
+        String fileName = String.valueOf(System.currentTimeMillis()) + "-hjc.jpg";
+
         //首先上传到文件服务器
-        String ret = HttpClientTpl.executeMulti("http://221.226.241.34:61170", new String[][]{
-                        {"Authorization", "etc"},
-                        {"Filename", String.valueOf(System.currentTimeMillis()) + "-hjc.jpg"},
-                        {"User-Agent", "Windows 7 amd64 6.1 Java/1.7.0_51"}},
-                new Object[][]{
-                        {"uploadFile", "uploadFile"},
-                        {"file", request.getNextValue(0)}
-                });
+        String ret = HttpClientTpl.executeMulti("http://" + fileServerUrl,
+                new String[][]{
+                        {AUTHORIZATION, "etc"},
+                        {NEW_FILE_NAME, fileName},
+                        {HEADER_AGENT, getUserAgent()}
+                },
+                new Object[][]{{fileName, request.getNextValue(0)}});
+
         logger.info("return from file sever:" + ret);
         JSONObject retJson = JSONObject.fromObject(ret);
         if (200 == retJson.getInt("status")) {
