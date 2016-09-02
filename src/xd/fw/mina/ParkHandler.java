@@ -82,13 +82,13 @@ public class ParkHandler extends ReversedHandler {
         } catch (Exception e) {
             logger.error("error json:" + json, e);
             jsonObject = new JSONObject();
-            jsonObject.put("state", false);
+            jsonObject.put("msg", "network failure");
             jsonObject.put("code", "-1");
         }
 
         TLVMessage ret = new TLVMessage(code);
-        sendRequest.constructMessage(ret.setNext(
-                Integer.valueOf(jsonObject.getString("code"))),msg);
+        sendRequest.constructMessage(ret.setNext(generateId()).setNext(
+                Integer.valueOf(jsonObject.getString("code"))).setNext(jsonObject.getString("msg")),msg);
         session.write(ret);
 
         return true;
@@ -117,10 +117,10 @@ public class ParkHandler extends ReversedHandler {
     }
 
     public void notifyWatchIdPayFee(String carNumber, float parkingPrice) {
-        TLVMessage message = createRequest(carNumber, parkingPrice);
+        TLVMessage message = createRequest(ParkProxy.PAY_FEE_NOTIFY,200,"OK",carNumber, parkingPrice);
         List<TLVMessage> messages = notifyAllId(message);
         for (TLVMessage m : messages){
-            if (m != null && 200 == (int)m.getNextValue(0)){
+            if (m != null && 200 == (int)m.getValue()){
                 logger.info("notify wh successfully:", m);
             } else {
                 logger.warn("fail to notify wh:", m);

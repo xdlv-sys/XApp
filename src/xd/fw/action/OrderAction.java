@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import xd.fw.FwUtil;
+import xd.fw.job.IDongHui;
 import xd.fw.job.ParkNative;
 import xd.fw.mina.ParkHandler;
 
@@ -14,7 +15,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class OrderAction extends BaseAction {
+public class OrderAction extends BaseAction implements IDongHui{
     Logger logger = LoggerFactory.getLogger(OrderAction.class);
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -47,13 +48,21 @@ public class OrderAction extends BaseAction {
     @Override
     public void validate() {
         if (StringUtils.isBlank(carnumber)){
-            addFieldError("carnumber", "is empty");
+            throw new IllegalArgumentException("carnumberis empty");
         }
         try {
             carnumber = new String(carnumber.getBytes("iso-8859-1"), "utf8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        try {
+            if (token == null || !token.equals(md5(carnumber, timestamp,parkingno))){
+                throw new IllegalArgumentException("token is wrong");
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("",e);
+        }
+
     }
 
     @Action("QueryOrder")
@@ -137,5 +146,9 @@ public class OrderAction extends BaseAction {
 
     public String getParkingTime() {
         return parkingTime;
+    }
+
+    public void setCurrenttime(String currenttime) {
+        this.currenttime = currenttime;
     }
 }

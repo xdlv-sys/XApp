@@ -17,18 +17,21 @@ public class Thumb extends SendRequest {
     String[][] constructParams(TLVMessage request) throws Exception {
         logger.info("start to send to thumb");
         //首先上传到文件服务器
-        String ret = HttpClientTpl.executeMulti("http://221.226.241.34:61170", new Object[][]{
-                {"Authorization","etc"},
-                {"Filename", String.valueOf(System.currentTimeMillis()) + "-hjc.jpg"},
-                {"uploadFile",request.getNextValue(0)}
-        });
+        String ret = HttpClientTpl.executeMulti("http://221.226.241.34:61170", new String[][]{
+                        {"Authorization", "etc"},
+                        {"Filename", String.valueOf(System.currentTimeMillis()) + "-hjc.jpg"},
+                        {"User-Agent", "Windows 7 amd64 6.1 Java/1.7.0_51"}},
+                new Object[][]{
+                        {"uploadFile", "uploadFile"},
+                        {"file", request.getNextValue(0)}
+                });
         logger.info("return from file sever:" + ret);
         JSONObject retJson = JSONObject.fromObject(ret);
-        if (200 == retJson.getInt("status")){
+        if (200 == retJson.getInt("status")) {
             String timeStamp = getTimeStamp();
             return new String[][]{
                     {"Parkingno", parkingNo},
-                    {"Carnumber",(String)request.getValue()},
+                    {"Carnumber", (String) request.getValue()},
                     {"Thumbname", retJson.getString("key")},
                     {"Uniquekey", uniqueKey},
                     {"Timestamp", timeStamp},
@@ -45,6 +48,6 @@ public class Thumb extends SendRequest {
 
     @Override
     String svrAddress() {
-        return "http://"+dhHost+"/mobile/index.php?v=2.0&act=thirdparking&op=thumb";
+        return "http://" + dhHost + "/mobile/index.php?v=2.0&act=thirdparking&op=thumb";
     }
 }

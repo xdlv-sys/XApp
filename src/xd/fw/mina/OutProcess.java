@@ -10,7 +10,7 @@ public class OutProcess extends SendRequest{
 
     public String[][] constructParams(TLVMessage request) throws Exception {
         String carNumber = (String) request.getValue();
-        String price = String.valueOf(request.getNext(0).getValue());
+        float price = (float)(request.getNext(0).getValue());
         String totalPrice = String.valueOf(request.getNextValue(1));
         String time1 = (String) request.getNext(2).getValue();
         String time2 = (String) request.getNext(3).getValue();
@@ -38,13 +38,13 @@ public class OutProcess extends SendRequest{
                 {"CarPlateColor",colorValue },
                 {"Uniquekey",uniqueKey},
                 {"DeviceNo",deviceNo},
-                {"Price", price},
+                {"Price", String.valueOf(price)},
                 {"totalPrice", totalPrice},
                 {"Time1", time1},
                 {"Time2", time2},
                 {"Timestamp", timeStamp},
                 {"Token", md5(carNumber, timeStamp, parkingNo, uniqueKey)},
-                {"IsOffPay", Float.parseFloat(price) > 0 ? "0" : "1"}
+                {"IsOffPay", price > 0 ? "0" : "1"}
         };
     }
 

@@ -21,7 +21,7 @@ public class AutoPay extends SendRequest{
                 {"Uniquekey",uniqueKey},
                 {"DeviceNo",deviceNo},
                 {"Price", price},
-                {"totalPrice", totalPrice},
+                {"TotalPrice", totalPrice},
                 {"Timestamp", timeStamp},
                 {"Time1", time1},
                 {"Time2", time2},
