@@ -10,7 +10,11 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -19,18 +23,22 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sybase.jdbc3.a.b.an.b;
 
 public class HttpClientTpl {
 
     static Logger logger = Logger.getLogger(HttpClientTpl.class);
     public static final String UTF8 = "UTF-8";
     static CloseableHttpClient httpclient = createHttpClient();
+    static ContentType utf8ContentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), Consts.UTF_8);
 
     private static CloseableHttpClient createHttpClient() {
         HttpClientConnectionManager manager = (HttpClientConnectionManager) FwUtil.getBean("httpClientConnectionManager");
-        if (manager == null){
+        if (manager == null) {
             PoolingHttpClientConnectionManager m = new PoolingHttpClientConnectionManager();
             m.setMaxTotal(100);
             m.setDefaultMaxPerRoute(50);
@@ -121,23 +129,24 @@ public class HttpClientTpl {
         }
     }
 
-    public static String executeMulti(String url, String[][] headers, Object[][] params) throws Exception{
+    public static String executeMulti(String url, String[][] headers, Object[][] params) throws Exception {
         CloseableHttpResponse response = null;
         HttpEntity entity = null;
         try {
             HttpPost request = new HttpPost(url);
-            if (headers != null){
-                for (String[] header : headers){
+            if (headers != null) {
+                for (String[] header : headers) {
                     request.setHeader(header[0], header[1]);
                 }
             }
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             for (Object[] param : params) {
-                if (param[1] instanceof String){
-                    builder.addTextBody((String)param[0],(String)param[1]);
+                if (param[1] instanceof String) {
+                    builder.addPart((String) param[0], new StringBody((String) param[1] , utf8ContentType));
                 } else {
-                    builder.addBinaryBody((String)param[0],(byte[])param[1]);
+                    builder.addPart((String) param[0], new InputStreamBody(new ByteArrayInputStream((byte[]) param[1])
+                            , (String) param[0]));
                 }
             }
             request.setEntity(builder.build());
@@ -149,7 +158,7 @@ public class HttpClientTpl {
                     != HttpStatus.SC_OK) {
                 throw new Exception("http status is wrong:" + statusLine);
             }
-            String res = (String)stringProcessor.process(entity);
+            String res = (String) stringProcessor.process(entity);
             return res;
         } finally {
             if (entity != null) {
