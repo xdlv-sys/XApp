@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import xd.fw.FwUtil;
 import xd.fw.job.IDongHui;
 import xd.fw.job.ParkNative;
 import xd.fw.mina.ParkHandler;
@@ -15,17 +14,15 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class OrderAction extends BaseAction implements IDongHui{
-    Logger logger = LoggerFactory.getLogger(OrderAction.class);
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+public class QueryOrder extends BaseAction implements IDongHui {
     @Autowired
     ParkNative parkNative;
 
     @Autowired
     ParkHandler parkHandler;
+
+    Logger logger = LoggerFactory.getLogger(NotifyOrderAction.class);
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
     String parkingno;
     String carnumber;
@@ -35,10 +32,9 @@ public class OrderAction extends BaseAction implements IDongHui{
 
     int code;//	int	返回编码
     String msg;//	String	备注
-    float parkingPrice;//	Float	停车费用
-    String starttime;	//timestamp	停车开始时间
-    String currenttime;	//timestamp	停车场当前时间
-    String parkingTime;	//String
+
+    float parkingprice;
+    String paystarttime, payendtime,duration,starttime;
 
     @Value("${order_success}")
     String success;
@@ -47,7 +43,7 @@ public class OrderAction extends BaseAction implements IDongHui{
 
     @Override
     public void validate() {
-        if (StringUtils.isBlank(carnumber)){
+        if (StringUtils.isBlank(carnumber)) {
             throw new IllegalArgumentException("carnumberis empty");
         }
         try {
@@ -56,46 +52,33 @@ public class OrderAction extends BaseAction implements IDongHui{
             e.printStackTrace();
         }
         try {
-            if (token == null || !token.equals(md5(carnumber, timestamp,parkingno))){
+            if (token == null || !token.equals(md5(carnumber, timestamp, parkingno))) {
                 throw new IllegalArgumentException("token is wrong");
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("",e);
+            throw new IllegalArgumentException("", e);
         }
-
     }
 
     @Action("QueryOrder")
-    public String queryOrder(){
+    public String queryOrder() {
         logger.info("query order {}", carnumber);
         ParkNative.ParkedInfo parkedInfo = parkNative.getParkedInfo(carPlateColorType == 2 ? 1 : 0, carnumber);
 
         msg = fail;
         code = 201;
 
-        if (parkedInfo != null && parkedInfo.iReturn == 0){
-            code = 200;
-            msg = success;
-            parkingPrice = parkedInfo.fMoney;
-            starttime = parkedInfo.sInTime.replaceAll("-",""
-            ).replaceAll(":","").replaceAll(" ","");
-            currenttime = sdf.format(new Date());
-            parkingTime = parkedInfo.iParkedTime / 60 + ":" +  parkedInfo.iParkedTime % 60;
-        }
-        return SUCCESS;
-    }
-
-    @Action("QueryFee")
-    public String queryFee(){
-        msg = fail;
-        code = 201;
-        boolean ret = parkNative.payFee(carnumber, sdf2.format(new Date()),parkingPrice);
-        if (ret){
+        if (parkedInfo != null && parkedInfo.iReturn == 0) {
             code = 200;
             msg = success;
 
-            //notify all watch house
-            parkHandler.notifyWatchIdPayFee(carnumber, parkingPrice);
+            parkingprice = parkedInfo.fMoney;
+            starttime = parkedInfo.sInTime.replaceAll("-", ""
+            ).replaceAll(":", "").replaceAll(" ", "");
+            paystarttime = starttime;
+            payendtime = sdf.format(new Date());
+            duration = parkedInfo.iParkedTime / 60 + ":" + parkedInfo.iParkedTime % 60;
+            logger.info("price:{},duration:{}",parkingprice,duration);
         }
         return SUCCESS;
     }
@@ -128,27 +111,23 @@ public class OrderAction extends BaseAction implements IDongHui{
         return msg;
     }
 
-    public void setParkingPrice(float parkingPrice) {
-        this.parkingPrice = parkingPrice;
+    public float getParkingprice() {
+        return parkingprice;
     }
 
-    public float getParkingPrice() {
-        return parkingPrice;
+    public String getPaystarttime() {
+        return paystarttime;
+    }
+
+    public String getPayendtime() {
+        return payendtime;
     }
 
     public String getStarttime() {
         return starttime;
     }
 
-    public String getCurrenttime() {
-        return currenttime;
-    }
-
-    public String getParkingTime() {
-        return parkingTime;
-    }
-
-    public void setCurrenttime(String currenttime) {
-        this.currenttime = currenttime;
+    public String getDuration() {
+        return duration;
     }
 }
