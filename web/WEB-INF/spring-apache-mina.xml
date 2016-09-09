@@ -34,9 +34,9 @@
     <bean id="filterChainBuilder" class="org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder">
         <property name="filters">
             <map>
+                <entry key="threadPool" value-ref="minaExecutor"/>
                 <entry key="loggingFilter" value-ref="loggingFilter"/>
                 <entry key="codecFilter" value-ref="tlvCodecFilter"/>
-                <entry key="threadPool" value-ref="minaExecutor"/>
             </map>
         </property>
     </bean>
