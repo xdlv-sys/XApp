@@ -17,6 +17,7 @@ public class JknUser {
     private byte vip;
     private byte userLevel;
     private byte areaLevel;
+    private byte storeKeeper;
     private int consumedCount;
     private int count;
     private int countOne;
@@ -128,6 +129,13 @@ public class JknUser {
         this.regDate = regDate;
     }
 
+    public byte getStoreKeeper() {
+        return storeKeeper;
+    }
+
+    public void setStoreKeeper(byte storeKeeper) {
+        this.storeKeeper = storeKeeper;
+    }
 
     @Override
     public boolean equals(Object o) {

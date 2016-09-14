@@ -18,7 +18,7 @@ public interface JknService extends BaseService {
 
     void triggerEvent(JknEvent event);
 
-    void upgradeUsers(List<JknEvent> eventList);
+    void upgradeUserLevel(int userId, byte userLevel, byte areaLevel);
 
     List<JknUser> getMemberUser(int start, int limit);
 

@@ -155,17 +155,17 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public void upgradeUsers(List<JknEvent> eventList) {
-        JknUser user;
-        for (JknEvent event : eventList) {
-            user = load(JknUser.class, event.getDbKey());
-            if (user.getUserLevel() < event.getDbInt()) {
-                user.setUserLevel((byte) event.getDbInt());
-                update(user);
-                //trigger notification for mall
-                triggerEvent(event);
-            }
+    public void upgradeUserLevel(int userId, byte userLevel, byte areaLevel) {
+        JknUser user = load(JknUser.class, userId);
+        if (user.getUserLevel() < userLevel){
+            user.setUserLevel(userLevel);
         }
+        if (user.getAreaLevel() < areaLevel){
+            user.setAreaLevel(areaLevel);
+        }
+        update(user);
+
+        triggerEvent(new JknEvent(EV_USER_NOTIFY, userId, 0));
     }
 
     @Override

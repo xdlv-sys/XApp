@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.testng.Assert.fail;
 
@@ -24,6 +25,16 @@ public class BasicTest implements IConst{
     String getUserUrl = "http://localhost:8080/an/jkn_user!obtainUsers.cmd?start=0&limit=25";
 
     String key="jkn@igecono.com0516";
+
+    static AtomicInteger userId = new AtomicInteger(50000);
+    static AtomicInteger tradeId = new AtomicInteger(50000);
+
+    public int userId(){
+        return userId.getAndAdd(1);
+    }
+    public int tradeId(){
+        return tradeId.getAndAdd(1);
+    }
 
     protected JSONObject send(String url, String[][] params) throws Exception {
         return JSONObject.fromObject(HttpClientTpl.post(url, params));
@@ -51,8 +62,8 @@ public class BasicTest implements IConst{
         boolean process(JSONObject i);
     }
 
-    void assertAddTrade(int tradeId, int userId,int tradeType, int totalFee) throws Exception {
-
+    int assertAddTrade(int userId,int tradeType, int totalFee) throws Exception {
+        int tradeId = tradeId();
         String[][] params = {
                 {"order.orderId", String.valueOf(tradeId)},
                 {"order.userId", String.valueOf(userId)},
@@ -76,9 +87,11 @@ public class BasicTest implements IConst{
         if (!add) {
             fail();
         }
+        return tradeId;
     }
 
-    void assertAddUser(int userId, int referrer) throws Exception {
+    int assertAddUser(int referrer) throws Exception {
+        int userId = userId();
         String[][] params = {
                 {"jknUser.userId", String.valueOf(userId)},
                 {"jknUser.userName", "a"},
@@ -100,5 +113,6 @@ public class BasicTest implements IConst{
         if (!add) {
             fail();
         }
+        return userId;
     }
 }

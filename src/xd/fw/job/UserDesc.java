@@ -1,6 +1,7 @@
 package xd.fw.job;
 
 import xd.fw.bean.JknUser;
+import xd.fw.service.IConst;
 import xd.fw.service.JknService;
 
 import java.util.LinkedList;
@@ -17,6 +18,8 @@ class UserDesc {
         this.userId = user.getUserId();
         this.userLevel = user.getUserLevel();
         this.referrer = user.getReferrer();
+        this.consumedCount = user.getConsumedCount();
+        this.areaLevel = user.getAreaLevel();
     }
 
     UserDesc (int userId){
@@ -25,7 +28,9 @@ class UserDesc {
 
     int userId;
     byte userLevel;
+    byte areaLevel;
     Integer referrer;
+    private int consumedCount;
 
     UserDesc parent;
     List<UserDesc> children = new LinkedList<>();
@@ -49,16 +54,39 @@ class UserDesc {
     }
 
     int allChildCount() {
-        int count = childCount();
+        int[] count = new int[] { 0 } ;
+        iterateGenerations((userDesc -> count[0]++));
+        return count[0];
+    }
+
+    long allConsumed(){
+        long[] allConsumed = new long[]{ 0 } ;
+        iterateGenerations((userDesc -> allConsumed[0] += userDesc.consumedCount));
+        return allConsumed[0];
+    }
+
+    int allCityCount(){
+        int[] cityCount = new int[] {0};
+        iterateGenerations((userDesc -> {
+            if (userDesc.areaLevel == IConst.AL_CITY){
+                cityCount[0] ++;
+            }
+        } ));
+        return cityCount[0];
+    }
+
+    private void iterateGenerations(IterateGeneration it){
         for (UserDesc son : children) { // son
-            count += son.childCount();
+            it.process(son);
             for (UserDesc gradeSon : son.children) { //gradeSon
-                count += gradeSon.childCount();
-                for (UserDesc gradeGradeSon : gradeSon.children) { // gradeGradeSon
-                    count += gradeGradeSon.childCount();
-                }
+                it.process(gradeSon);
+                // gradeGradeSon
+                gradeSon.children.forEach(it::process);
             }
         }
-        return count;
+    }
+
+    interface IterateGeneration{
+        void process(UserDesc userDesc);
     }
 }

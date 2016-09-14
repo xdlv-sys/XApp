@@ -12,20 +12,18 @@ public class UserTest extends BasicTest {
 
     @Test
     public void userRegistry() throws Exception {
-        int userId = 100;
-        assertAddUser(userId,3);
+        int userId = assertAddUser(3);
         //check user
         assertTrue(checkUser((j)-> j.getInt("userId") == userId));
     }
 
     @Test
     public void userUpgrade() throws Exception {
-        int userId = 200;
-        int tradeId = 100;
         int totalFeeOne = 5900, totalFeeTwo = 60000;
         int totalFee = totalFeeOne + totalFeeTwo;
-        assertAddUser(userId,3);
-        assertAddTrade(tradeId,userId,TR_TYPE_CONSUME,totalFeeOne);
+
+        int userId = assertAddUser(3);
+        assertAddTrade(userId,TR_TYPE_CONSUME,totalFeeOne);
 
         sleep(5 * 1000);
         //check user
@@ -37,7 +35,7 @@ public class UserTest extends BasicTest {
                 && j.getInt("userLevel") == UL_GOLD));
 
         //vip
-        assertAddTrade(tradeId + 1,userId, TR_TYPE_CONSUME,totalFeeTwo);
+        assertAddTrade(userId, TR_TYPE_CONSUME,totalFeeTwo);
         sleep(5 * 1000);
         //check user
         assertTrue(checkUser((j)-> j.getInt("userId") == userId
@@ -46,7 +44,7 @@ public class UserTest extends BasicTest {
         // 用户 3取现
         //check cash 取现
         int cash = 200;
-        assertAddTrade(tradeId + 2, 3,TR_TYPE_MONEY, cash);
+        assertAddTrade( 3,TR_TYPE_MONEY, cash);
         sleep(5 * 1000);
 
         //check settlement
@@ -65,18 +63,16 @@ public class UserTest extends BasicTest {
          * 首先创建根用户 300，然后在下面直推10人，302 下再推10人，
          * 再加312下加10个人 达到钻石标准
          */
-        final int userId = 300;
-        final int tradeId = 200;
 
         //add root user
-        assertAddUser(userId, 3);
-        assertAddTrade(tradeId,userId,0,5900);
+        int userId = assertAddUser(3);
+        assertAddTrade(userId,0,5900);
         sleep(2 * 1000);
 
         for (int i=1;i<=10; i++){
-            assertAddUser(userId + i, userId);
+            int childId = assertAddUser(userId);
             //became to membership
-            assertAddTrade(tradeId + i,userId + i,TR_TYPE_CONSUME,5900);
+            assertAddTrade(childId,TR_TYPE_CONSUME,5900);
         }
         sleep(2 * 1000);
         // check user for white
@@ -85,14 +81,14 @@ public class UserTest extends BasicTest {
 
         //
         for (int i=11;i<=20; i++){
-            assertAddUser(userId + i, userId + 2);
+            int childId = assertAddUser(userId + 2);
             //became to membership
-            assertAddTrade(tradeId + i,userId + i,TR_TYPE_CONSUME,5900);
+            assertAddTrade(childId,TR_TYPE_CONSUME,5900);
         }
 
         for (int i=21;i<=30; i++){
-            assertAddUser(userId + i, userId + 10 +2);
-            assertAddTrade(tradeId + i,userId + i,TR_TYPE_CONSUME,5900);
+            int childId = assertAddUser(userId + 10 +2);
+            assertAddTrade(childId,TR_TYPE_CONSUME,5900);
         }
         sleep(10 * 1000);
         // check user
@@ -106,30 +102,48 @@ public class UserTest extends BasicTest {
         /**
          * 1->2->3 , 3升级成会员后，2，3不成为黄金会员
          */
-        final int userId = 400;
-        final int tradeId = 300;
-
-        //create root user
-        assertAddUser(userId, 3);
+        final int userId = assertAddUser(3);
         sleep(2 * 1000);
 
         // create 10 customer
         for (int i=1;i<=10; i++){
-            assertAddUser(userId + i, userId);
+            assertAddUser(userId);
         }
 
-        assertAddUser(userId + 11, userId + 5);
-        assertAddTrade(tradeId ,userId + 11,TR_TYPE_CONSUME,5900);
+        int tmpUserId = assertAddUser(userId + 5);
+        assertAddTrade(tmpUserId,TR_TYPE_CONSUME,5900);
 
         sleep(5 * 1000);
 
-        checkUser((j)-> j.getInt("userId") == (userId + 11)
+        checkUser((j)-> j.getInt("userId") == tmpUserId
                 && j.getInt("userLevel") == UL_NORMAL);
 
         checkUser((j)-> j.getInt("userId") == (userId + 5)
                 && j.getInt("userLevel") == UL_NON);
         checkUser((j)-> j.getInt("userId") == (userId)
                 && j.getInt("userLevel") == UL_NON);
+    }
+
+    @Test(dependsOnMethods = "userUpgrade3")
+    public void userAreaUpgrade() throws Exception {
+        final int userId = assertAddUser(3);
+        assertAddTrade(userId,TR_TYPE_CONSUME,5900);
+
+        //create 20 child user and every child has 90 children
+        for (int i=1;i<=20;i++){
+            int childId = assertAddUser(userId);
+            //一级用户（20人），每人消费1500 共3w
+            assertAddTrade(childId,TR_TYPE_CONSUME,150000);
+            //二级级用户（180人），每人消费500 共9w
+            for (int j =0 ; j<=90;j++){
+                childId = assertAddUser(childId);
+                assertAddTrade(childId,TR_TYPE_CONSUME,50000);
+            }
+        }
+        //用户成为区代
+        checkUser((j)-> j.getInt("userId") == (userId + 5)
+                && j.getInt("userLevel") == UL_DIAMOND && j.getInt("areaLevel") == AL_REGION);
+
     }
 
 }

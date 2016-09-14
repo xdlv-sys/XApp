@@ -30,6 +30,15 @@ public class JKN extends Conf {
     public static int diamond_ucn = 10;
     public static int diamond_acn = 30;
 
+    public static int region_ucn = 20;
+    public static int region_acn = 200;
+    public static long region_consumed = 120000 * 100;//12w
+    public static float region_settlement = 0.03f;
+
+    public static int city_ucn = 35;
+    public static int city_region_cn = 3;
+    public static long city_consumed = 600000 * 100;//60w
+    public static float city_settlement = 0.04f;
 
     public static int membership_count = 5900;
     public static int vip_cost = 59000;

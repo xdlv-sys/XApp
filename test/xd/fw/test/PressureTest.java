@@ -40,8 +40,7 @@ public class PressureTest extends BasicTest {
                 for (int j = 0; j < each; j++) {
                     try {
                         logger.info("start:" + (count + j));
-                        assertAddUser(count + j, 3);
-                        assertAddTrade(count + j, count + j, TR_TYPE_CONSUME, totalFee);
+                        assertAddTrade(assertAddUser(3), TR_TYPE_CONSUME, totalFee);
                     } catch (Exception e) {
                         logger.error("", e);
                     }

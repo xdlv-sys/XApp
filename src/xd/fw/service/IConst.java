@@ -14,7 +14,7 @@ public interface IConst {
     // user level: 0 非会员，1 会员，2黄金，3白金，4钻石
     byte UL_NON = 0, UL_NORMAL = 1, UL_GOLD = 2, UL_WHITE = 3, UL_DIAMOND = 4;
     //area level: 0 无效，5区代，6市代，7省代
-    byte AL_NON = 0, AL_ARE = 5, AL_CITY = 6, AL_PROVINCE = 7;
+    byte AL_NON = 0, AL_REGION = 5, AL_CITY = 6, AL_PROVINCE = 7;
 
     // 交易状态 2已付款，4退货成功，5 己收货，6己分销
     byte TR_PAY = 2, TR_REJECT = 4, TR_RECEIVED = 5, TR_COMPLETE = 6;

@@ -26,7 +26,7 @@ public class UserUpgrade implements UserHandler {
             user = UserDesc.create(self);
             userMap.put(self.getUserId(), user);
             user.parent = userMap.get(self.getReferrer());
-            if (user.parent != null){
+            if (user.parent != null) {
                 user.parent.addChild(user);
             }
         } else {
@@ -37,41 +37,37 @@ public class UserUpgrade implements UserHandler {
         jknService.triggerEvent(new JknEvent(EV_USER_NOTIFY, user.userId, null));
 
         //make sure three up generation exists
-        //upgrade father ...
-        List<JknEvent> eventList = new ArrayList<>();
+        //upgrade fathers ...
 
         UserDesc parent = checkParent(user, userMap);
-        if (parent != null){
-            upgrade(parent, eventList,userMap);
+        if (parent != null) {
+            upgrade(parent, userMap);
             parent = checkParent(parent, userMap);
-            if (parent != null){
-                upgrade(parent,eventList,userMap);
-                parent = checkParent(parent,userMap);
-                if (parent != null){
-                    upgrade(parent,eventList,userMap);
+            if (parent != null) {
+                upgrade(parent, userMap);
+                parent = checkParent(parent, userMap);
+                if (parent != null) {
+                    upgrade(parent, userMap);
                 }
             }
         }
 
-        // update user level and trigger notify event
-        jknService.upgradeUsers(eventList);
-
         return ES_DONE;
     }
 
-    UserDesc checkParent(UserDesc user, Map<Integer, UserDesc> userMap){
-        if (user.referrer == null){
+    private UserDesc checkParent(UserDesc user, Map<Integer, UserDesc> userMap) {
+        if (user.referrer == null) {
             return null;
         }
 
-        if (user.parent == null){
+        if (user.parent == null) {
             //try to load in user map
             user.parent = userMap.get(user.referrer);
         }
 
-        if (user.parent == null || user.parent.userId == INVALIDATE_INT){
+        if (user.parent == null || user.parent.userId == INVALIDATE_INT) {
             JknUser parent = jknService.get(JknUser.class, user.referrer);
-            if (user.parent == null){
+            if (user.parent == null) {
                 user.parent = UserDesc.create(parent);
                 userMap.put(user.parent.userId, user.parent);
             } else {
@@ -84,13 +80,14 @@ public class UserUpgrade implements UserHandler {
         return user.parent;
     }
 
-    private void upgrade(UserDesc user, List<JknEvent> eventList, Map<Integer, UserDesc> userMap) {
-        if (user.userLevel < UL_NORMAL){
+    private void upgrade(UserDesc user, Map<Integer, UserDesc> userMap) {
+        if (user.userLevel < UL_NORMAL) {
             return;
         }
 
         int childrenCount = user.childCount();
         int allChildrenCount = user.allChildCount();
+        long allConsumedCount = user.allConsumed();
 
         byte shouldLevel = UL_NON;
         if (childrenCount >= JKN.gold_ucn && allChildrenCount >= JKN.gold_acn) {
@@ -103,11 +100,21 @@ public class UserUpgrade implements UserHandler {
             shouldLevel = UL_DIAMOND;
         }
         // TODO　are level implementation
-        JknUser dbUser = jknService.get(JknUser.class, user.userId);
-        if (dbUser.getUserLevel() < shouldLevel) {
-            //upgrade user level and the record in db will be upgraded later
-            eventList.add(new JknEvent(EV_USER_NOTIFY, user.userId, shouldLevel));
-            userMap.get(user.userId).userLevel = (byte)shouldLevel;
+        byte areaLevel = AL_NON;
+        if (childrenCount >= JKN.region_ucn && allChildrenCount >= JKN.region_acn
+                && allConsumedCount >= JKN.region_consumed && user.areaLevel < AL_REGION) {
+            areaLevel = AL_REGION;
+        }
+        if (childrenCount >= JKN.city_ucn && allConsumedCount >= JKN.city_consumed
+                && user.allCityCount() >= JKN.city_region_cn && user.areaLevel < AL_CITY) {
+            areaLevel = AL_CITY;
+        }
+
+        if (user.userLevel < shouldLevel || user.areaLevel < areaLevel) {
+            //upgrade user level and the records in db
+            user.userLevel = shouldLevel;
+            user.areaLevel = areaLevel;
+            jknService.upgradeUserLevel(user.userId, shouldLevel, areaLevel);
         }
     }
 }

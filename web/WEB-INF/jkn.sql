@@ -117,10 +117,24 @@ insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('sett
 
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('settlement_period','100','预算期时长（单位毫秒）',0);
 -- ---
-insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('user_notify_url','http://114.55.129.254/api/updateUsers.php','用户信息通知地址（VIP，用户等级变更等）',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('user_notify_url','','用户信息通知地址（VIP，用户等级变更等）',0);
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('vip_discount','80','VIP用户打折比例（百分比）',0);
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('security_key','jkn@igecono.com0516','电商接口密钥',0);
 
 -- -----
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('sms_telephones','13813904510,15951928975','故障短信接收人',0);
 
+
+-- --------------period 2----------------------
+
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('region_ucn','20','升级成区代直推荐人数',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('region_acn','200','升级成区代伞下人数',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('region_consumed','12000000','区代业绩考核（分）',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('region_settlement','12000000','区代分成比例',0);
+
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('city_ucn','35','升级成市代直推荐人数',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('city_region_cn','3','市代伞下区代个数',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('city_consumed','60000000','代业绩考核（分）',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('city_settlement','0.04','市代分成比例',0);
+
+ALTER TABLE t_jkn_user ADD COLUMN `store_keeper` SMALLINT(6) NOT NULL default 0 AFTER `area_level`;
