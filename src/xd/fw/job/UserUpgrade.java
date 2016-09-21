@@ -106,7 +106,7 @@ public class UserUpgrade implements UserHandler {
             areaLevel = AL_REGION;
         }
         if (childrenCount >= JKN.city_ucn && allConsumedCount >= JKN.city_consumed
-                && user.allCityCount() >= JKN.city_region_cn && user.areaLevel < AL_CITY) {
+                && user.allRegionCount() >= JKN.city_region_cn && user.areaLevel < AL_CITY) {
             areaLevel = AL_CITY;
         }
 

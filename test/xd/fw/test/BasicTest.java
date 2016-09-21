@@ -22,12 +22,12 @@ public class BasicTest implements IConst{
     String addUserUrl = "http://localhost:8080/an/syncUser.cmd";
     String addTrade = "http://localhost:8080/an/addTrade.cmd";
 
-    String getUserUrl = "http://localhost:8080/an/jkn_user!obtainUsers.cmd?start=0&limit=25";
+    String getUserUrl = "http://localhost:8080/an/jkn_user!obtainUsers.cmd?start=0&limit=250000";
 
     String key="jkn@igecono.com0516";
 
-    static AtomicInteger userId = new AtomicInteger(50000);
-    static AtomicInteger tradeId = new AtomicInteger(50000);
+    static AtomicInteger userId = new AtomicInteger(5000000);
+    static AtomicInteger tradeId = new AtomicInteger(5000000);
 
     public int userId(){
         return userId.getAndAdd(1);
@@ -47,17 +47,33 @@ public class BasicTest implements IConst{
         return false;
     }
 
-    protected boolean checkUser(UserChecker checker) throws Exception {
-        Iterator<JSONObject> iterator = send(getUserUrl, null).getJSONArray("jknUsers").iterator();
-        boolean success = false;
-        while (iterator.hasNext()) {
-            if (checker.process(iterator.next())) {
-                success = true;
-                break;
+    protected void checkUser(int userId,UserChecker checker) throws Exception{
+        JSONObject v;
+        for (Object o : send(getUserUrl, null).getJSONArray("jknUsers")) {
+            v = (JSONObject)o;
+            if (v.getInt("userId") == userId){
+                if (checker.process(v)){
+                    return;
+                }
+                fail("user is incorrect:" + v);
             }
         }
-        return success;
+        fail("there is no invalidate user :" + userId);
     }
+
+    /*protected boolean checkUser(UserChecker checker) throws Exception {
+        Iterator<JSONObject> iterator = send(getUserUrl, new String[][]{
+                {"start","0"},
+                {"limit","20000"}
+        }).getJSONArray("jknUsers").iterator();
+
+        while (iterator.hasNext()) {
+            if (checker.process(iterator.next())) {
+                return true;
+            }
+        }
+        return false;
+    }*/
     interface UserChecker{
         boolean process(JSONObject i);
     }

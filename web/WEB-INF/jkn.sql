@@ -130,7 +130,7 @@ insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('sms
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('region_ucn','20','升级成区代直推荐人数',0);
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('region_acn','200','升级成区代伞下人数',0);
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('region_consumed','12000000','区代业绩考核（分）',0);
-insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('region_settlement','12000000','区代分成比例',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('region_settlement','0.03','区代分成比例',0);
 
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('city_ucn','35','升级成市代直推荐人数',0);
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('city_region_cn','3','市代伞下区代个数',0);

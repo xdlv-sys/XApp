@@ -58,11 +58,8 @@ public class PressureTest extends BasicTest {
 
         sleep(3 * 60 * 1000);
 
-        assertTrue(checkUser((j)-> j.getInt("userId") == 1
-                && j.getInt("count") == thread * each * totalFee * 0.11));
-        assertTrue(checkUser((j)-> j.getInt("userId") == 2
-                && j.getInt("count") == thread * each * totalFee * 0.09));
-        assertTrue(checkUser((j)-> j.getInt("userId") == 3
-                && j.getInt("count") == thread * each * totalFee * 0.07));
+        checkUser(1, (j)->j.getInt("count") == thread * each * totalFee * 0.11);
+        checkUser(2,(j)->j.getInt("count") == thread * each * totalFee * 0.09);
+        checkUser(3, (j)-> j.getInt("count") == thread * each * totalFee * 0.07);
     }
 }

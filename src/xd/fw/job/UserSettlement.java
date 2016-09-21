@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
-import xd.fw.bean.JknUser;
 import xd.fw.bean.Order;
 import xd.fw.bean.OrderSettlement;
 import xd.fw.service.JknService;
@@ -30,26 +29,25 @@ public class UserSettlement implements UserHandler {
 
         int fee;
         UserDesc target = user.parent;
-        JknUser targetUser;
         if (target != null) {
-            if (jknService.get(JknUser.class, target.userId).getUserLevel() >= UL_GOLD){
-                fee = (int) (totalFee * JKN.settlement_one);
+            if (target.userLevel >= UL_GOLD){
+                fee = fee(target,JKN.settlement_one, totalFee);
                 orderSettlement.setCountOne(fee);
                 orderSettlement.setUserIdOne(target.userId);
             }
 
             target = target.parent;
             if (target != null) {
-                if (jknService.get(JknUser.class, target.userId).getUserLevel() >= UL_WHITE){
-                    fee = (int) (totalFee * JKN.settlement_two);
+                if (target.userLevel >= UL_WHITE){
+                    fee = fee(target,JKN.settlement_two, totalFee);
                     orderSettlement.setCountTwo(fee);
                     orderSettlement.setUserIdTwo(target.userId);
                 }
 
                 target = target.parent;
                 if (target != null) {
-                    if (jknService.get(JknUser.class, target.userId).getUserLevel() >= UL_DIAMOND){
-                        fee = (int) (totalFee * JKN.settlement_three);
+                    if (target.userLevel >= UL_DIAMOND){
+                        fee = fee(target,JKN.settlement_three, totalFee);
                         orderSettlement.setCountThree(fee);
                         orderSettlement.setUserIdThree(target.userId);
                     }
@@ -59,5 +57,15 @@ public class UserSettlement implements UserHandler {
 
         jknService.saveSettlement(orderSettlement);
         return ES_DONE;
+    }
+
+    private int fee(UserDesc target, float base, int totalFee){
+        if (target.areaLevel == AL_REGION){
+            base += JKN.region_settlement;
+        }
+        if (target.areaLevel == AL_CITY){
+            base += JKN.city_settlement;
+        }
+        return (int) (base * totalFee);
     }
 }

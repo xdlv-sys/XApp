@@ -65,10 +65,10 @@ class UserDesc {
         return allConsumed[0];
     }
 
-    int allCityCount(){
+    int allRegionCount(){
         int[] cityCount = new int[] {0};
         iterateGenerations((userDesc -> {
-            if (userDesc.areaLevel == IConst.AL_CITY){
+            if (userDesc.areaLevel == IConst.AL_REGION){
                 cityCount[0] ++;
             }
         } ));
