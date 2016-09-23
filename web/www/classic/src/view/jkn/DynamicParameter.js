@@ -10,7 +10,7 @@ Ext.define("XApp.view.jkn.DynamicParameter",{
     controller: "jkn-dynamicparameter",
     viewModel: {
         type: "jkn-dynamicparameter"
-    },
+    }
 
     
 });

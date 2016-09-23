@@ -5,7 +5,8 @@ Ext.define('XApp.model.JknUser', {
         , {name: 'userLevel', type: 'int'}, {name: 'areaLevel', type: 'int'}
         , {name: 'count', type: 'int'}, {name: 'countOne', type: 'int'}
         , {name: 'countTwo', type: 'int'}, {name: 'countThree', type: 'int'}
-        ,{name: 'consumedCount', type: 'int'},'regDate'],
+        ,{name: 'consumedCount', type: 'int'}
+        ,{name: 'storeKeeper', type: 'int'},'regDate'],
 
     proxy: {
         url: 'jkn_user!obtainUsers.cmd',

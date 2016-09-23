@@ -3,7 +3,8 @@ Ext.define("XApp.view.jkn.EventManager", {
 
     requires: [
         "XApp.view.jkn.EventManagerController",
-        "XApp.view.jkn.EventManagerModel"
+        "XApp.view.jkn.EventManagerModel",
+        "XApp.view.jkn.EventType"
     ],
 
     controller: "jkn-eventmanager",
@@ -26,6 +27,11 @@ Ext.define("XApp.view.jkn.EventManager", {
             xtype: 'button',
             text: '重新触发',
             handler: 'triggerEvent'
+        },{
+            margin: '0 0 0 10',
+            xtype: 'button',
+            text: '新增事件',
+            handler: 'addEvent'
         }],
         columns: [{
             text: "编号",
@@ -36,37 +42,8 @@ Ext.define("XApp.view.jkn.EventManager", {
             text: "类型",
             flex: 1,
             dataIndex: 'eventType',
-            renderer: function (v) {
-                var tmp = '';
-                switch (v) {
-                    case 1 :
-                        tmp = '用户属性更新';
-                        break;
-                    case 3 :
-                        tmp = '新交易';
-                        break;
-                    case 4 :
-                        tmp = '紧急短信';
-                        break;
-                    case 11 :
-                        tmp = '用户升级';
-                        break;
-                    case 12 :
-                        tmp = '交易结算';
-                        break;
-                    case 13 :
-                        tmp = '通知电商用户属性信息';
-                        break;
-                    case 14 :
-                        tmp = '交易结束结算期';
-                        break;
-                    case 15 :
-                        tmp = '通知电商用户结算信息';
-                        break;
-                    default :
-                        tmp = '未知';
-                        break;
-                }
+            renderer: function(v){
+                var tmp = XApp.view.jkn.EventType.getName(v);
                 return tmp + '(' + v + ')';
             }
         }, {

@@ -17,6 +17,48 @@ Ext.define("XApp.view.jkn.OrderManager",{
         align: 'stretch'
     },
     items: [{
+        xtype: 'form',
+        layout: 'hbox',
+        defaults: {
+            xtype: 'textfield',
+            flex: 1,
+            labelWidth: 60,
+            margin: 5
+        },
+        items: [{
+            fieldLabel: '用户ID',
+            name: 'order.userId'
+        },{
+            fieldLabel: '交易ID',
+            name: 'order.orderId'
+        },{
+            fieldLabel : '交易类型',
+            name: 'order.tradeType',
+            xtype: 'combobox',
+            displayField: 'name',
+            valueField: 'value',
+            value: '-1',
+            editable: false,
+            store: Ext.create('Ext.data.Store', {
+                fields: ['value', 'name'],
+                data: [
+                    {"value": "-1", "name": "全部"},
+                    {"value": "0", "name": "消费"},
+                    {"value": "1", "name": "提现"}
+                ]
+            })
+        },{
+            xtype: 'button',
+            text: '重置',
+            flex: 0,
+            handler: 'resetForm'
+        },{
+            xtype: 'button',
+            text: '查询',
+            flex: 0,
+            handler: 'queryOrder'
+        }]
+    },{
         xtype: 'cduGrid',
         modelName: '交易',
         hiddenButtons: ['add','mod','del'],
@@ -57,7 +99,7 @@ Ext.define("XApp.view.jkn.OrderManager",{
         },{
             text: '交易状态',
             dataIndex: 'tradeStatus',
-            renderer: function(v,o,record){
+            renderer: function(v){
                 switch(v){
                     case 2 : return '己付款';
                     case 4 : return '己退货';

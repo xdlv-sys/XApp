@@ -6,6 +6,7 @@ import xd.fw.bean.JknEvent;
 import xd.fw.bean.JknUser;
 import xd.fw.service.JknService;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class JknEventAction extends BaseAction {
@@ -31,7 +32,18 @@ public class JknEventAction extends BaseAction {
         });
         return SUCCESS;
     }
-
+    public String addEvents(){
+        FwUtil.safeEach(jknEvents, new FwUtil.SafeEachProcess<JknEvent>() {
+            @Override
+            public void process(JknEvent event) {
+                event.setTryCount((byte)0);
+                event.setEventStatus(ES_INI);
+                event.setTriggerDate(new Timestamp(System.currentTimeMillis()));
+                jknService.save(event);
+            }
+        });
+        return SUCCESS;
+    }
 
 
     public void setJknEvents(List<JknEvent> jknEvents) {

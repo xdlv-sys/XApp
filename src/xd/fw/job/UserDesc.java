@@ -20,6 +20,7 @@ class UserDesc {
         this.referrer = user.getReferrer();
         this.consumedCount = user.getConsumedCount();
         this.areaLevel = user.getAreaLevel();
+        this.storeKeeper = user.getStoreKeeper();
     }
 
     UserDesc (int userId){
@@ -29,6 +30,7 @@ class UserDesc {
     int userId;
     byte userLevel;
     byte areaLevel;
+    byte storeKeeper;
     Integer referrer;
     private int consumedCount;
 

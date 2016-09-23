@@ -3,10 +3,18 @@ Ext.define('XApp.view.jkn.UserManagerController', {
     alias: 'controller.jkn-usermanager',
 
     queryUser: function (btn) {
-        var form = btn.up('form');
-        this.getStore('JknUser').loadPage(1,{
-            params: form.getValues()
-        });
+        var params = btn.up('form').getValues();
+        for (var i in params){
+            if (Ext.isEmpty(params[i])){
+                delete params[i];
+            }
+        }
+        var store = this.getStore('JknUser');
+        store.getProxy().extraParams = params;
+        store.loadPage(1);
+    },
+    resetForm: function(btn){
+        btn.up('form').reset();
     }
     
 });

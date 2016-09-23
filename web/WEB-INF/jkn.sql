@@ -138,3 +138,18 @@ insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('cit
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('city_settlement','0.04','市代分成比例',0);
 
 ALTER TABLE t_jkn_user ADD COLUMN `store_keeper` SMALLINT(6) NOT NULL default 0 AFTER `area_level`;
+
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('store_keeper_first_settlement','0.03','首批商铺分成比例',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('store_keeper_extend_settlement','0.03','扩展商铺分成比例',0);
+
+insert into t_mod values(5,'店铺管理',null, null,'x-fa fa-twitch',0);
+insert into t_mod values(6,'店铺申批',null,'jkn-StoreApply','x-fa fa-rebel',5);
+
+drop table IF EXISTS t_jkn_store_approve;
+create table t_jkn_store_approve(
+  approve_id int auto_increment primary key,
+  user_id int not null,
+  approve_type tinyint not null,
+  create_date DATETIME not null,
+  approve_date DATETIME not null
+)ENGINE = INNODB;

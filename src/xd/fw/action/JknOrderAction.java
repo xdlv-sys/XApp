@@ -18,8 +18,13 @@ public class JknOrderAction extends BaseAction {
     List<Order> orders;
     List<OrderSettlement> orderSettlements;
     public String obtainOrders(){
-        total = jknService.getAllCount(Order.class);
-        orders = jknService.getList(Order.class,null, start, limit);
+
+        int orderId = order == null ? 0 : order.getOrderId();
+        int userId = order == null ? 0 : order.getUserId();
+        short tradeType = order == null ? -1 : order.getTradeType();
+
+        total = jknService.getJknOrderCount(orderId, userId,tradeType);
+        orders = jknService.getJknOrders(orderId, userId,tradeType, start, limit);
         return SUCCESS;
     }
 

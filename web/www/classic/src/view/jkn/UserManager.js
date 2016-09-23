@@ -26,11 +26,19 @@ Ext.define("XApp.view.jkn.UserManager",{
             margin: 5
         },
         items: [{
+            fieldLabel: '用户ID',
+            name: 'jknUser.userId'
+        },{
             fieldLabel: '用户名',
             name: 'jknUser.userName'
         },{
             fieldLabel : '推荐人',
             name: 'referrerName'
+        },{
+            xtype: 'button',
+            text: '重置',
+            flex: 0,
+            handler: 'resetForm'
         },{
             xtype: 'button',
             text: '查询',
@@ -78,11 +86,21 @@ Ext.define("XApp.view.jkn.UserManager",{
         },{
             text: '地域等级',
             dataIndex: 'areaLevel',
-            renderer: function(v,o,record){
+            renderer: function(v){
                 switch(v){
                     case 5 : return '区代';
                     case 6 : return '市代';
                     case 7: return '省代';
+                    default : return '无效'
+                }
+            }
+        },{
+            text: '店铺',
+            dataIndex: 'storeKeeper',
+            renderer: function(v){
+                switch(v){
+                    case 1 : return '第一批';
+                    case 2 : return '扩展';
                     default : return '无效'
                 }
             }

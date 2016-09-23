@@ -16,6 +16,8 @@ public interface IConst {
     //area level: 0 无效，5区代，6市代，7省代
     byte AL_NON = 0, AL_REGION = 5, AL_CITY = 6, AL_PROVINCE = 7;
 
+    byte STORE_KEEPER_NON = 0, STORE_KEEPER_FIRST = 1, STORE_KEEPER_EXTEND = 2;
+
     // 交易状态 2已付款，4退货成功，5 己收货，6己分销
     byte TR_PAY = 2, TR_REJECT = 4, TR_RECEIVED = 5, TR_COMPLETE = 6;
 

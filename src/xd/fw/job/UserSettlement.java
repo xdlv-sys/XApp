@@ -66,6 +66,12 @@ public class UserSettlement implements UserHandler {
         if (target.areaLevel == AL_CITY){
             base += JKN.city_settlement;
         }
+        if (target.storeKeeper == STORE_KEEPER_FIRST){
+            base += JKN.store_keeper_first_settlement;
+        }
+        if (target.storeKeeper == STORE_KEEPER_EXTEND){
+            base += JKN.store_keeper_extend_settlement;
+        }
         return (int) (base * totalFee);
     }
 }

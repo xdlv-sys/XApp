@@ -1,8 +1,11 @@
 package xd.fw.service.impl;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SQLQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xd.fw.FwUtil;
@@ -14,6 +17,7 @@ import xd.fw.bean.OrderSettlement;
 import xd.fw.bean.mapper.JknUserMapper;
 import xd.fw.service.JknService;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
@@ -157,10 +161,10 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
     @Transactional
     public void upgradeUserLevel(int userId, byte userLevel, byte areaLevel) {
         JknUser user = load(JknUser.class, userId);
-        if (user.getUserLevel() < userLevel){
+        if (user.getUserLevel() < userLevel) {
             user.setUserLevel(userLevel);
         }
-        if (user.getAreaLevel() < areaLevel){
+        if (user.getAreaLevel() < areaLevel) {
             user.setAreaLevel(areaLevel);
         }
         update(user);
@@ -203,7 +207,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
         if (orderSettlement.getUserIdOne() != 0) {
             JknUser userOne = load(JknUser.class, orderSettlement.getUserIdOne());
-            if (userOne.getCountOne() >= orderSettlement.getCountOne()){
+            if (userOne.getCountOne() >= orderSettlement.getCountOne()) {
                 userOne.setCount(orderSettlement.getCountOne() + userOne.getCount());
                 userOne.setCountOne(userOne.getCountOne() - orderSettlement.getCountOne());
                 update(userOne);
@@ -212,7 +216,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
         if (orderSettlement.getUserIdTwo() != 0) {
             JknUser userTwo = load(JknUser.class, orderSettlement.getUserIdTwo());
-            if (userTwo.getCountTwo() >= orderSettlement.getCountTwo()){
+            if (userTwo.getCountTwo() >= orderSettlement.getCountTwo()) {
                 userTwo.setCount(orderSettlement.getCountTwo() + userTwo.getCount());
                 userTwo.setCountTwo(userTwo.getCountTwo() - orderSettlement.getCountTwo());
                 update(userTwo);
@@ -221,7 +225,7 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
         if (orderSettlement.getUserIdThree() != 0) {
             JknUser userThree = load(JknUser.class, orderSettlement.getUserIdThree());
-            if (userThree.getCountThree() >= orderSettlement.getCountThree()){
+            if (userThree.getCountThree() >= orderSettlement.getCountThree()) {
                 userThree.setCount(orderSettlement.getCountThree() + userThree.getCount());
                 userThree.setCountThree(userThree.getCountThree() - orderSettlement.getCountThree());
                 update(userThree);
@@ -247,12 +251,12 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
         }
 
         boolean[] exists = new boolean[]{false};
-        FwUtil.safeEach(jknEvents,(event)->{
-            if (event.getEventStatus() == ES_INI){
+        FwUtil.safeEach(jknEvents, (event) -> {
+            if (event.getEventStatus() == ES_INI) {
                 exists[0] = true;
             }
         });
-        if (exists[0]){
+        if (exists[0]) {
             logger.info("there are still sms event not send, ignore this");
             return;
         }
@@ -267,5 +271,65 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
     public void deleteEarlierEvent() {
         int count = jknUserMapper.deleteEarlierEvent();
         logger.info("delete {} rows in earlier events", count);
+    }
+
+    private String constructJknUserSql(int userId, String userName, String referrerName, boolean count) {
+        StringBuilder sql = new StringBuilder(count ? "select count(*) " : "select a.* "
+        ).append("from t_jkn_user a ");
+        if (StringUtils.isNotBlank(referrerName)) {
+            sql.append("join t_jkn_user b on a.referrer=b.user_id where b.user_name like '%"
+            ).append(referrerName).append("%'");
+        } else {
+            sql.append("where 1=1");
+        }
+        if (userId > 0) {
+            sql.append(" and a.user_id=").append(userId);
+        }
+        if (StringUtils.isNotBlank(userName)) {
+            sql.append(" and a.user_name like '%").append(userName).append("%'");
+        }
+        return sql.toString();
+    }
+
+    public List<JknUser> getJknUsers(int userId, String userName, String referrerName, int start, int limit) {
+        return htpl.execute((HibernateCallback<List<JknUser>>) session -> {
+            String sql = constructJknUserSql(userId, userName, referrerName, false);
+            SQLQuery query = session.createSQLQuery(sql).addEntity(JknUser.class);
+            return query.setFirstResult(start).setMaxResults(limit).list();
+        });
+    }
+
+    public int getJknUserCount(int userId, String userName, String referrerName) {
+        return htpl.execute(session -> {
+            String sql = constructJknUserSql(userId, userName, referrerName, true);
+            SQLQuery query = session.createSQLQuery(sql);
+            return ((BigInteger) query.list().get(0)).intValue();
+        });
+    }
+
+    public List<Order> getJknOrders(int orderId, int userId, short tradeType, int start, int limit) {
+        return htpl.execute((HibernateCallback<List<Order>>) session -> session.createQuery(constructOrderSql(orderId, userId, tradeType, false)
+        ).setFirstResult(start).setMaxResults(limit).list());
+    }
+
+    public int getJknOrderCount(int orderId, int userId, short tradeType) {
+        return htpl.execute(session -> {
+            String sql = constructOrderSql(orderId, userId, tradeType, true);
+            return ((Long) session.createQuery(sql).list().get(0)).intValue();
+        });
+    }
+
+    private String constructOrderSql(int orderId, int userId, short tradeType, boolean count) {
+        StringBuilder sql = new StringBuilder(count ? "select count(*) " : "").append("from Order where 1=1");
+        if (orderId > 0) {
+            sql.append(" and orderId=").append(orderId);
+        }
+        if (userId > 0) {
+            sql.append(" and userId=").append(userId);
+        }
+        if (tradeType > -1) {
+            sql.append(" and tradeType=").append(tradeType);
+        }
+        return sql.toString();
     }
 }

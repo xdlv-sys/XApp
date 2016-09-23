@@ -1,6 +1,12 @@
 Ext.define('XApp.Util', {
     singleton: true,
 
+    each : function(data, eachFunction){
+        for (var k in data){
+            eachFunction(data[k],k,data);
+        }
+    },
+
     ajax: function (objs) {
         Ext.Ajax.request({
             url: objs.url,

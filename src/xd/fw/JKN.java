@@ -40,6 +40,9 @@ public class JKN extends Conf {
     public static long city_consumed = 600000 * 100;//60w
     public static float city_settlement = 0.04f;
 
+    public static float store_keeper_first_settlement = 0.03f;
+    public static float store_keeper_extend_settlement = 0.03f;
+
     public static int membership_count = 5900;
     public static int vip_cost = 59000;
 

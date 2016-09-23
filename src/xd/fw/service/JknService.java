@@ -38,4 +38,12 @@ public interface JknService extends BaseService {
 
     void deleteEarlierEvent();
 
+    List<JknUser> getJknUsers(int userId,String userName, String referrerName, int start, int limit);
+
+    int getJknUserCount(int userId,String userName, String referrerName);
+
+    List<Order> getJknOrders(int orderId, int userId, short tradeType, int start, int limit);
+
+    int getJknOrderCount(int orderId, int userId, short tradeType);
+
 }
