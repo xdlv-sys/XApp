@@ -150,6 +150,7 @@ create table t_jkn_store_approve(
   approve_id int auto_increment primary key,
   user_id int not null,
   approve_type tinyint not null,
+  approve_status tinyint not null,
   create_date DATETIME not null,
-  approve_date DATETIME not null
+  approve_date DATETIME
 )ENGINE = INNODB;

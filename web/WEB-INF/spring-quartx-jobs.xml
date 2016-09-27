@@ -17,6 +17,7 @@
         <property name="taskExecutor" ref="quartzExecutor"/>
         <property name="triggers">
             <list>
+                <ref bean="userProcessDoTime"/>
                 <!--<ref bean="memoryCheckDoTime"/>-->
                 <!--<ref bean="userProcessDoTime"/>
                 &lt;!&ndash;<ref bean="notifyUserUpdateDoTime"/>&ndash;&gt;

@@ -98,11 +98,7 @@ Ext.define("XApp.view.jkn.UserManager",{
             text: '店铺',
             dataIndex: 'storeKeeper',
             renderer: function(v){
-                switch(v){
-                    case 1 : return '第一批';
-                    case 2 : return '扩展';
-                    default : return '无效'
-                }
+                return XApp.view.jkn.Const.getStoreType(v);
             }
         },{
             text: '金额(元)',

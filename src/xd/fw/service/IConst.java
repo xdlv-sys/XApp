@@ -4,6 +4,8 @@ package xd.fw.service;
 public interface IConst {
     int INVALIDATE_INT = -1000;
 
+    byte STATUS_INI = 0, STATUS_DONE = 1, STATUS_FAIL = 2;
+
     int OK = 200;
 
     byte TRUE = 1, FALSE = 0;

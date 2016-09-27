@@ -1,6 +1,6 @@
 Ext.define('XApp.Application', {
     extend: 'Ext.app.Application',
-    requires: [],
+    requires: ['XApp.view.jkn.*'],
     name: 'XApp',
     
     controllers: ['Root@XApp.controller'],

@@ -12,6 +12,7 @@ public class JknStoreApprove {
     private int approveId;
     private int userId;
     private byte approveType;
+    private byte approveStatus;
     private Timestamp createDate;
     private Timestamp approveDate;
 
@@ -53,6 +54,14 @@ public class JknStoreApprove {
 
     public void setApproveDate(Timestamp approveDate) {
         this.approveDate = approveDate;
+    }
+
+    public void setApproveStatus(byte approveStatus) {
+        this.approveStatus = approveStatus;
+    }
+
+    public byte getApproveStatus() {
+        return approveStatus;
     }
 
     @Override

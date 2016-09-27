@@ -5,7 +5,7 @@ var app = angular.module("interfaceTest", ['angular-md5']).config(['$httpProvide
             str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
         }
         return str.join("&");
-    }
+    };
     $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
     $httpProvider.defaults.headers.post = {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'

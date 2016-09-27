@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xd.fw.FwUtil;
 import xd.fw.JKN;
-import xd.fw.bean.JknEvent;
-import xd.fw.bean.JknUser;
-import xd.fw.bean.Order;
-import xd.fw.bean.OrderSettlement;
+import xd.fw.bean.*;
 import xd.fw.bean.mapper.JknUserMapper;
 import xd.fw.service.JknService;
 
@@ -331,5 +328,21 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
             sql.append(" and tradeType=").append(tradeType);
         }
         return sql.toString();
+    }
+
+    @Override
+    public void updateApproveStore(JknStoreApprove storeApprove) {
+        JknStoreApprove record = load(JknStoreApprove.class, storeApprove.getApproveId());
+        record.setApproveStatus(storeApprove.getApproveStatus());
+        record.setApproveDate(new Timestamp(System.currentTimeMillis()));
+        update(record);
+
+        if (storeApprove.getApproveStatus() == STATUS_DONE){
+            //notify user
+            JknUser jknUser = load(JknUser.class, record.getUserId());
+            jknUser.setStoreKeeper(record.getApproveType());
+            update(jknUser);
+            //
+        }
     }
 }

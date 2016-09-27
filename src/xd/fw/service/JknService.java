@@ -1,9 +1,6 @@
 package xd.fw.service;
 
-import xd.fw.bean.JknEvent;
-import xd.fw.bean.JknUser;
-import xd.fw.bean.Order;
-import xd.fw.bean.OrderSettlement;
+import xd.fw.bean.*;
 
 import java.util.List;
 
@@ -45,5 +42,7 @@ public interface JknService extends BaseService {
     List<Order> getJknOrders(int orderId, int userId, short tradeType, int start, int limit);
 
     int getJknOrderCount(int orderId, int userId, short tradeType);
+
+    void updateApproveStore(JknStoreApprove storeApprove);
 
 }

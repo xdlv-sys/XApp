@@ -20,7 +20,22 @@ public class JknStoreAction extends BaseAction {
         return SUCCESS;
     }
 
+    public String approveStore(){
+        FwUtil.safeEach(jknStoreApproves, new FwUtil.SafeEachProcess<JknStoreApprove>() {
+            @Override
+            public void process(JknStoreApprove jknStoreApprove) {
+                jknStoreApprove.setApproveStatus(STATUS_DONE);
+                jknService.updateApproveStore(jknStoreApprove);
+            }
+        });
+        return FINISH;
+    }
+
     public List<JknStoreApprove> getJknStoreApproves() {
         return jknStoreApproves;
+    }
+
+    public void setJknStoreApproves(List<JknStoreApprove> jknStoreApproves) {
+        this.jknStoreApproves = jknStoreApproves;
     }
 }
