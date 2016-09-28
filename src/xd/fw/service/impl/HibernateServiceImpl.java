@@ -12,6 +12,7 @@ import xd.fw.FwUtil;
 import xd.fw.bean.PrimaryKey;
 import xd.fw.service.BaseService;
 import xd.fw.service.ConstructHql;
+import xd.fw.service.SessionProcessor;
 import xd.fw.service.SetParameters;
 
 import java.io.Serializable;
@@ -26,6 +27,12 @@ public class HibernateServiceImpl implements BaseService{
 
     @Autowired
     protected HibernateTemplate htpl;
+
+    @Override
+    @Transactional
+    public <T> T runInSession(SessionProcessor<T> processor) {
+        return processor.process(htpl);
+    }
 
     public int getPrimaryKey(Class<?> cls){
         int[] value;

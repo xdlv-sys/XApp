@@ -37,4 +37,6 @@ public interface BaseService extends IConst{
 
     <T> int getAllCount(T param, SetParameters setParameters, ConstructHql<T> constructHql);
 
+    <T> T runInSession(SessionProcessor<T> processor);
+
 }
