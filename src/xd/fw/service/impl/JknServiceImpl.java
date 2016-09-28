@@ -190,6 +190,11 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
             user.setCountThree(user.getCountThree() + orderSettlement.getCountThree());
             update(user);
         }
+        if (orderSettlement.getStoreUserId() > 0){
+            user = load(JknUser.class, orderSettlement.getStoreUserId());
+            user.setStoreCount(user.getStoreCount() + orderSettlement.getStoreCount());
+            update(user);
+        }
 
         JknEvent event = new JknEvent(EV_USER_SETTLEMENT_APPLY
                 , orderSettlement.getOrderId(), null);
@@ -226,6 +231,15 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
                 userThree.setCount(orderSettlement.getCountThree() + userThree.getCount());
                 userThree.setCountThree(userThree.getCountThree() - orderSettlement.getCountThree());
                 update(userThree);
+            }
+        }
+
+        if (orderSettlement.getStoreUserId() > 0) {
+            JknUser userStore = load(JknUser.class, orderSettlement.getStoreUserId());
+            if (userStore.getStoreCount() >= orderSettlement.getStoreCount()) {
+                userStore.setCount(orderSettlement.getStoreCount() + userStore.getCount());
+                userStore.setStoreCount(userStore.getStoreCount() - orderSettlement.getStoreCount());
+                update(userStore);
             }
         }
         orderSettlement.setSettlementStatus(SS_DONE);

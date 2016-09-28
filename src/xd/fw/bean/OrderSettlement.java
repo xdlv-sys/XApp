@@ -7,6 +7,9 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "t_jkn_order_settlement")
+@org.hibernate.annotations.Entity(
+        dynamicUpdate = true
+)
 public class OrderSettlement {
     @Id
     private int orderId;
@@ -17,6 +20,8 @@ public class OrderSettlement {
     private int countTwo;
     private int userIdThree;
     private int countThree;
+    private int storeUserId;
+    private int storeCount;
     private byte settlementStatus;
     private Timestamp lastDate;
 
@@ -98,6 +103,22 @@ public class OrderSettlement {
 
     public void setLastDate(Timestamp lastDate) {
         this.lastDate = lastDate;
+    }
+
+    public int getStoreUserId() {
+        return storeUserId;
+    }
+
+    public void setStoreUserId(int storeUserId) {
+        this.storeUserId = storeUserId;
+    }
+
+    public int getStoreCount() {
+        return storeCount;
+    }
+
+    public void setStoreCount(int storeCount) {
+        this.storeCount = storeCount;
     }
 
     @Override

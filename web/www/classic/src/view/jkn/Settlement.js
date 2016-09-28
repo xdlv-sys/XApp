@@ -60,6 +60,17 @@ Ext.define("XApp.view.jkn.Settlement",{
             renderer: function(v){
                 return v/100.0;
             }
+        }, {
+            text: "店铺用户",
+            flex: 1,
+            dataIndex: 'storeUserId'
+        },{
+            text: "店铺提成",
+            flex: 1,
+            dataIndex: 'storeCount',
+            renderer: function(v){
+                return v/100.0;
+            }
         },{
             text: '状态',
             dataIndex: 'settlementStatus',

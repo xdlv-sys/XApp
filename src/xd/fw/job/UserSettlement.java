@@ -27,6 +27,21 @@ public class UserSettlement implements UserHandler {
         orderSettlement.setUserId(order.getUserId());
         orderSettlement.setSettlementStatus(SS_INI);
 
+        //店铺走货
+        UserDesc storeUserDesc;
+        if (order.getStoreUserId() > 0
+                && (storeUserDesc = userMap.get(order.getStoreUserId())) != null){
+            orderSettlement.setStoreUserId(order.getStoreUserId());
+            float radio = 0f;
+            if (storeUserDesc.storeKeeper == STORE_KEEPER_FIRST){
+                radio = JKN.store_order_first_settlement;
+            }
+            if (storeUserDesc.storeKeeper == STORE_KEEPER_EXTEND){
+                radio = JKN.store_order_extend_settlement;
+            }
+            orderSettlement.setStoreCount((int) (totalFee * radio));
+        }
+
         int fee;
         UserDesc target = user.parent;
         if (target != null) {

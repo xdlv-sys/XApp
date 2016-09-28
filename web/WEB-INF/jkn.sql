@@ -142,8 +142,8 @@ ALTER TABLE t_jkn_user ADD COLUMN `store_keeper` SMALLINT(6) NOT NULL default 0 
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('store_keeper_first_settlement','0.03','首批商铺分成比例',0);
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('store_keeper_extend_settlement','0.03','扩展商铺分成比例',0);
 
-insert into t_mod values(5,'店铺管理',null, null,'x-fa fa-twitch',0);
-insert into t_mod values(6,'店铺申批',null,'jkn-StoreApply','x-fa fa-rebel',5);
+-- insert into t_mod values(5,'店铺管理',null, null,'x-fa fa-twitch',0);
+-- insert into t_mod values(6,'店铺申批',null,'jkn-StoreApply','x-fa fa-rebel',5);
 
 drop table IF EXISTS t_jkn_store_approve;
 create table t_jkn_store_approve(
@@ -154,3 +154,14 @@ create table t_jkn_store_approve(
   create_date DATETIME not null,
   approve_date DATETIME
 )ENGINE = INNODB;
+
+alter table t_jkn_order add column `store_user_id` int null default 0 AFTER `balance_fee`;
+
+alter table t_jkn_order_settlement add column `store_user_id` int null default 0 after `count_three`;
+alter table t_jkn_order_settlement add column `store_count` int null default 0 after `store_user_id`;
+
+alter table t_jkn_user add column `store_count` int null default 0 after `count_three`;
+
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('store_order_first_settlement','0.06','第一批商铺发货返点比例',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('store_order_extend_settlement','0.06','拓展商铺发货返点比例',0);
+

@@ -5,15 +5,14 @@ import org.apache.struts2.convention.annotation.Action;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 import xd.fw.FwUtil;
 import xd.fw.JKN;
-import xd.fw.bean.JknUser;
-import xd.fw.bean.Order;
-import xd.fw.bean.OrderSettlement;
-import xd.fw.bean.UserCount;
+import xd.fw.bean.*;
 import xd.fw.bean.mapper.JknUserMapper;
 import xd.fw.service.ConstructHql;
 import xd.fw.service.JknService;
+import xd.fw.service.SessionProcessor;
 import xd.fw.service.SetParameters;
 
 import java.util.List;
@@ -74,6 +73,22 @@ public class JknAction extends BaseAction {
         }
         code = jknService.saveOrder(order);
         order = null;
+        return SUCCESS;
+    }
+
+    @Action("approveStore")
+    public String approveStore() {
+        code = jknService.runInSession(new SessionProcessor<Integer>() {
+            @Override
+            public Integer process(HibernateTemplate htpl) {
+                JknUser record = htpl.load(JknUser.class, jknUser.getUserId());
+                record.setStoreKeeper(jknUser.getStoreKeeper());
+                htpl.update(record);
+                jknService.triggerEvent(
+                        new JknEvent(EV_USER_UPGRADE,record.getUserId(),null));
+                return 200;
+            }
+        });
         return SUCCESS;
     }
 

@@ -32,6 +32,15 @@ public class NotifyUserUpdatedJob extends EventJob {
         if (orderSettlement.getCountThree() > 0){
             notifyUser(orderSettlement.getUserIdThree());
         }
+        // notify store user
+        if (orderSettlement.getStoreUserId() > 0){
+            if (orderSettlement.getStoreUserId() != orderSettlement.getUserIdOne()
+                    && orderSettlement.getStoreUserId() != orderSettlement.getUserIdTwo()
+                    && orderSettlement.getStoreUserId() != orderSettlement.getUserIdThree()){
+                notifyUser(orderSettlement.getStoreUserId());
+            }
+        }
+
         return ES_DONE ;
     }
 
@@ -43,7 +52,7 @@ public class NotifyUserUpdatedJob extends EventJob {
                 {"userLevelOne", String.valueOf(user.getUserLevel())},
                 {"userLevelTwo", String.valueOf(user.getAreaLevel())},
                 {"count", String.valueOf(user.getCount())},
-                {"unApplyCount", String.valueOf(user.getCountOne() + user.getCountTwo() + user.getCountThree())},
+                {"unApplyCount", String.valueOf(user.getStoreCount() + user.getCountOne() + user.getCountTwo() + user.getCountThree())},
                 {"discount", String.valueOf(user.getVip() == VIP ? JKN.vip_discount : 100)},
                 {"sign",""}
         };

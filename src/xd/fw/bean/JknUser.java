@@ -8,6 +8,9 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "t_jkn_user")
+@org.hibernate.annotations.Entity(
+        dynamicUpdate = true
+)
 public class JknUser {
     @Id
     private int userId;
@@ -23,6 +26,7 @@ public class JknUser {
     private int countOne;
     private int countTwo;
     private int countThree;
+    private int storeCount;
     private Timestamp regDate;
 
     public int getUserId() {
@@ -135,6 +139,14 @@ public class JknUser {
 
     public void setStoreKeeper(byte storeKeeper) {
         this.storeKeeper = storeKeeper;
+    }
+
+    public int getStoreCount() {
+        return storeCount;
+    }
+
+    public void setStoreCount(int storeCount) {
+        this.storeCount = storeCount;
     }
 
     @Override

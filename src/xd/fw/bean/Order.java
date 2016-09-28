@@ -12,6 +12,9 @@ import java.text.SimpleDateFormat;
 
 @Entity
 @Table(name = "t_jkn_order")
+@org.hibernate.annotations.Entity(
+        dynamicUpdate = true
+)
 public class Order {
     @Id
     private int orderId;
@@ -22,6 +25,7 @@ public class Order {
     private byte tradeType;
     private int totalFee;
     private int balanceFee;
+    private int storeUserId;
     private byte tradeStatus;
     private Timestamp lastDate;
 
@@ -94,8 +98,17 @@ public class Order {
             try{
                 this.balanceFee = Integer.parseInt(balanceFee);
             }catch (NumberFormatException e){
+                e.printStackTrace();
             }
         }
+    }
+
+    public int getStoreUserId() {
+        return storeUserId;
+    }
+
+    public void setStoreUserId(int storeUserId) {
+        this.storeUserId = storeUserId;
     }
 
     public byte getTradeStatus() {

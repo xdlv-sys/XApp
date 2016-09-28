@@ -6,6 +6,7 @@ Ext.define('XApp.model.JknUser', {
         , {name: 'count', type: 'int'}, {name: 'countOne', type: 'int'}
         , {name: 'countTwo', type: 'int'}, {name: 'countThree', type: 'int'}
         ,{name: 'consumedCount', type: 'int'}
+        ,{name: 'storeCount', type: 'int'}
         ,{name: 'storeKeeper', type: 'int'},'regDate'],
 
     proxy: {

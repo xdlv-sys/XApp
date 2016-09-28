@@ -1,7 +1,7 @@
-<form method="post" role="form">
+<form method="post" role="form" class="form">
     <div class="title">{{title}}</div>
     <div class="url">{{url}}</div>
-        <table border="0">
+        <table border="0" class="table table-bordered">
             <tr ng-repeat="t in inputs">
                 <td>{{t.label}}:</td>
                 <td width="400px">
@@ -18,5 +18,5 @@
         <div class="title_v">返回结果</div>
         <div class="result">{{result | json}}</div>
     </div>
-    <button class="btn btn-primary" ng-disabled="incomplete" type="button" ng-click="submitForm()">提交</button>
+    <button class="btn btn-lg btn-primary" ng-disabled="incomplete" type="button" ng-click="submitForm()">提交</button>
 </form>

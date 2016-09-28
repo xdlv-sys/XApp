@@ -9,7 +9,6 @@ import xd.fw.service.IConst;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,6 +20,7 @@ public class BasicTest implements IConst{
 
     String addUserUrl = "http://localhost:8080/an/syncUser.cmd";
     String addTrade = "http://localhost:8080/an/addTrade.cmd";
+    String approveStore = "http://localhost:8080/an/approveStore.cmd";
 
     String getUserUrl = "http://localhost:8080/an/jkn_user!obtainUsers.cmd?start=0&limit=250000";
 
@@ -41,10 +41,7 @@ public class BasicTest implements IConst{
     }
     protected  boolean sendF(String url, String[][] params) throws Exception {
         JSONObject ret = send(url, params);
-        if (ret.getInt("code") == 200){
-            return true;
-        }
-        return false;
+        return ret.getInt("code") == 200;
     }
 
     protected void checkUser(int userId,UserChecker checker) throws Exception{
@@ -78,7 +75,16 @@ public class BasicTest implements IConst{
         boolean process(JSONObject i);
     }
 
-    int assertAddTrade(int userId,int tradeType, int totalFee) throws Exception {
+    void assertApproveStore(int userId, byte storeType) throws Exception{
+        String[][] params = {
+                {"jknUser.userId", String.valueOf(userId)},
+                {"jknUser.storeKeeper", String.valueOf(storeType)},
+                {"sign",""}
+        };
+        doAdd(approveStore, params);
+    }
+
+    int assertAddTrade(int userId, int tradeType, int totalFee, int storeUserId) throws Exception {
         int tradeId = tradeId();
         String[][] params = {
                 {"order.orderId", String.valueOf(tradeId)},
@@ -87,22 +93,11 @@ public class BasicTest implements IConst{
                 {"order.tradeType", String.valueOf(tradeType)},
                 {"order.totalFee", String.valueOf(totalFee)},
                 {"order.balanceFee", String.valueOf(0)},
+                {"order.storeUserId", String.valueOf(storeUserId)},
                 {"order.lastUpdateS", FwUtil.sdf.format(new Date())},
                 {"sign",""}
         };
-        List<String> lists = new ArrayList<>();
-        for (String[] p : params){
-            if (p[0].equals("sign")){
-                break;
-            }
-            lists.add(p[0] + "=" + p[1] + "&");
-        }
-        String sign = FwUtil.getSign(lists,key);
-        params[params.length -1][1] = sign;
-        boolean add = sendF(addTrade, params);
-        if (!add) {
-            fail();
-        }
+        doAdd(addTrade, params);
         return tradeId;
     }
 
@@ -115,6 +110,11 @@ public class BasicTest implements IConst{
                 {"jknUser.telephone", "15951928975"},
                 {"sign",""}
         };
+        doAdd(addUserUrl, params);
+        return userId;
+    }
+
+    private void doAdd(String url, String[][] params) throws Exception{
         List<String> lists = new ArrayList<>();
         for (String[] p : params){
             if (p[0].equals("sign")){
@@ -125,10 +125,9 @@ public class BasicTest implements IConst{
         String sign = FwUtil.getSign(lists,key);
         params[params.length -1][1] = sign;
 
-        boolean add = sendF(addUserUrl, params);
+        boolean add = sendF(url, params);
         if (!add) {
             fail();
         }
-        return userId;
     }
 }

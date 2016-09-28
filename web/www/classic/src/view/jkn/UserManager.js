@@ -110,7 +110,7 @@ Ext.define("XApp.view.jkn.UserManager",{
             text: '未结算总额(元)',
             dataIndex: 'countOne',
             renderer: function(v,o,record){
-                return (v + record.get('countTwo') + record.get('countThree'))/100.0;
+                return (v + record.get('countTwo') + record.get('countThree') + record.get('storeCount'))/100.0;
             }
         },{
             text: '消费总额(元)',

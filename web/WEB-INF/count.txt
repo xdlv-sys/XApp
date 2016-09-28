@@ -4,3 +4,12 @@ localhost：3306
 数据库名：igecono_js
 用户名：igecono_js
 密码：igecono_2016!
+
+wx_public:
+keytool -genkey -alias android.keystore -keyalg RSA -validity 20000 -keystore android.keystore
+  password: jiekangnuo2016
+  Is CN=jiekangnuo, OU=jkn, O=jkn, L=zj, ST=zj, C=cn
+  cordova build android --release -- --keystore=android.keystore --storePassword=jiekangnuo2016 --alias=android.keystore --password=jiekangnuo2016
+  https://github.com/xu-li/cordova-plugin-wechat-example/blob/master/server/payment_demo.php
+appid:
+   cordova plugin add cordova-plugin-wechat --variable wechatappid=wxfb177b648d500632
