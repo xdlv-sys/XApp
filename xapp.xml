@@ -23,7 +23,7 @@
 
     <target name="sencha">
         <parallel failonany="true">
-            <antcall target="sencha-wwt"/>
+            <!--<antcall target="sencha-wwt"/>-->
             <antcall target="sencha-www"/>
         </parallel>
     </target>
