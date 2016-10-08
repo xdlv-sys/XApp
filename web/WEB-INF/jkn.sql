@@ -164,4 +164,6 @@ alter table t_jkn_user add column `store_count` int null default 0 after `count_
 
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('store_order_first_settlement','0.06','第一批商铺发货返点比例',0);
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('store_order_extend_settlement','0.06','拓展商铺发货返点比例',0);
+insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('withdraw_percent','0.9','提现百分比',0);
+
 

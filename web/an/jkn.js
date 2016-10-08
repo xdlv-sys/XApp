@@ -62,10 +62,12 @@ var app = angular.module("interfaceTest", ['angular-md5']).config(['$httpProvide
                 var httpParams = scope.getHttpParams();
 
                 $http.post(scope.action, httpParams).success(function(data) {
-                    if (attrs.result) {
+                    if (scope.resultKey) {
                         scope.result = data[scope.resultKey];
+                        if (scope.resultKey === '@'){
+                            scope.result = data;
+                        }
                     }
-
                     alert((data.code === 200 ? 'OK:' : 'Fail:') + data.code);
                 });
             };

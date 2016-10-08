@@ -16,7 +16,7 @@
         font-weight: bold;
         font-size: 24px;
         color: #b30000;
-        width: 200px;
+        width: 300px;
         padding: 20px;
     }
 
@@ -119,6 +119,11 @@
             title="审批用户店铺 approveStore"
             params="jknUser.userId-用户ID
                 -jknUser.storeKeeper-店铺类型(1 第一批店铺 2 拓展店铺))">
+</input-form>
+
+<input-form action="withdrawCount.cmd"
+            title="可提现金额 withdrawCount"
+            params="jknUser.userId-用户ID" result="@">
 </input-form>
 
 </body>

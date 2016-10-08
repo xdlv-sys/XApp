@@ -92,6 +92,19 @@ public class JknAction extends BaseAction {
         return SUCCESS;
     }
 
+    Integer withdrawCount;
+    @Action("withdrawCount")
+    public String withdrawCount(){
+        jknUser = jknService.get(JknUser.class, jknUser.getUserId());
+        if (jknUser == null){
+            code = 201;
+        } else {
+            withdrawCount = (int)(jknUser.getCount() * JKN.withdraw_percent);
+        }
+        jknUser = null;
+        return SUCCESS;
+    }
+
     List<OrderSettlement> orderSettlements;
 
     public List<OrderSettlement> getOrderSettlements() {
@@ -228,5 +241,9 @@ public class JknAction extends BaseAction {
 
     public void setSign(String sign) {
         this.sign = sign;
+    }
+
+    public Integer getWithdrawCount() {
+        return withdrawCount;
     }
 }

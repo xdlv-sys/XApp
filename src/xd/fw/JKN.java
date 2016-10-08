@@ -46,6 +46,8 @@ public class JKN extends Conf {
     public static float store_order_first_settlement = 0.06f;
     public static float store_order_extend_settlement = 0.06f;
 
+    public static float withdraw_percent = 0.9f;
+
     public static int membership_count = 5900;
     public static int vip_cost = 59000;
 
