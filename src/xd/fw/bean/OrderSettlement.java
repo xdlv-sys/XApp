@@ -1,5 +1,7 @@
 package xd.fw.bean;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -7,9 +9,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "t_jkn_order_settlement")
-@org.hibernate.annotations.Entity(
-        dynamicUpdate = true
-)
+@DynamicUpdate
 public class OrderSettlement {
     @Id
     private int orderId;

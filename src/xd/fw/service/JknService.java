@@ -27,7 +27,7 @@ public interface JknService extends BaseService {
 
     byte applySettlement(int dbKey);
 
-    void modifyUserCount(int userId, int count, int countOne, int countTwo, int countThree);
+    void userWithdrawCount(int userId, int count);
 
     byte[] updateUserProsForProcessOrder(Order order);
 

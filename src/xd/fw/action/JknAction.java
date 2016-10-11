@@ -99,7 +99,7 @@ public class JknAction extends BaseAction {
         if (jknUser == null){
             code = 201;
         } else {
-            withdrawCount = (int)(jknUser.getCount() * JKN.withdraw_percent);
+            withdrawCount = (int)((jknUser.getAllCount() - jknUser.getWithdrawCount()) * JKN.withdraw_percent);
         }
         jknUser = null;
         return SUCCESS;

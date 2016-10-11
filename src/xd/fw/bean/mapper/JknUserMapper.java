@@ -4,10 +4,7 @@ import org.apache.ibatis.annotations.Param;
 
 public interface JknUserMapper {
 
-    int modifyUserCount(@Param("userId") int userId, @Param("count") int count,
-                        @Param("countOne") int countOne,
-                        @Param("countTwo") int countTwo,
-                        @Param("countThree") int countThree);
+    int userWithdrawCount(@Param("userId") int userId, @Param("totalCount") int totalCount);
 
     Integer sumFeeFromGeneration(@Param("generation") int generation,
                         @Param("userId") int userId);

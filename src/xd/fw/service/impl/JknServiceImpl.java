@@ -123,9 +123,9 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
 
     @Override
     @Transactional
-    public void modifyUserCount(int userId, int count
-            , int countOne, int countTwo, int countThree) {
-        jknUserMapper.modifyUserCount(userId, count, countOne, countTwo, countThree);
+    public void userWithdrawCount(int userId, int totalCount) {
+        //用户提现：若totalCount>0 ，则为提现，否则撤销提现
+        jknUserMapper.userWithdrawCount(userId, totalCount);
     }
 
     @Override
@@ -150,6 +150,12 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
             upgrade = true;
         }
 
+        //如果是vip，返现20%
+        if (jknUser.getVip() == VIP){
+            int disCount = order.getTotalFee() * (100 - JKN.vip_discount) /100;
+            jknUser.setCount(jknUser.getCount() + disCount);
+            jknUser.setAllCount(jknUser.getAllCount() + disCount);
+        }
         update(jknUser);
         return new byte[]{upgrade ? TRUE : FALSE, jknUser.getUserLevel()};
     }

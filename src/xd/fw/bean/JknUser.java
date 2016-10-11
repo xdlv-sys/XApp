@@ -1,16 +1,15 @@
 package xd.fw.bean;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "t_jkn_user")
-@org.hibernate.annotations.Entity(
-        dynamicUpdate = true
-)
+@DynamicUpdate
 public class JknUser {
     @Id
     private int userId;
@@ -27,6 +26,8 @@ public class JknUser {
     private int countTwo;
     private int countThree;
     private int storeCount;
+    private int allCount;
+    private int withdrawCount;
     private Timestamp regDate;
 
     public int getUserId() {
@@ -147,6 +148,22 @@ public class JknUser {
 
     public void setStoreCount(int storeCount) {
         this.storeCount = storeCount;
+    }
+
+    public int getAllCount() {
+        return allCount;
+    }
+
+    public void setAllCount(int allCount) {
+        this.allCount = allCount;
+    }
+
+    public int getWithdrawCount() {
+        return withdrawCount;
+    }
+
+    public void setWithdrawCount(int withdrawCount) {
+        this.withdrawCount = withdrawCount;
     }
 
     @Override

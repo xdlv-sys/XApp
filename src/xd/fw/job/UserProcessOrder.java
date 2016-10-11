@@ -2,9 +2,7 @@ package xd.fw.job;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xd.fw.JKN;
 import xd.fw.bean.JknEvent;
-import xd.fw.bean.JknUser;
 import xd.fw.bean.Order;
 import xd.fw.service.JknService;
 
@@ -21,7 +19,7 @@ public class UserProcessOrder implements UserHandler {
 
         //若是提现，则修改用户余额无须通知
         if (order.getTradeType() == TR_TYPE_MONEY) {
-            jknService.modifyUserCount(order.getUserId(), order.getTotalFee() * -1, 0, 0, 0);
+            jknService.userWithdrawCount(order.getUserId(), order.getTotalFee());
             return ES_DONE;
         }
 

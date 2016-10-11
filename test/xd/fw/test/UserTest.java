@@ -196,6 +196,14 @@ public class UserTest extends BasicTest {
 
     }
 
+    @Test(dependsOnMethods = "userStoreUpgrade")
+    public void withdrawCount() throws Exception {
+        /**
+         * 创建用户 升级成VIP 验证返现
+         */
+    }
+
+
     private int createRegionUser(int referrer) throws Exception{
         final int userId = assertAddUser(referrer);
         assertAddTrade(userId,TR_TYPE_CONSUME,5900, 0);

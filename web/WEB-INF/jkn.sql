@@ -166,4 +166,10 @@ insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('sto
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('store_order_extend_settlement','0.06','拓展商铺发货返点比例',0);
 insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('withdraw_percent','0.9','提现百分比',0);
 
+-- vip -----
+alter table t_jkn_user add column `all_count` int null default 0 after `store_count`;
+alter table t_jkn_user add column `withdraw_count` int null default 0 after `all_count`;
+-- update t_jkn_user set all_count=count;
+
+
 
