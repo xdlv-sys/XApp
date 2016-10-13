@@ -20,7 +20,7 @@ public class ParkNative {
         public String sInTime;
         public float fMoney;
         public int iParkedTime;
-        public int iReturn;
+        public int iReturn = 0;
     }
 
     Method initialized, unitialized, getParkedCarInfo, payParkCarFee;

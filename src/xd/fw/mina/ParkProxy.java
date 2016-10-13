@@ -66,7 +66,7 @@ public class ParkProxy extends ReversedProxy {
                     parkedInfo = parkNative.getParkedInfo(carType, carNumber);
                     parkedInfo.carNumber = carNumber;
                 }
-                if (parkedInfo != null){
+                if (parkedInfo != null && parkedInfo.iReturn != 6){
                     next.setNext(parkedInfo.carNumber).setNext(parkedInfo.fMoney
                     ).setNext(parkedInfo.sInTime).setNext(parkedInfo.iParkedTime);
                 } else {
