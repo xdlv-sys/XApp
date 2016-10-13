@@ -21,6 +21,7 @@ public class BasicTest implements IConst{
     String addUserUrl = "http://localhost:8080/an/syncUser.cmd";
     String addTrade = "http://localhost:8080/an/addTrade.cmd";
     String approveStore = "http://localhost:8080/an/approveStore.cmd";
+    String withdrawCount = "http://localhost:8080/an/withdrawCount.cmd";
 
     String getUserUrl = "http://localhost:8080/an/jkn_user!obtainUsers.cmd?start=0&limit=250000";
 
@@ -58,19 +59,6 @@ public class BasicTest implements IConst{
         fail("there is no invalidate user :" + userId);
     }
 
-    /*protected boolean checkUser(UserChecker checker) throws Exception {
-        Iterator<JSONObject> iterator = send(getUserUrl, new String[][]{
-                {"start","0"},
-                {"limit","20000"}
-        }).getJSONArray("jknUsers").iterator();
-
-        while (iterator.hasNext()) {
-            if (checker.process(iterator.next())) {
-                return true;
-            }
-        }
-        return false;
-    }*/
     interface UserChecker{
         boolean process(JSONObject i);
     }
@@ -83,8 +71,16 @@ public class BasicTest implements IConst{
         };
         doAdd(approveStore, params);
     }
+    int getWithdrawCount(int userId) throws Exception{
+        String[][] params = {
+                {"jknUser.userId", String.valueOf(userId)},
+                {"sign", ""}
+        };
+        generateSign(params);
+        return send(withdrawCount, params).getInt("withdrawCount");
+    }
 
-    int assertAddTrade(int userId, int tradeType, int totalFee, int storeUserId) throws Exception {
+    int assertAddTrade(int userId, int tradeType, int totalFee, int storeUserId, int balanceFee) throws Exception {
         int tradeId = tradeId();
         String[][] params = {
                 {"order.orderId", String.valueOf(tradeId)},
@@ -92,7 +88,7 @@ public class BasicTest implements IConst{
                 {"order.payType", String.valueOf(1)},
                 {"order.tradeType", String.valueOf(tradeType)},
                 {"order.totalFee", String.valueOf(totalFee)},
-                {"order.balanceFee", String.valueOf(0)},
+                {"order.balanceFee", String.valueOf(balanceFee)},
                 {"order.storeUserId", String.valueOf(storeUserId)},
                 {"order.lastUpdateS", FwUtil.sdf.format(new Date())},
                 {"sign",""}
@@ -115,6 +111,14 @@ public class BasicTest implements IConst{
     }
 
     private void doAdd(String url, String[][] params) throws Exception{
+        generateSign(params);
+        boolean add = sendF(url, params);
+        if (!add) {
+            fail();
+        }
+    }
+
+    private void generateSign(String[][] params){
         List<String> lists = new ArrayList<>();
         for (String[] p : params){
             if (p[0].equals("sign")){
@@ -124,10 +128,5 @@ public class BasicTest implements IConst{
         }
         String sign = FwUtil.getSign(lists,key);
         params[params.length -1][1] = sign;
-
-        boolean add = sendF(url, params);
-        if (!add) {
-            fail();
-        }
     }
 }

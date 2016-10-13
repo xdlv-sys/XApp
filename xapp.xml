@@ -65,7 +65,6 @@
     <target name="war" depends="clean, sencha ,copy">
         <zip destfile="${output}/war.zip">
             <fileset dir="${output}">
-                <include name="**"/>
                 <exclude name="classes"/>
             </fileset>
         </zip>

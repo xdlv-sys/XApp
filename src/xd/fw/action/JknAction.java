@@ -62,7 +62,7 @@ public class JknAction extends BaseAction {
     @Action("addTrade")
     public String addTrade() {
         int totalFee = order.getTotalFee();
-        if (totalFee < 0) {
+        if (totalFee == 0) {
             code = 301;
             return SUCCESS;
         }
@@ -99,7 +99,8 @@ public class JknAction extends BaseAction {
         if (jknUser == null){
             code = 201;
         } else {
-            withdrawCount = (int)((jknUser.getAllCount() - jknUser.getWithdrawCount()) * JKN.withdraw_percent);
+            withdrawCount = (int)((jknUser.getAllCount() * JKN.withdraw_percent - jknUser.getWithdrawCount()));
+            withdrawCount = Math.min(withdrawCount, jknUser.getCount());
         }
         jknUser = null;
         return SUCCESS;
@@ -183,9 +184,9 @@ public class JknAction extends BaseAction {
 
         Integer sumOne = jknUserMapper.sumFeeFromGeneration(1, jknUser.getUserId());
 
-        Integer sumTwo = jknUserMapper.sumFeeFromGeneration(2, jknUser.getUserId());;
+        Integer sumTwo = jknUserMapper.sumFeeFromGeneration(2, jknUser.getUserId());
 
-        Integer sumThree = jknUserMapper.sumFeeFromGeneration(3, jknUser.getUserId());;;
+        Integer sumThree = jknUserMapper.sumFeeFromGeneration(3, jknUser.getUserId());
 
         userCount.setSumOne(sumOne == null ? 0 : sumOne);
         userCount.setSumTwo(sumTwo == null ? 0 : sumTwo);

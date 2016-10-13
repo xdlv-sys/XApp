@@ -101,6 +101,10 @@ public class JknUser {
     public void setCount(int count) {
         this.count = count;
     }
+    public void addCount(int increment){
+        this.count += increment;
+        this.allCount += increment;
+    }
 
     public int getCountOne() {
         return countOne;
