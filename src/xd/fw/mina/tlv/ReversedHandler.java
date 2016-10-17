@@ -4,47 +4,47 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.*;
 
-public class ReversedHandler extends TLVHandler implements IMinaConst, ReversedHandler.ProxyListener {
-
+public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyListener{
     @Value("${mina_timeout}")
     int minaTimeout;
 
-    static List<String> discardRequests = new LinkedList<>();
+    final static List<String> discardRequests = new LinkedList<>();
 
     static Map<String, IoSession> sessionMap = new HashMap<>();
 
-    interface ProxyListener {
-        void proxyCreated(String parkId);
-
-        void proxyRemoved(String parkId);
-    }
-
     static List<ProxyListener> proxyListeners = new ArrayList<>();
 
-    static void addProxyListeners(ProxyListener listener) {
+    protected static void addProxyListeners(ProxyListener listener) {
         if (!proxyListeners.contains(listener)) {
             proxyListeners.add(listener);
         }
     }
 
+    public ReversedHandler(){
+        addProxyListeners(this);
+    }
+
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
-        logger.info("receive:" + message);
         TLVMessage msg = (TLVMessage) message;
         int code = (int) msg.getValue();
         if (code == REGISTRY) {
             String id = (String) msg.getNextValue(0);
+            if ("000".equals(id)){
+                return;
+            }
             synchronized (sessionMap) {
                 IoSession proxySession = sessionMap.get(id);
                 if (session != proxySession) {
+                    if (proxySession != null){
+                        proxySession.closeNow();
+                        logger.info("drop old session:{} from {}", id, proxySession.getRemoteAddress());
+                    }
                     sessionMap.put(id, session);
                     for (ProxyListener listener : proxyListeners) {
-                        listener.proxyCreated(id);
+                        listener.proxyCreated(id, session);
                     }
                 }
             }
@@ -52,6 +52,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ReversedH
             handlerRegistry(msg, session);
             return;
         }
+        logger.info("receive:" + message);
 
         // message is handled already
         if (handlerMessage(msg,session)){
@@ -78,40 +79,20 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ReversedH
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
     }
 
-    public final boolean pushFile(String id,String directory,File file) throws Exception{
-
-        try(InputStream is = new FileInputStream(file)){
-            byte[] content = new byte[is.available()];
-            is.read(content);
-            TLVMessage message = createRequest(PUSH_FILE,directory,file.getName(),content);
-            TLVMessage result = request(id, message);
-            return result != null && "OK".equals(result.getValue());
-        }
-    }
-
-    public final String[] executeCmd(String id, String directory, String cmd){
-        TLVMessage message = createRequest(new Object[]{EXECUTE
-                , directory == null ? "" : directory, cmd});
-        TLVMessage result = request(id, message);
-        if (result == null){
-            return null;
-        }
-        return new String[]{(String)result.getValue(), (String)result.getNextValue(0)};
-    }
-
     @Override
     public void sessionClosed(IoSession session) throws Exception {
         super.sessionClosed(session);
         removeSession(session);
     }
 
-    protected TLVMessage createRequest(Object ... args){
-        TLVMessage message = new TLVMessage(Integer.parseInt(objs[0] + ""));
+
+    protected TLVMessage createRequest(Object ... objs){
+        TLVMessage message = new TLVMessage(objs[0]);
         // add timestamp after code
-        TLVMessage next = message.setNext(generateId());
+        TLVMessage next = message.setNext(String.valueOf(System.currentTimeMillis()));
         int i = 0;
-        while (args.length > ++i){
-            next = next.setNext(args[i]);
+        while (objs.length > ++i){
+            next = next.setNext(objs[i]);
         }
         return message;
     }
@@ -121,57 +102,26 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ReversedH
         if (StringUtils.isNotBlank(id)) {
             synchronized (sessionMap) {
                 if (sessionMap.remove(id) != null) {
-                    logger.info("remove proxy session:" + id);
                     for (ProxyListener listener : proxyListeners) {
-                        listener.proxyRemoved(id);
+                        listener.proxyRemoved(id, session);
                     }
                 }
             }
         }
     }
 
-    protected String generateId(){
-        return String.valueOf(System.currentTimeMillis());
-    }
-
-    private IoSession getSession(String id) {
+    private IoSession getSession(String parkId) {
         synchronized (sessionMap) {
-            return sessionMap.get(id);
+            return sessionMap.get(parkId);
         }
     }
 
-    protected List<TLVMessage> notifyAllId(TLVMessage message){
-        List<TLVMessage> messages = new ArrayList<>();
-        Collection<IoSession> sessions = new HashSet<>();
-        synchronized (sessionMap) {
-            sessions.addAll(sessionMap.values());
-        }
-        TLVMessage ret;
-        for (IoSession session : sessions){
-            ret = doSend(session, message);
-            if (ret == null){
-                logger.warn("fail to notify {}" , session.getAttribute(ID_KEY));
-            } else {
-                messages.add(ret);
-            }
-            //reset message id
-            message.getNext(0).setValue(generateId());
-        }
-
-        return messages;
-    }
-
-    protected TLVMessage request(String id, TLVMessage message) {
-        IoSession session = getSession(id);
+    protected TLVMessage request(String parkId, TLVMessage message) {
+        IoSession session = getSession(parkId);
         if (session == null) {
-            logger.info("there is no park session:" + id);
+            logger.info("there is no park session:" + parkId);
             return null;
         }
-        return doSend(session, message);
-    }
-
-    private TLVMessage doSend(IoSession session, TLVMessage message){
-
         // timestamp is just behind code
         String messageId = (String)message.getNextValue(0);
         session.write(message).awaitUninterruptibly();
@@ -203,5 +153,15 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ReversedH
             return null;
         }
         return ret;
+    }
+
+    @Override
+    public void proxyCreated(String parkId, IoSession session) {
+        logger.info("proxy create:{} from {}", parkId, session.getRemoteAddress());
+    }
+
+    @Override
+    public void proxyRemoved(String parkId,IoSession session) {
+        logger.info("proxy remove:{}", parkId);
     }
 }
