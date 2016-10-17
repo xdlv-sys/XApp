@@ -1,12 +1,14 @@
 package xd.fw.mina;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.job.ParkNative;
-import xd.fw.mina.tlv.*;
-import xd.fw.service.ParkService;
+import xd.fw.mina.tlv.ReversedProxy;
+import xd.fw.mina.tlv.TLVMessage;
 
 import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
@@ -32,6 +34,9 @@ public class ParkProxy extends ReversedProxy {
     @Value("${park_name}")
     String parkName;
 
+    @Value("${version}")
+    int version;
+
     @PreDestroy
     public void destroy(){
         super.destroy();
@@ -39,7 +44,7 @@ public class ParkProxy extends ReversedProxy {
 
     @Override
     protected void constructRegistryMessage(TLVMessage registryMessage) {
-        registryMessage.setNext(parkId).setNext(parkName).setNext(100);
+        registryMessage.setNext(parkId).setNext(parkName).setNext(100).setNext(version);
     }
 
     @Override
