@@ -4,9 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.*;
 
-public class ReversedHandler extends TLVHandler implements IMinaConst{
+public class ReversedHandler extends TLVHandler implements IMinaConst, ReversedHandler.ProxyListener {
+
     @Value("${mina_timeout}")
     int minaTimeout;
 
@@ -74,15 +78,35 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
     }
 
+    public final boolean pushFile(String id,String directory,File file) throws Exception{
+
+        try(InputStream is = new FileInputStream(file)){
+            byte[] content = new byte[is.available()];
+            is.read(content);
+            TLVMessage message = createRequest(PUSH_FILE,directory,file.getName(),content);
+            TLVMessage result = request(id, message);
+            return result != null && "OK".equals(result.getValue());
+        }
+    }
+
+    public final String[] executeCmd(String id, String directory, String cmd){
+        TLVMessage message = createRequest(new Object[]{EXECUTE
+                , directory == null ? "" : directory, cmd});
+        TLVMessage result = request(id, message);
+        if (result == null){
+            return null;
+        }
+        return new String[]{(String)result.getValue(), (String)result.getNextValue(0)};
+    }
+
     @Override
     public void sessionClosed(IoSession session) throws Exception {
         super.sessionClosed(session);
         removeSession(session);
     }
 
-
     protected TLVMessage createRequest(Object ... args){
-        TLVMessage message = new TLVMessage(args[0]);
+        TLVMessage message = new TLVMessage(Integer.parseInt(objs[0] + ""));
         // add timestamp after code
         TLVMessage next = message.setNext(generateId());
         int i = 0;

@@ -29,6 +29,9 @@ Ext.define('XApp.Util', {
                 if (!blockTips) {
                     Ext.MessageBox.alert('提示', '操作成功');
                 }
+                if (objs.final){
+                    objs.final(jsonObj);
+                }
             }
         });
     }
