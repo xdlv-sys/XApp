@@ -20,7 +20,7 @@ public class Test extends IoHandlerAdapter {
     private SocketConnector connector;
     private IoSession session;
 
-    public Test(String host, int port) {
+    public Test(String host, int port) throws Exception{
         this.host = host;
         this.port = port;
         connector = new NioSocketConnector();
@@ -32,17 +32,15 @@ public class Test extends IoHandlerAdapter {
         future.awaitUninterruptibly();
         session = future.getSession();
 
-        TLVMessage tlvMessage = new TLVMessage(123);
-        TLVMessage floatMessage = new TLVMessage(12.01f);
-        TLVMessage stringMessage = new TLVMessage("Hello word");
-        tlvMessage.setNext(floatMessage).setNext(stringMessage);
-        session.write(tlvMessage);
 
-        TLVMessage tlvMessage2 = new TLVMessage(89L);
-        TLVMessage tlvMessage3 = new TLVMessage((byte)9);
-        TLVMessage tlvMessage4 = new TLVMessage(1.02);
-        tlvMessage2.setNext(tlvMessage3).setNext(tlvMessage4);
-        //session.write(tlvMessage2);
+        for (int i=0;i<1000;i++){
+            TLVMessage tlvMessage = new TLVMessage(0);
+            tlvMessage.setNext(String.valueOf(i));
+            session.write(tlvMessage);
+
+        }
+        System.in.read();
+        //session.Thread.sleep(10);write(tlvMessage2);
     }
 
     public void messageReceived(IoSession session, Object message) throws Exception {
@@ -50,7 +48,7 @@ public class Test extends IoHandlerAdapter {
     }
 
     public static void main(String[] args)throws Exception{
-        Test t = new Test("127.0.0.1",18080);
+        Test t = new Test("127.0.0.1",48011);
         System.in.read();
         t.session.closeNow();
         System.exit(0);

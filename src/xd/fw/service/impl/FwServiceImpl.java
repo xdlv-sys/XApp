@@ -28,13 +28,13 @@ public class FwServiceImpl extends HibernateServiceImpl implements FwService, IC
             @Override
             public List<User> doInHibernate(Session session) throws HibernateException {
                 Query query = session.createQuery("from User where name=:name");
-                query.setParameter("name",user.getName());
+                query.setParameter("name", user.getName());
                 return query.list();
             }
         });
         User ret;
         if (users.size() > 0
-                && (ret = users.get(0)).getPassword().equals(FwUtil.md5(user.getPassword()))){
+                && (ret = users.get(0)).getPassword().equals(FwUtil.md5(user.getPassword()))) {
             return ret;
         }
         return null;
@@ -46,7 +46,7 @@ public class FwServiceImpl extends HibernateServiceImpl implements FwService, IC
         User record;
         if (user.getId() != null) {
             record = get(User.class, user.getId());
-            if (!record.getPassword().equals(user.getPassword())){
+            if (!record.getPassword().equals(user.getPassword())) {
                 user.setPassword(FwUtil.md5(user.getPassword()));
             }
             //merge(user);
@@ -55,8 +55,8 @@ public class FwServiceImpl extends HibernateServiceImpl implements FwService, IC
             user.setPassword(FwUtil.md5(user.getPassword()));
             //save(user);
         }
-        for (Role role : user.getRolesL()){
-            role = load(Role.class,role.getId());
+        for (Role role : user.getRolesL()) {
+            role = load(Role.class, role.getId());
         }
         user.setRoles(new HashSet<>(user.getRolesL()));
         merge(user);
@@ -65,10 +65,10 @@ public class FwServiceImpl extends HibernateServiceImpl implements FwService, IC
     @Override
     @Transactional
     public void saveOrUpdateRole(Role role) {
-        if (role.getId() == null){
+        if (role.getId() == null) {
             role.setId(getPrimaryKey(Role.class));
         }
-        for (Mod mod : role.getModsL()){
+        for (Mod mod : role.getModsL()) {
             mod = load(Mod.class, mod.getId());
         }
         role.setMods(new HashSet<>(role.getModsL()));
@@ -79,11 +79,11 @@ public class FwServiceImpl extends HibernateServiceImpl implements FwService, IC
     @Override
     public List<Event> getTriggeringEvent(byte[] eventType, int maxTry, int limit) {
         String events = Arrays.toString(eventType);
-        events = events.substring(1, events.length() -1);
+        events = events.substring(1, events.length() - 1);
 
         String hsql = String.format("from Event where eventStatus in (%d,%d) " +
-                "and tryCount < %d and eventType in (%s)" +
-                " and (triggerDate is null or triggerDate < now()) order by eventId"
+                        "and tryCount < %d and eventType in (%s)" +
+                        " and (triggerDate is null or triggerDate < now()) order by eventId"
                 , STATUS_INI, STATUS_FAIL, maxTry, events);
 
         return getList(hsql, null, 0, limit);
@@ -100,3 +100,4 @@ public class FwServiceImpl extends HibernateServiceImpl implements FwService, IC
         save(event);
     }
 }
+

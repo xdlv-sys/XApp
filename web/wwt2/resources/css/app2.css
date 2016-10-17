@@ -1,0 +1,46 @@
+.price-textfield .x-input-text {
+    color: #f00 !important;
+    font-size: 24px;
+}
+
+.wx-button {
+    background: url(../images/wx.png) no-repeat !important;
+    border: 0px !important;
+    height: 70px;
+}
+
+.ali-button {
+    background: url(../images/ali.png) no-repeat !important;
+    border: 0px !important;
+    height: 70px;
+}
+.text_label {
+    font-size : 21px !important;
+    font-weight: bold; !important;
+    background-color: #f7f7f7;
+    color: #0a3351; !important;
+}
+.car-button {
+    border-radius: 0px;
+    background: url(../images/bg.png) !important;
+    padding: 5px;
+    color: white;
+    margin-left: -1px;
+}
+.pay-button {
+    border-radius: 0px;
+    background: #f00308 !important;
+    padding: 5px;
+    color: white;
+    margin-left: -1px;
+}
+
+.query-button {
+    border-radius: 0px;
+    background: url(../images/bg.png) !important;
+    padding: 14px;
+    color: white;
+}
+.car_number_text .x-input-text{
+    font-size : 26px;
+}

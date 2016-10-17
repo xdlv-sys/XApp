@@ -27,7 +27,7 @@ public class SessionFilter implements Filter {
 
     boolean accept(String uri){
         for (String wn : whiteNames){
-            if (uri.endsWith(wn)){
+            if (uri.indexOf(wn) > -1){
                 return true;
             }
         }

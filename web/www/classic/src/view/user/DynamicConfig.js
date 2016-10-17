@@ -13,7 +13,6 @@ Ext.define("XApp.view.user.DynamicConfig", {
 
     layout: {
         type: 'fit'
-        //align: 'stretch'
     },
     items: [{
         xtype: 'cduGrid',
