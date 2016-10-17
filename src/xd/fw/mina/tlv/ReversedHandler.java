@@ -4,9 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.*;
 
-public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyListener{
+public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyListener {
     @Value("${mina_timeout}")
     int minaTimeout;
 
@@ -79,20 +82,40 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
     }
 
+    public final boolean pushFile(String id,String directory,File file) throws Exception{
+
+        try(InputStream is = new FileInputStream(file)){
+            byte[] content = new byte[is.available()];
+            is.read(content);
+            TLVMessage message = createRequest(PUSH_FILE,directory,file.getName(),content);
+            TLVMessage result = request(id, message);
+            return result != null && "OK".equals(result.getValue());
+        }
+    }
+
+    public final String[] executeCmd(String id, String directory, String cmd){
+        TLVMessage message = createRequest(new Object[]{EXECUTE
+                , directory == null ? "" : directory, cmd});
+        TLVMessage result = request(id, message);
+        if (result == null){
+            return null;
+        }
+        return new String[]{(String)result.getValue(), (String)result.getNextValue(0)};
+    }
+
     @Override
     public void sessionClosed(IoSession session) throws Exception {
         super.sessionClosed(session);
         removeSession(session);
     }
 
-
-    protected TLVMessage createRequest(Object ... objs){
-        TLVMessage message = new TLVMessage(objs[0]);
+    protected TLVMessage createRequest(Object ... args){
+        TLVMessage message = new TLVMessage(Integer.parseInt(args[0] + ""));
         // add timestamp after code
-        TLVMessage next = message.setNext(String.valueOf(System.currentTimeMillis()));
+        TLVMessage next = message.setNext(generateId());
         int i = 0;
-        while (objs.length > ++i){
-            next = next.setNext(objs[i]);
+        while (args.length > ++i){
+            next = next.setNext(args[i]);
         }
         return message;
     }
@@ -110,18 +133,48 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         }
     }
 
-    private IoSession getSession(String parkId) {
+    protected String generateId(){
+        return String.valueOf(System.currentTimeMillis());
+    }
+
+    private IoSession getSession(String id) {
         synchronized (sessionMap) {
-            return sessionMap.get(parkId);
+            return sessionMap.get(id);
         }
     }
 
-    protected TLVMessage request(String parkId, TLVMessage message) {
-        IoSession session = getSession(parkId);
+    protected List<TLVMessage> notifyAllId(TLVMessage message){
+        List<TLVMessage> messages = new ArrayList<>();
+        Collection<IoSession> sessions = new HashSet<>();
+        synchronized (sessionMap) {
+            sessions.addAll(sessionMap.values());
+        }
+        TLVMessage ret;
+        for (IoSession session : sessions){
+            ret = doSend(session, message);
+            if (ret == null){
+                logger.warn("fail to notify {}" , session.getAttribute(ID_KEY));
+            } else {
+                messages.add(ret);
+            }
+            //reset message id
+            message.getNext(0).setValue(generateId());
+        }
+
+        return messages;
+    }
+
+    protected TLVMessage request(String id, TLVMessage message) {
+        IoSession session = getSession(id);
         if (session == null) {
-            logger.info("there is no park session:" + parkId);
+            logger.info("there is no park session:" + id);
             return null;
         }
+        return doSend(session, message);
+    }
+
+    private TLVMessage doSend(IoSession session, TLVMessage message){
+
         // timestamp is just behind code
         String messageId = (String)message.getNextValue(0);
         session.write(message).awaitUninterruptibly();
@@ -156,12 +209,12 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
     }
 
     @Override
-    public void proxyCreated(String parkId, IoSession session) {
-        logger.info("proxy create:{} from {}", parkId, session.getRemoteAddress());
+    public void proxyCreated(String id, IoSession session) {
+        logger.info("proxy create:{} from {}", id, session.getRemoteAddress());
     }
 
     @Override
-    public void proxyRemoved(String parkId,IoSession session) {
-        logger.info("proxy remove:{}", parkId);
+    public void proxyRemoved(String id,IoSession session) {
+        logger.info("proxy remove:{}", id);
     }
 }
