@@ -146,6 +146,7 @@ public class TLVMessage {
             buffer.put(IMG_TYPE);
             buffer.putInt(bytes.length);
             buffer.put(bytes);
+            return;
         }
         throw new IllegalArgumentException("invalidate object:" + value);
     }

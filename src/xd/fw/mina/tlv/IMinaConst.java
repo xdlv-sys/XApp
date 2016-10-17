@@ -8,4 +8,5 @@ public interface IMinaConst {
     int UPGRADE = -10;
     int EXECUTE = -9;
     int PUSH_FILE = -8;
+    int PULL_FILE = -7;
 }

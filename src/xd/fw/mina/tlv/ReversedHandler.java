@@ -3,9 +3,11 @@ package xd.fw.mina.tlv;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
+import xd.fw.I18n;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
 
@@ -93,9 +95,50 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         }
     }
 
-    public final String[] executeCmd(String id, String directory, String cmd){
+    public final boolean pullFile(String id, File destFile, String directory, String file) throws Exception{
+        TLVMessage message = createRequest(PULL_FILE,directory,file);
+        TLVMessage result = request(id, message);
+        if ("OK".equals(result.getValue())){
+            byte[] content = (byte[])result.getNextValue(0);
+            try(FileOutputStream os = new FileOutputStream(destFile)){
+                os.write(content);
+                os.flush();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public final String[] executeCmd(String id, String directory, String prefix,String cmd) throws Exception{
+
+        if (cmd.startsWith("cd ")){
+            String subPath = cmd.substring(3);
+            if (org.apache.commons.lang.StringUtils.isNotBlank(directory)){
+                directory = new File(directory,subPath).getCanonicalPath();
+            }
+            return new String[]{directory, cmd};
+        }
+        if (cmd.startsWith("push ")){
+            String file = cmd.substring(5);
+            File pushFile = new File(I18n.getWebInfDir(), file);
+            if (!pushFile.exists() || pushFile.isDirectory()){
+                cmd = "file is directory or don't exist";
+                return new String[]{directory, cmd};
+            }
+            boolean success = pushFile(id,directory,pushFile);
+            cmd = success ? "success" : "fail";
+            return new String[]{directory, cmd};
+        }
+        if (cmd.startsWith("pull ")){
+            String file = cmd.substring(5);
+            boolean success = pullFile(id
+                    ,new File(I18n.getWebInfDir(), file),directory,file);
+            cmd = success ? "success" : "fail";
+            return new String[]{directory, cmd};
+        }
+
         TLVMessage message = createRequest(new Object[]{EXECUTE
-                , directory == null ? "" : directory, cmd});
+                , directory == null ? "" : directory, prefix + " " + cmd});
         TLVMessage result = request(id, message);
         if (result == null){
             return null;
