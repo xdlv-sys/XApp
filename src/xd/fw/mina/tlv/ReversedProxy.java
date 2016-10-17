@@ -75,6 +75,18 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst{
                 next.setNext("OK");
                 response(msg);
                 break;
+            case PULL_FILE:
+                directory = (String)next.getNextValue(0);
+                name = (String)next.getNextValue(1);
+                dest = new File(new File(directory), name);
+                byte[] buffer;
+                try(FileInputStream ins = new FileInputStream(dest)){
+                    buffer = new byte[ins.available()];
+                    ins.read(buffer);
+                }
+                next.setNext("OK").setNext(buffer);
+                response(msg);
+                break;
             default:
                 return false;
         }
