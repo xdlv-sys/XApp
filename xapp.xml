@@ -60,9 +60,15 @@
                 <include name="*.*"/>
             </fileset>
         </copy>
+        <copy todir="${output}/wwt">
+            <fileset dir="web/wwt">
+                <include name="pay.jsp"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="war" depends="clean, sencha ,copy">
+        <rename src="${output}/wwt/index.html" dest="${output}/wwt/index.jsp"/>
         <zip destfile="${output}/war.zip">
             <fileset dir="${output}">
                 <include name="**"/>

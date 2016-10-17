@@ -23,7 +23,7 @@
         <property name="sessionIdleLogLevel" value="DEBUG"/>
     </bean>
 
-    <bean id="minaExecutor" class="org.apache.mina.filter.executor.ExecutorFilter">
+    <bean id="minaExecutor" class="org.apache.mina.filter.executor.ExecutorFilter" destroy-method="destroy">
         <!-- max size-->
         <constructor-arg index="0" value="0"/>
         <constructor-arg index="1" value="${mina_pool_size}"/>
@@ -62,7 +62,8 @@
         <property name="defaultLocalAddress" value="${mina_port}"/>
         <property name="reuseAddress" value="true"/>
 
-        <property name="handler" ref="tlvHandler"/>
+        <property name="handler" ref="parkHandler"/>
         <property name="filterChainBuilder" ref="filterChainBuilder"/>
     </bean>
+
 </beans>

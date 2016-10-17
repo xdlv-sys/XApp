@@ -1,7 +1,11 @@
 <!DOCTYPE HTML>
-<html manifest="" lang="en-US">
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    Object ret = request.getAttribute("RET_FOR_TOUCH");
+%>
+<html>
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <title>XApp</title>
     <style type="text/css">
          /**
@@ -49,6 +53,12 @@
             }
         }
     </style>
+    <script language="javascript">
+        var XAPP_DATA = <%=ret == null ? "{}" : ret%>;
+        if (XAPP_DATA.parkName){
+            document.title = XAPP_DATA.parkName;
+        }
+    </script>
     <!-- The line below must be kept intact for Sencha Command to build your application -->
     <script id="microloader" type="text/javascript" src=".sencha/app/microloader/development.js"></script>
 </head>

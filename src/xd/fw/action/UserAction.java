@@ -1,23 +1,16 @@
 package xd.fw.action;
 
-
 import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 import xd.fw.FwException;
-import xd.fw.FwUtil;
-import xd.fw.bean.Role;
 import xd.fw.bean.User;
 import xd.fw.scheduler.DeleteUserEvent;
 import xd.fw.service.FwService;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class UserAction extends BaseAction {
     @Autowired

@@ -74,6 +74,10 @@
         {
             "path": "resources/css/app.css",
             "update": "delta"
+        },
+        {
+            "path" : "resources/css/app2.css",
+            "update": "delta"
         }
     ],
 
@@ -131,5 +135,5 @@
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.
      */
-    "id": "3c28f69a-00ac-437e-97cf-cc4e8d54612f"
+    "id": "b741cac0-58c0-405c-9dee-5f0a71446907"
 }

@@ -6,5 +6,8 @@ Ext.define('XApp.Application', {
     onAppUpdate: function () {
         window.localStorage.clear();
         window.location.reload();
-    }
+    },
+
+    mainView: 'XApp.view.main.Main'
+
 });

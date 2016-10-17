@@ -1,7 +1,7 @@
 Ext.define('XApp.controller.Root', {
     extend: 'Ext.app.Controller',
     requires: ['Ext.data.TreeStore','Ext.data.Session'],
-    
+
     onLaunch : function(){
         var me = this;
         XApp.Util.ajax({
@@ -12,19 +12,19 @@ Ext.define('XApp.controller.Root', {
             }
         });
 
-    	//create session for application scope
-    	this.session = new Ext.data.Session({
+        //create session for application scope
+        this.session = new Ext.data.Session({
             autoDestroy: false
         });
 
-    	this.login = Ext.create('XApp.view.login.Login',{
-    		autoShow: true,
-    		session : this.session,
-    		listeners: {
+        this.login = Ext.create('XApp.view.login.Login',{
+            autoShow: true,
+            session : this.session,
+            listeners: {
                 scope: this,
                 login: 'onLogin'
             }
-    	});
+        });
     },
     showUi: function(user){
         var root = {
@@ -82,7 +82,7 @@ Ext.define('XApp.controller.Root', {
         });
     },
     onLogin: function(view,user){
-    	this.login.destroy();
+        this.login.destroy();
         var me = this;
         me.showUi(user);
     }

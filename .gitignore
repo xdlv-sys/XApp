@@ -1,4 +1,5 @@
 .idea
+
 /web/wwt/build
 /web/wwt/.sencha
 /web/wwt/resources/loading
@@ -6,11 +7,19 @@
 
 /web/wwt/resources/sass/stylesheets
 /web/wwt/resources/sass/.sass-cache
+/web/wwt2/build
+/web/wwt2/.sencha
+/web/wwt2/resources/loading
+/web/wwt2/resources/icons
 
-/web/wwt/resources/css/app.css
-/web/wwt/sass/example
-/web/wwt/touch
-/web/wwt/bootstrap.js
+/web/wwt2/resources/sass/stylesheets
+/web/wwt2/resources/sass/.sass-cache
+
+
+/web/wwt2/resources/css/app.css
+/web/wwt2/sass/example
+/web/wwt2/touch
+/web/wwt2/bootstrap.js
 /web/wwt/bootstrap.json
 /web/www/build
 /web/www/.sencha

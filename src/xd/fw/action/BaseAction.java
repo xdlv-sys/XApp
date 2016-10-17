@@ -2,16 +2,17 @@ package xd.fw.action;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.beanutils.BeanUtils;
-
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.*;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import xd.fw.FwUtil;
 import xd.fw.bean.User;
 import xd.fw.service.IConst;
@@ -27,12 +28,13 @@ import java.util.regex.Pattern;
         @Result(name = "error", type = "chain", location = "result"),
         @Result(name = "finish", type = "chain", location = "result"),
         @Result(name = "login", location = "www/index.html"),
-        @Result(name = "xml", location = "xml.jsp"),
+        @Result(name = "xml", location = "../../xml.jsp"),
         @Result(name = "excel", type = "stream",
                 params = {"contentType", "application/octet-stream",
                         "inputName", "excelFile",
                         "contentDisposition", "attachment;filename=\"${fileName}\"",
-                        "bufferSize", "1024"})
+                        "bufferSize", "1024"}),
+        @Result(name = "index", location = "../../wwt/index.jsp")
 })
 public abstract class BaseAction extends ActionSupport implements IConst{
     private static final long serialVersionUID = 1L;
@@ -184,6 +186,10 @@ public abstract class BaseAction extends ActionSupport implements IConst{
 
     public void setNode(String node) {
         this.node = node;
+    }
+
+    public boolean weixinBroswer(){
+        return ServletActionContext.getRequest().getHeader("user-agent").contains("MicroMessenger");
     }
 
     public static void main(String[] args) throws IllegalAccessException, InvocationTargetException {

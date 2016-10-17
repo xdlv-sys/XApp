@@ -40,6 +40,9 @@ public class FwUtil {
         WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
         return wac == null ? null : wac.getBean(name);
     }
+    public static <T> T getBean(Class<T> cls){
+        return ContextLoader.getCurrentWebApplicationContext().getBean(cls);
+    }
 
     // sdf is not thread safe so we need add synchronized
     public synchronized static int getLastDayInMonth(int year, int month) {

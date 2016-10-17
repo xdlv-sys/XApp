@@ -4,6 +4,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import xd.fw.FwUtil;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteOrder;
 
 public class TLVMessage {
     public static final byte BYTE_TYPE = 1, INT_TYPE = 2, LONG_TYPE = 3, FLOAT_TYPE = 4, DOUBLE_TYPE = 5
@@ -72,7 +73,9 @@ public class TLVMessage {
                 buffer.getInt();
                 return new TLVMessage(buffer.getLong());
             case FLOAT_TYPE:
+                buffer.order(ByteOrder.LITTLE_ENDIAN);
                 buffer.getInt();
+                buffer.order(ByteOrder.BIG_ENDIAN);
                 return new TLVMessage(buffer.getFloat());
             case DOUBLE_TYPE:
                 buffer.getInt();
@@ -159,8 +162,8 @@ public class TLVMessage {
             stringBuffer.append("->").append(tmp.getValue());
         }
         return stringBuffer.toString();
-
     }
+
 
     public static void main(String[] args){
         IoBuffer buffer = IoBuffer.wrap(new byte[]{

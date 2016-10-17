@@ -1,0 +1,13 @@
+<div class="modal-header">
+    <h1 class="modal-title" id="modal-title">{{$modalCtl.title}}</h1>
+</div>
+<div class="modal-body" id="modal-body">
+    <div ng-show="$modalCtl.payStatus === 1">
+        <h4> 温馨提醒：请在15分钟内驶出停车场，否则将重新计费，谢谢。</h4>
+        <h1 style="color:red" count-down mins="15"></h1>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="$modalCtl.ok()">确定</button>
+    <button class="btn btn-warning" type="button" ng-click="$modalCtl.cancel()">取消</button>
+</div>
