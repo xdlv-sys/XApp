@@ -7,7 +7,7 @@ Ext.define("XApp.view.cdu.Command", {
     },
     title: '运维代理',
     width: 650,
-    height: 400,
+    height: 500,
     padding: 10,
     modal: true,
 

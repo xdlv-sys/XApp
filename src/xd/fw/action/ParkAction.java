@@ -60,26 +60,7 @@ public class ParkAction extends BaseAction {
     }
 
     public String executeCommand() throws Exception{
-        if (command.startsWith("cd ")){
-            String subPath = command.substring(3);
-            if (StringUtils.isNotBlank(directory)){
-                directory = new File(directory,subPath).getCanonicalPath();
-            }
-            return SUCCESS;
-        }
-        if (command.startsWith("download ")){
-            String file = command.substring(9);
-            File pushFile = new File(I18n.getWebInfDir(), file);
-            if (!pushFile.exists() || pushFile.isDirectory()){
-                command = "file is directory or don't exist";
-                return SUCCESS;
-            }
-            boolean success = parkHandler.pushFile(parkInfo.getParkId(),directory,pushFile);
-            command = success ? "success" : "fail";
-            return SUCCESS;
-        }
-
-        String[] result = parkHandler.executeCmd(parkInfo.getParkId(),directory,prefix + " " + command);
+        String[] result = parkHandler.executeCmd(parkInfo.getParkId(),directory,prefix, command);
         directory = result[0];
         command = result[1];
         return SUCCESS;

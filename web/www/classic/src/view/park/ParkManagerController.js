@@ -46,8 +46,8 @@ Ext.define('XApp.view.park.ParkManagerController', {
                 'directory' : directory.getValue()
             },
             success : function(data){
-                area.setValue(area.getValue() + data.command + '\n');
-                area.getEl().dom.scrollTop=99999;
+                area.setValue(data.command + '\n-----------------\n' +area.getValue());
+                //area.getEl().dom.scrollTop=99999;
                 directory.setValue(data.directory);
                 text.setValue('');
                 return true;
