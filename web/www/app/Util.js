@@ -21,16 +21,16 @@ Ext.define('XApp.Util', {
                     if (!blockTips) {
                         Ext.MessageBox.alert('错误', '操作失败:' + Ext.isEmpty(jsonObj) ? "" : jsonObj.msg);
                     }
-                    return;
+                } else {
+                    if (objs.success) {
+                        blockTips = objs.success(jsonObj);
+                    }
+                    if (!blockTips) {
+                        Ext.MessageBox.alert('提示', '操作成功');
+                    }
                 }
-                if (objs.success) {
-                    blockTips = objs.success(jsonObj);
-                }
-                if (!blockTips) {
-                    Ext.MessageBox.alert('提示', '操作成功');
-                }
-                if (objs.final){
-                    objs.final(jsonObj);
+                if (objs.clean){
+                    objs.clean(jsonObj);
                 }
             }
         });
