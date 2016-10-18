@@ -33,7 +33,7 @@ Ext.define('XApp.view.park.ParkManagerController', {
             area.setValue('');
             return;
         }
-        text.disabled = true;
+        //text.disabled = true;
 
         var prefix = win.down('textfield[name=prefix]');
         var directory = win.down('textfield[name=directory]');
@@ -52,10 +52,10 @@ Ext.define('XApp.view.park.ParkManagerController', {
                 text.setValue('');
                 return true;
             },
-            failure: function(data){
+            failure: function(){
                 return false;
             },
-            final: function(){
+            clean: function(){
                 text.disabled = false;
             }
         });
@@ -76,7 +76,7 @@ Ext.define('XApp.view.park.ParkManagerController', {
         XApp.Util.ajax({
             url : 'park!refreshStatus.cmd',
             params: ids,
-            success: function (response) {
+            success: function () {
                 grid.getStore().reload();
             }
         });
