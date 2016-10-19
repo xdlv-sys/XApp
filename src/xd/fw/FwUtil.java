@@ -1,49 +1,56 @@
 package xd.fw;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class FwUtil {
 
-	public static String UTF8 = "UTF-8";
+    public static String UTF8 = "UTF-8";
     //static int[] months = new int[]{0,31,29,31,30,31,30,31,31,30,31,30,31};
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public static String getValidateCode(){
-        return String.format("%04d",Math.abs(new Random().nextInt(9999)));
+    public static String getValidateCode() {
+        return String.format("%04d", Math.abs(new Random().nextInt(9999)));
     }
 
-    public static Object getBean(String name){
+    public static Object getBean(String name) {
         WebApplicationContext wac = ContextLoader.getCurrentWebApplicationContext();
         return wac == null ? null : wac.getBean(name);
     }
 
     // sdf is not thread safe so we need add synchronized
-    public synchronized static int getLastDayInMonth(int year,int month){
+    public synchronized static int getLastDayInMonth(int year, int month) {
         Calendar calendar = Calendar.getInstance();
         try {
-            calendar.setTime(sdf.parse(String.format("%d-%02d-%02d 00:00:00",year,month,1)));
+            calendar.setTime(sdf.parse(String.format("%d-%02d-%02d 00:00:00", year, month, 1)));
         } catch (Exception e) {
             throw new IllegalArgumentException("can not parse data", e);
         }
-        calendar.add(Calendar.DAY_OF_MONTH,-1);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
 
-    public static int[] getLastMonth(){
+    public static int[] getLastMonth() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -1);
-        return new int[]{calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH) + 1};
+        return new int[]{calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1};
     }
 
-    public static String md5(String plainText) throws Exception{
+    public static String md5(String plainText) throws Exception {
         byte[] secretBytes = MessageDigest.getInstance("md5").digest(
                 plainText.getBytes(HttpClientTpl.UTF8));
         String md5code = new BigInteger(1, secretBytes).toString(16);
@@ -53,7 +60,7 @@ public class FwUtil {
         return md5code;
     }
 
-    public static void invokeBeanFields(Object o, BeanFieldProcess p)throws IllegalAccessException{
+    public static void invokeBeanFields(Object o, BeanFieldProcess p) throws IllegalAccessException {
         Field[] fields = o.getClass().getDeclaredFields();
         Object v;
         for (Field f : fields) {
@@ -62,55 +69,57 @@ public class FwUtil {
             p.process(f, v);
         }
     }
-    public static void invokeBeanFieldsWidthConditions(Object o, BeanFieldProcess p, BeanFieldCondition condition)throws IllegalAccessException{
-        invokeBeanFields(o,(f,v)->{
-            if (condition.accept(f,v)){
-                p.process(f,v);
+
+    public static void invokeBeanFieldsWidthConditions(Object o, BeanFieldProcess p, BeanFieldCondition condition) throws IllegalAccessException {
+        invokeBeanFields(o, (f, v) -> {
+            if (condition.accept(f, v)) {
+                p.process(f, v);
             }
         });
     }
 
-    public interface BeanFieldCondition{
+    public interface BeanFieldCondition {
         boolean accept(Field f, Object o);
     }
 
-    public interface BeanFieldProcess{
+    public interface BeanFieldProcess {
         void process(Field f, Object o);
     }
-    public interface SafeEachProcess<T>{
+
+    public interface SafeEachProcess<T> {
         void process(T t);
     }
 
-    public static <T> void safeEach(Collection<T> list, SafeEachProcess<T> p){
-        if (list == null || list.size() < 1){
+    public static <T> void safeEach(Collection<T> list, SafeEachProcess<T> p) {
+        if (list == null || list.size() < 1) {
             return;
         }
         list.forEach(p::process);
     }
 
-    public static boolean verify(Map<String, Object> params, String key){
+    public static boolean verify(Map<String, Object> params, String key) {
         List<String> list = new ArrayList<String>();
         String sign = null;
         String value;
-        for (Map.Entry<String,Object> entry : params.entrySet()){
-            if (entry.getValue() instanceof String[]){
-                value = ((String[])entry.getValue())[0];
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            if (entry.getValue() instanceof String[]) {
+                value = ((String[]) entry.getValue())[0];
             } else {
                 value = String.valueOf(entry.getValue());
             }
-            if (entry.getKey().equals("sign")){
+            if (entry.getKey().equals("sign")) {
                 sign = value;
                 continue;
             }
-            if (StringUtils.isBlank(value)){
+            if (StringUtils.isBlank(value)) {
                 continue;
             }
-            list.add(entry.getKey() + "=" + value+ "&");
+            list.add(entry.getKey() + "=" + value + "&");
         }
         return getSign(list, key).equals(sign);
     }
 
-    public static String getSign(List<String> params, String key){
+    public static String getSign(List<String> params, String key) {
         int size = params.size();
         String[] arrayToSort = params.toArray(new String[size]);
         Arrays.sort(arrayToSort, String.CASE_INSENSITIVE_ORDER);
@@ -122,21 +131,41 @@ public class FwUtil {
         return MD5.MD5Encode(sb.toString());
     }
 
-    public static void main(String[] args) throws Exception {
-        Map<String,Object> params = new HashMap<>();
-        params.put("jknUser.userId","17");
-        params.put("jknUser.userName","许月芬");
-        params.put("jknUser.referrer","3");
-        params.put("jknUser.telephone","13868273086");
-        params.put("sign","fe30415f518a25ba3ff58f081efeb8ef");
-        System.out.println(verify(params,"jkn@igecono.com0516"));
+    public static void unzip(File zipFile, File destDir) throws IOException {
+        try (ZipFile zip = ZipHelper.openZipFile(zipFile)) {
+            Enumeration<? extends ZipEntry> entries = zip.entries();
+            ZipEntry zipEntry;
+            byte[] buffer = new byte[1024];
+            InputStream ins = null;
+            int count;
+            FileOutputStream os = null;
+            while (entries.hasMoreElements()) {
+                zipEntry = entries.nextElement();
+                File itemFile = new File(destDir, zipEntry.getName());
+                try {
+                    if (zipEntry.isDirectory()) {
+                        if (!itemFile.exists() && !itemFile.mkdirs()){
+                            throw new IOException("can not make dir :" + zipEntry.getName());
+                        }
+                        continue;
+                    }
+                    if (itemFile.exists() && !itemFile.delete()){
+                        throw new IOException("can no delete file:" + itemFile);
+                    }
+                    os = new FileOutputStream(itemFile);
+                    ins = zip.getInputStream(zipEntry);
+                    while ((count = ins.read(buffer)) > -1) {
+                        os.write(buffer, 0, count);
+                    }
+                } finally {
+                    if (os != null) os.close();
+                    if (ins != null) ins.close();
+                }
+            }
+        }
+    }
 
-        HttpClientTpl.post("http://localhost:8080/an/syncUser.cmd",new String[][]{
-                {"jknUser.userId","17"},
-                {"jknUser.userName","许月芬"},
-                {"jknUser.referrer","3"},
-                {"jknUser.telephone","13868273086"},
-                {"sign","fe30415f518a25ba3ff58f081efeb8ef"}
-        });
+    public static void main(String[] args) throws Exception {
+        unzip(new File("C:\\Work\\Java\\output\\war.zip"), new File("C:\\Work\\Java\\output\\war"));
     }
 }

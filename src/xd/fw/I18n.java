@@ -37,12 +37,9 @@ public class I18n {
 
     public static File[] getPatches(int version){
        return new File(I18n.getWebInfDir(), "patch").listFiles((f) -> {
-            Matcher matcher = patchPattern.matcher(f.getName());
-            if (!matcher.find()){
-                return false;
-            }
-            return Integer.parseInt(matcher.group(1)) > version;
-        });
+           Matcher matcher = patchPattern.matcher(f.getName());
+           return matcher.find() && Integer.parseInt(matcher.group(1)) > version;
+       });
     }
 
     public static String getI18n(String key) {
