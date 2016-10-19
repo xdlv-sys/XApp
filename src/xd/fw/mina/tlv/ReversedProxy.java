@@ -24,15 +24,17 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public abstract class ReversedProxy extends BaseJob implements IMinaConst{
+public abstract class ReversedProxy extends BaseJob implements IMinaConst {
 
-    protected  static Logger logger = LoggerFactory.getLogger(ReversedProxy.class);
+    protected static Logger logger = LoggerFactory.getLogger(ReversedProxy.class);
     private SocketConnector connector;
     private IoSession session;
 
     @Qualifier("executor")
     @Autowired()
     AsyncTaskExecutor taskExecutor;
+    @Autowired
+    UpgradeTask upgradeTask;
 
     public ReversedProxy() {
         connector = new NioSocketConnector(MinaWrapper.getPool());
@@ -42,49 +44,62 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst{
             @Override
             public void messageReceived(IoSession session, Object message) throws Exception {
                 TLVMessage msg = (TLVMessage) message;
-                if (!processInnerMessage(msg)){
+                if (!processInnerMessage(msg)) {
                     handlerQuery(msg);
                 }
             }
         });
     }
 
-    private boolean processInnerMessage(TLVMessage msg) throws Exception{
+    protected String charset() {
+        return FwUtil.UTF8;
+    }
+
+    private boolean processInnerMessage(TLVMessage msg) throws Exception {
         int code = (int) msg.getValue();
         TLVMessage next = msg.getNext(0);
-        switch (code){
+        switch (code) {
             case EXECUTE:
-                String directory = (String)next.getNextValue(0);
+                String directory = (String) next.getNextValue(0);
                 File dir = I18n.getWebInfDir().getParentFile().getParentFile().getParentFile();
-                if (StringUtils.isNotBlank(directory) && new File(directory).exists()){
+                if (StringUtils.isNotBlank(directory) && new File(directory).exists()) {
                     dir = new File(directory);
                 }
-                String command = (String)next.getNextValue(1);
-                String result = executeCmd(dir,command.split(" "));
+                String command = (String) next.getNextValue(1);
+                String result = executeCmd(dir, command.split(" "));
                 next.setNext(dir.getCanonicalPath()).setNext(result);
                 response(msg);
                 break;
             case PUSH_FILE:
-                directory = (String)next.getNextValue(0);
-                String name = (String)next.getNextValue(1);
+                directory = (String) next.getNextValue(0);
+                String name = (String) next.getNextValue(1);
                 File dest = new File(new File(directory), name);
-                try(FileOutputStream os = new FileOutputStream(dest)){
-                    os.write((byte[])next.getNextValue(2));
+                try (FileOutputStream os = new FileOutputStream(dest)) {
+                    os.write((byte[]) next.getNextValue(2));
                     os.flush();
                 }
                 next.setNext("OK");
                 response(msg);
                 break;
             case PULL_FILE:
-                directory = (String)next.getNextValue(0);
-                name = (String)next.getNextValue(1);
+                directory = (String) next.getNextValue(0);
+                name = (String) next.getNextValue(1);
                 dest = new File(new File(directory), name);
                 byte[] buffer;
-                try(FileInputStream ins = new FileInputStream(dest)){
+                try (FileInputStream ins = new FileInputStream(dest)) {
                     buffer = new byte[ins.available()];
                     ins.read(buffer);
                 }
                 next.setNext("OK").setNext(buffer);
+                response(msg);
+                break;
+            case UPGRADE:
+                if ((int) next.getNextValue(0) == 1) {
+                    next.setNext(new File(I18n.getWebInfDir(), "patch").getCanonicalPath());
+                } else {
+                    taskExecutor.submit(upgradeTask);
+                    next.setNext("OK");
+                }
                 response(msg);
                 break;
             default:
@@ -115,7 +130,7 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst{
 
     protected abstract void handlerQuery(TLVMessage msg) throws Exception;
 
-    protected void response(TLVMessage response){
+    protected void response(TLVMessage response) {
         session.write(response);
     }
 
@@ -142,14 +157,15 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst{
             logger.info("connected center...");
         }
     }
-    private String executeCmd(File directory, String[] cmd)throws Exception{
+
+    private String executeCmd(File directory, String[] cmd) throws Exception {
         ProcessBuilder builder = new ProcessBuilder(cmd);
         builder.directory(directory);
         Process process = null;
         BufferedReader br = null;
         BufferedReader br2 = null;
         StringBuilder buffer = new StringBuilder();
-        try{
+        try {
             process = builder.start();
             br = new BufferedReader(new InputStreamReader(process.getInputStream()));
             br2 = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -157,13 +173,13 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst{
             Future<String> error = taskExecutor.submit(new ReaderThread(br2));
             buffer.append(info.get(10, TimeUnit.SECONDS)).append(error.get(10, TimeUnit.SECONDS));
         } finally {
-            if (process != null){
+            if (process != null) {
                 process.destroy();
             }
-            if (br != null){
+            if (br != null) {
                 br.close();
             }
-            if (br2 != null){
+            if (br2 != null) {
                 br.close();
             }
         }
@@ -173,18 +189,20 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst{
 
     static class ReaderThread implements Callable<String> {
         BufferedReader br;
-        ReaderThread(BufferedReader br){
+
+        ReaderThread(BufferedReader br) {
             this.br = br;
         }
-        public String call(){
+
+        public String call() {
             StringBuffer lines = new StringBuffer();
             String line;
             try {
-                while ((line = br.readLine()) != null){
+                while ((line = br.readLine()) != null) {
                     lines.append(line).append("\n");
                 }
             } catch (IOException e) {
-                logger.error("",e);
+                logger.error("", e);
             }
             return lines.toString();
         }

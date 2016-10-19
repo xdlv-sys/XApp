@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class I18n {
 
@@ -26,6 +28,21 @@ public class I18n {
 
     public static File getWebInfDir(){
         return webInfoDir;
+    }
+    public static File getPatchDir(){
+        return new File(getWebInfDir(),"patch");
+    }
+
+    static Pattern patchPattern = Pattern.compile("v(\\d+)\\.zip");
+
+    public static File[] getPatches(int version){
+       return new File(I18n.getWebInfDir(), "patch").listFiles((f) -> {
+            Matcher matcher = patchPattern.matcher(f.getName());
+            if (!matcher.find()){
+                return false;
+            }
+            return Integer.parseInt(matcher.group(1)) > version;
+        });
     }
 
     public static String getI18n(String key) {
