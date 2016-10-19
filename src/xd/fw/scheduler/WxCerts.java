@@ -1,6 +1,5 @@
 package xd.fw.scheduler;
 
-import oracle.jdbc.proxy.annotation.Post;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;

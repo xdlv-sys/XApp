@@ -1,21 +1,16 @@
 package xd.fw.action;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import xd.fw.I18n;
 import xd.fw.bean.Const;
 import xd.fw.bean.ParkInfo;
 import xd.fw.bean.PayOrder;
 import xd.fw.mina.ParkHandler;
+import xd.fw.scheduler.UpgradeProxyEvent;
 import xd.fw.service.ParkService;
 
-import java.io.File;
 import java.util.List;
 
-public class ParkAction extends BaseAction {
-
-    @Autowired
-    ParkService parkService;
+public class ParkAction extends ParkBaseAction {
 
     List<ParkInfo> parkInfos;
 
@@ -64,6 +59,14 @@ public class ParkAction extends BaseAction {
         directory = result[0];
         command = result[1];
         return SUCCESS;
+    }
+
+    public String upgradeProxy() throws Exception{
+        for (int i = 0; parkInfos != null && i < parkInfos.size(); i++) {
+            ParkInfo parkInfo = parkService.get(ParkInfo.class, parkInfos.get(i).getParkId());
+            applicationContext.publishEvent(new UpgradeProxyEvent(parkInfo));
+        }
+        return FINISH;
     }
 
     public String saveParkInfo() {

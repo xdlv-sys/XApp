@@ -16,7 +16,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
 
     final static List<String> discardRequests = new LinkedList<>();
 
-    static Map<String, IoSession> sessionMap = new HashMap<>();
+    final static Map<String, IoSession> sessionMap = new HashMap<>();
 
     static List<ProxyListener> proxyListeners = new ArrayList<>();
 
@@ -80,6 +80,26 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
     }
 
+    public final boolean upgrade(String id, int version) throws Exception {
+        File[] patches = I18n.getPatches(version);
+        if (patches == null || patches.length < 1) {
+            return false;
+        }
+        TLVMessage message = createRequest(UPGRADE,1);
+        TLVMessage result = request(id, message);
+        if (result == null){
+            return false;
+        }
+        String dir = (String)result.getValue();
+        for (File patch : patches) {
+            pushFile(id,dir,patch);
+        }
+        //trigger UPGRADE
+        message = createRequest(UPGRADE,2);
+        result = request(id, message);
+        return result != null && "OK".equals(result.getValue());
+    }
+
     public final boolean pushFile(String id,String directory,File file) throws Exception{
 
         try(InputStream is = new FileInputStream(file)){
@@ -120,8 +140,8 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             return new String[]{directory, cmd};
         }
 
-        TLVMessage message = createRequest(new Object[]{EXECUTE
-                , directory == null ? "" : directory, prefix + " " + cmd});
+        TLVMessage message = createRequest(EXECUTE
+                , directory == null ? "" : directory, prefix + " " + cmd);
         TLVMessage result = request(id, message);
         if (result == null){
             return null;
