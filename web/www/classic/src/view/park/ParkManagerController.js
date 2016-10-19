@@ -5,6 +5,14 @@ Ext.define('XApp.view.park.ParkManagerController', {
     requires: ['XApp.view.cdu.Command'],
 
     upgradeProxy: function(btn){
+        var ids = {};
+        Ext.each(btn.up('grid').getSelection(), function (v, i) {
+            ids['parkInfos[' + i + '].parkId'] = v.get('parkId');
+        });
+        this.ajax({
+            url: 'park!upgradeProxy.cmd',
+            params: ids
+        });
 
     },
     manageProxy: function(btn){

@@ -13,9 +13,6 @@ public class RefundAction extends ParkBaseAction implements Const {
     @Autowired
     PayService payService;
 
-    @Autowired
-    ApplicationContext applicationContext;
-
     public String refund() {
         PayOrder order = payService.get(PayOrder.class, outTradeNo);
         // pay successfully and fail to notify

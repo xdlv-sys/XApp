@@ -6,6 +6,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import xd.fw.mbean.SystemConfig;
 import xd.fw.service.ParkService;
 import xd.fw.service.PayService;
@@ -30,6 +31,9 @@ public class ParkBaseAction extends BaseAction {
     @Autowired
     ParkService parkService;
     final static SimpleDateFormat sdf = new SimpleDateFormat("HHmmssyyyyMMddSSS");
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     protected void setRetAttribute(String key, String value) {
         HttpServletRequest request = ServletActionContext.getRequest();

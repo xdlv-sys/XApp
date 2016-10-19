@@ -2,7 +2,7 @@ Ext.define('XApp.model.ParkInfo', {
     extend : 'XApp.model.Base',
 
     fields : [ 'parkId', 'parkName', 'appId','proxyState',{name: 'proxyState', type: 'int'},
-        {name: 'freeCount', type: 'int'},'limitPay','partnerId','lastUpdate'],
+        {name: 'freeCount', type: 'int'},{name: 'proxyVersion', type: 'int'},'limitPay','partnerId','lastUpdate'],
 
     proxy: {
         url: 'park!obtainParkInfos.cmd',
