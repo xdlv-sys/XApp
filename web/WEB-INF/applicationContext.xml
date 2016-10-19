@@ -18,6 +18,7 @@
                 <value>classpath:/jdbc.properties</value>
                 <value>classpath:/i18n.properties</value>
                 <value>classpath:/app.properties</value>
+                <value>classpath:/app2.properties</value>
             </list>
         </property>
     </bean>
