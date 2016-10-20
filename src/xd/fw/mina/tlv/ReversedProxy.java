@@ -51,10 +51,6 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
         });
     }
 
-    protected String charset() {
-        return FwUtil.UTF8;
-    }
-
     private boolean processInnerMessage(TLVMessage msg) throws Exception {
         int code = (int) msg.getValue();
         TLVMessage next = msg.getNext(0);
@@ -66,7 +62,7 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
                     dir = new File(directory);
                 }
                 String command = (String) next.getNextValue(1);
-                String result = executeCmd(dir, command.split(" "));
+                String result = FwUtil.executeCmd(taskExecutor,dir, command.split(" "));
                 next.setNext(dir.getCanonicalPath()).setNext(result);
                 response(msg);
                 break;
@@ -155,56 +151,6 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
         }
         if (reconnect && session != null) {
             logger.info("connected center...");
-        }
-    }
-
-    private String executeCmd(File directory, String[] cmd) throws Exception {
-        ProcessBuilder builder = new ProcessBuilder(cmd);
-        builder.directory(directory);
-        Process process = null;
-        BufferedReader br = null;
-        BufferedReader br2 = null;
-        StringBuilder buffer = new StringBuilder();
-        try {
-            process = builder.start();
-            br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            br2 = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            Future<String> info = taskExecutor.submit(new ReaderThread(br));
-            Future<String> error = taskExecutor.submit(new ReaderThread(br2));
-            buffer.append(info.get(10, TimeUnit.SECONDS)).append(error.get(10, TimeUnit.SECONDS));
-        } finally {
-            if (process != null) {
-                process.destroy();
-            }
-            if (br != null) {
-                br.close();
-            }
-            if (br2 != null) {
-                br.close();
-            }
-        }
-        return buffer.toString();
-    }
-
-
-    static class ReaderThread implements Callable<String> {
-        BufferedReader br;
-
-        ReaderThread(BufferedReader br) {
-            this.br = br;
-        }
-
-        public String call() {
-            StringBuffer lines = new StringBuffer();
-            String line;
-            try {
-                while ((line = br.readLine()) != null) {
-                    lines.append(line).append("\n");
-                }
-            } catch (IOException e) {
-                logger.error("", e);
-            }
-            return lines.toString();
         }
     }
 }

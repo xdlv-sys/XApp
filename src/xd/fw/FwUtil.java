@@ -2,18 +2,21 @@ package xd.fw;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -131,6 +134,34 @@ public class FwUtil {
         return MD5.MD5Encode(sb.toString());
     }
 
+    public static String executeCmd(AsyncTaskExecutor taskExecutor, File directory, String[] cmd) throws Exception {
+        ProcessBuilder builder = new ProcessBuilder(cmd);
+        builder.directory(directory);
+        Process process = null;
+        BufferedReader br = null;
+        BufferedReader br2 = null;
+        StringBuilder buffer = new StringBuilder();
+        try {
+            process = builder.start();
+            br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            br2 = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            Future<String> info = taskExecutor.submit(new ReaderThread(br));
+            Future<String> error = taskExecutor.submit(new ReaderThread(br2));
+            buffer.append(info.get(10, TimeUnit.SECONDS)).append(error.get(10, TimeUnit.SECONDS));
+        } finally {
+            if (process != null) {
+                process.waitFor();
+            }
+            if (br != null) {
+                br.close();
+            }
+            if (br2 != null) {
+                br.close();
+            }
+        }
+        return buffer.toString();
+    }
+
     public static void unzip(File zipFile, File destDir) throws IOException {
         try (ZipFile zip = ZipHelper.openZipFile(zipFile)) {
             Enumeration<? extends ZipEntry> entries = zip.entries();
@@ -164,6 +195,30 @@ public class FwUtil {
             }
         }
     }
+
+    static class ReaderThread implements Callable<String> {
+        static Logger logger = LoggerFactory.getLogger(ReaderThread.class);
+        BufferedReader br;
+        ReaderThread(BufferedReader br) {
+            this.br = br;
+        }
+
+        public String call() {
+            StringBuilder lines = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    lines.append(line).append("\n");
+                    logger.info(line);
+                }
+            } catch (IOException e) {
+                logger.error("", e);
+            }
+            return lines.toString();
+        }
+    }
+
+
 
     public static void main(String[] args) throws Exception {
         unzip(new File("C:\\Work\\Java\\output\\war.zip"), new File("C:\\Work\\Java\\output\\war"));
