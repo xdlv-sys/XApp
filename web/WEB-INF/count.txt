@@ -1,4 +1,4 @@
-
+﻿
 ip地址：114.55.129.254
 localhost：3306
 数据库名：igecono_js
@@ -13,3 +13,15 @@ keytool -genkey -alias android.keystore -keyalg RSA -validity 20000 -keystore an
   https://github.com/xu-li/cordova-plugin-wechat-example/blob/master/server/payment_demo.php
 appid:
    cordova plugin add cordova-plugin-wechat --variable wechatappid=wxfb177b648d500632
+
+   api_key:wxfb177b648d500632123fddfsadfsks
+   微信支付商户号：1395463402
+商户平台登录帐号：1395463402@1395463402
+申请对应的应用：杰康诺之家（）
+应用APPID：wxfb177b648d500632
+
+微信开放平台app支付申请：
+帐号：jknzj2016@163.com
+密码：jiekangnuo2016
+
+
