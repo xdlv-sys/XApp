@@ -95,22 +95,16 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         }
     }
 
-    public final boolean pullFile(String id, File destFile, String directory, String file) throws Exception{
+    public final byte[] pullFile(String id, String directory, String file) throws Exception{
         TLVMessage message = createRequest(PULL_FILE,directory,file);
         TLVMessage result = request(id, message);
         if ("OK".equals(result.getValue())){
-            byte[] content = (byte[])result.getNextValue(0);
-            try(FileOutputStream os = new FileOutputStream(destFile)){
-                os.write(content);
-                os.flush();
-            }
-            return true;
+            return (byte[])result.getNextValue(0);
         }
-        return false;
+        return null;
     }
 
     public final String[] executeCmd(String id, String directory, String prefix,String cmd) throws Exception{
-
         if (cmd.startsWith("cd ")){
             String subPath = cmd.substring(3);
             if (org.apache.commons.lang.StringUtils.isNotBlank(directory)){
@@ -126,13 +120,6 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
                 return new String[]{directory, cmd};
             }
             boolean success = pushFile(id,directory,pushFile);
-            cmd = success ? "success" : "fail";
-            return new String[]{directory, cmd};
-        }
-        if (cmd.startsWith("pull ")){
-            String file = cmd.substring(5);
-            boolean success = pullFile(id
-                    ,new File(I18n.getWebInfDir(), file),directory,file);
             cmd = success ? "success" : "fail";
             return new String[]{directory, cmd};
         }
