@@ -68,7 +68,7 @@ public class ParkProxy extends ReversedProxy {
                     parkedInfo = parkHandler.queryCarInfo(QUERY_CAR,watchId,carNumber);
                 } else {
                     byte carType = (byte)msg.getNextValue(3);
-                    parkedInfo = parkNative.getParkedInfo(carType, carNumber);
+                    parkedInfo = parkNative.getParkedInfo(carType, carNumber,15);
                     parkedInfo.carNumber = carNumber;
                 }
                 if (parkedInfo != null && parkedInfo.iReturn != 6){
@@ -90,8 +90,8 @@ public class ParkProxy extends ReversedProxy {
                 if (StringUtils.isNotBlank(watchId)){
                     success = parkHandler.payFee(PAY_FEE,watchId,carNumber,totalFee);
                 } else {
-                    //byte carType = (byte)msg.getNextValue(4);
-                    success = parkNative.payFee(carNumber, timeStamp, totalFee);
+                    byte carType = (byte)msg.getNextValue(5);
+                    success = parkNative.payFee(carType,carNumber, timeStamp, totalFee);
                 }
                 next.setNext(success ? "OK" : "FAIL");
                 response(msg);

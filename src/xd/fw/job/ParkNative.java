@@ -64,9 +64,9 @@ public class ParkNative {
         }
     }
 
-    public ParkedInfo getParkedInfo(int carType, String carNumber) {
+    public ParkedInfo getParkedInfo(int carType, String carNumber, int free) {
         return (ParkedInfo) executeTemplate(args -> {
-            Object obj = getParkedCarInfo.invoke(null, carType, carNumber);
+            Object obj = getParkedCarInfo.invoke(null, carType, carNumber, free);
             ParkedInfo parkedInfo = new ParkedInfo();
             copyProperties(parkedInfo, obj);
             return parkedInfo;
@@ -82,10 +82,8 @@ public class ParkNative {
         return null;
     }
 
-    public boolean payFee(String carNumber,String timeStamp, float totalFee){
-        return (boolean)executeTemplate(args->{
-            return ((int)payParkCarFee.invoke(null, carNumber, timeStamp, totalFee)) == 0;
-        });
+    public boolean payFee(int carType, String carNumber,String timeStamp, float totalFee){
+        return (boolean)executeTemplate(args-> ((int)payParkCarFee.invoke(null, carType, carNumber, timeStamp, totalFee)) == 0);
     }
 
     static class ParkedInfo2 {

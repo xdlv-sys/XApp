@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="5 seconds">
 
-    <property name="DEV_HOME" value="../logs" />
+    <property name="DEV_HOME" value="${catalina.base}/logs" />
     <property name="FORMAT" value="%d{yyyy-MM-dd HH:mm:ss} [%logger{0}] %-5level %msg%n"/>
     <property name="MAX_HISTROY" value="5"/>
     <property name="MAX_SIZE" value="1MB"/>
@@ -64,7 +64,7 @@
 
     <logger name="org.mybatis" level="error"/>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE-AUDIT" />
         <appender-ref ref="FILE-ERROR" />

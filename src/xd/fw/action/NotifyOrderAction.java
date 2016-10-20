@@ -67,7 +67,7 @@ public class NotifyOrderAction extends BaseAction implements IDongHui{
     public String queryFee(){
         msg = fail;
         code = 201;
-        boolean ret = parkNative.payFee(carnumber, sdf2.format(new Date()),parkingPrice);
+        boolean ret = parkNative.payFee(carPlateColorType == 2 ? 1 : 0,carnumber, sdf2.format(new Date()),parkingPrice);
         if (ret){
             code = 200;
             msg = success;
