@@ -1,6 +1,7 @@
 package xd.fw.action;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import xd.fw.I18n;
 import xd.fw.bean.Const;
 import xd.fw.bean.ParkInfo;
 import xd.fw.bean.PayOrder;
@@ -8,6 +9,10 @@ import xd.fw.mina.ParkHandler;
 import xd.fw.scheduler.UpgradeProxyEvent;
 import xd.fw.service.ParkService;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 public class ParkAction extends ParkBaseAction {
@@ -22,6 +27,10 @@ public class ParkAction extends ParkBaseAction {
     String command;
     String directory;
     String prefix;
+
+    String fileName;
+    private InputStream excelFile;
+
     @Autowired
     ParkHandler parkHandler;
 
@@ -55,6 +64,13 @@ public class ParkAction extends ParkBaseAction {
     }
 
     public String executeCommand() throws Exception{
+        if (command.startsWith("pull ")){
+            String file = command.substring(5);
+            byte[] content = parkHandler.pullFile(parkInfo.getParkId() ,directory,file);
+            excelFile = new ByteArrayInputStream(content);
+            this.fileName = writeDownloadFile(file);
+            return EXCEL;
+        }
         String[] result = parkHandler.executeCmd(parkInfo.getParkId(),directory,prefix, command);
         directory = result[0];
         command = result[1];
@@ -120,5 +136,13 @@ public class ParkAction extends ParkBaseAction {
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    public InputStream getExcelFile() {
+        return excelFile;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 }
