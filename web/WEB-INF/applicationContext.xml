@@ -21,28 +21,6 @@
             </list>
         </property>
     </bean>
-    <bean id="vendorProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="properties">
-            <props>
-                <prop key="SQL Server">sqlserver</prop>
-                <prop key="Oracle">oracle</prop>
-                <prop key="MySQL">mysql</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">
-        <property name="properties" ref="vendorProperties"/>
-    </bean>
-
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="databaseIdProvider" ref="databaseIdProvider"/>
-    </bean>
-    <!-- ScanMapperFiles -->
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="xd.fw.bean.mapper"/>
-    </bean>
 
     <bean id="dataSource" destroy-method="close"
           class="org.apache.commons.dbcp.BasicDataSource">
@@ -50,8 +28,8 @@
         <property name="url" value="${jdbc.url}"/>
         <property name="username" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
-        <property name="validationQuery" value="${jdbc.validate}"></property>
-        <property name="maxActive" value="20"></property>
+        <property name="validationQuery" value="${jdbc.validate}"/>
+        <property name="maxActive" value="20"/>
     </bean>
 
 
@@ -103,34 +81,6 @@
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <!--quartz jobs-->
-    <bean id="baseJobDetail" abstract="true"
-          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject">
-            <ref bean="baseJob"/>
-        </property>
-        <property name="targetMethod">
-            <value>execute</value>
-        </property>
-        <property name="concurrent">
-            <value>false</value>
-        </property>
-    </bean>
-
-
-    <bean id="memoryCheckDoTime"
-          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail">
-            <bean parent="baseJobDetail">
-                <property name="targetObject">
-                    <ref bean="memoryJob"/>
-                </property>
-            </bean>
-        </property>
-        <property name="cronExpression">
-            <value>0/10 * * * * ?</value>
-        </property>
-    </bean>
     <bean id="httpClientConnectionManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">
         <property name="maxTotal" value="${http_client_max_connection_total}"/>
         <property name="defaultMaxPerRoute" value="${http_client_max_connection_per_host}"/>
@@ -148,8 +98,9 @@
     <task:annotation-driven executor="executor" scheduler="scheduler" proxy-target-class="true"/>
 
 
-    <import resource="spring-quartx-jobs.xml"/>
-    <import resource="spring-apache-mina.xml"/>
-    <import resource="spring-apache-derby.xml"/>
+    <!--<import resource="spring-quartx-jobs.xml"/>-->
+    <!--<import resource="spring-apache-mina.xml"/>-->
+    <!--<import resource="spring-apache-derby.xml"/>-->
+    <!--<import resource="spring-mybatis.xml"/>-->
 
 </beans>

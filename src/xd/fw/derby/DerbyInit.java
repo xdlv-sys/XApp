@@ -22,7 +22,6 @@ import java.sql.SQLException;
 /**
  * initialize the derby database
  */
-@Service
 public class DerbyInit {
 
     static Logger logger = Logger.getLogger(DerbyInit.class);

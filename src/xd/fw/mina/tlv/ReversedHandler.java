@@ -3,6 +3,7 @@ package xd.fw.mina.tlv;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import xd.fw.I18n;
 
 import java.io.File;
@@ -10,7 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
-
+@Service
 public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyListener {
     @Value("${mina_timeout}")
     int minaTimeout;
@@ -131,6 +132,10 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             return null;
         }
         return new String[]{(String)result.getValue(), (String)result.getNextValue(0)};
+    }
+
+    public final void upgrade(int id, int version){
+
     }
 
     @Override

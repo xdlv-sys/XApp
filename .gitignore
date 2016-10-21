@@ -3,7 +3,7 @@
 /web/wwt/.sencha
 /web/wwt/resources/loading
 /web/wwt/resources/icons
-/.gitignore
+
 /web/wwt/resources/sass/stylesheets
 /web/wwt/resources/sass/.sass-cache
 
@@ -25,3 +25,4 @@
 /XApp.iml
 /XApp2.iml
 out
+/XApp_ONE.iml

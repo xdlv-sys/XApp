@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-@Service
 @ManagedResource(objectName = "xapp:name=DbOperation", description = "derby db operations")
 public class DbOperation {
     Logger logger = Logger.getLogger(DbOperation.class);
