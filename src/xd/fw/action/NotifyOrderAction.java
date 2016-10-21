@@ -64,10 +64,11 @@ public class NotifyOrderAction extends BaseAction implements IDongHui{
     }
 
     @Action("QueryFee")
-    public String queryFee(){
+    public String queryFee()throws Exception{
         msg = fail;
         code = 201;
-        boolean ret = parkNative.payFee(carPlateColorType == 2 ? 1 : 0,carnumber, sdf2.format(new Date()),parkingPrice);
+        boolean ret = parkNative.payFee(carPlateColorType == 2 ? 1 : 0,carnumber
+                , sdf2.format(sdf.parse(currenttime)),parkingPrice);
         if (ret){
             code = 200;
             msg = success;
