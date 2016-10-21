@@ -17,11 +17,11 @@ public class UpgradeProxyListener implements ApplicationListener<UpgradeProxyEve
 
     @Override
     public void onApplicationEvent(UpgradeProxyEvent upgradeProxyEvent){
-        int[] source = (int[])upgradeProxyEvent.getSource();
+        UpgradeProxyEvent.Upgrade source = (UpgradeProxyEvent.Upgrade)upgradeProxyEvent.getSource();
         try {
-            logger.info("start to upgrade {} from {}", source[0], source[1]);
-            reversedHandler.upgrade(source[0], source[1]);
-            logger.info("end to upgrade {} from {}", source[0], source[1]);
+            logger.info("start to upgrade {} from {}", source.id, source.version);
+            reversedHandler.upgrade(source.id, source.version);
+            logger.info("end to upgrade {} from {}", source.id, source.version);
         } catch (Exception e) {
             logger.error("",e);
         }

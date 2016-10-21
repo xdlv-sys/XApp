@@ -80,7 +80,8 @@ public class ParkAction extends ParkBaseAction {
     public String upgradeProxy() throws Exception{
         for (int i = 0; parkInfos != null && i < parkInfos.size(); i++) {
             ParkInfo parkInfo = parkService.get(ParkInfo.class, parkInfos.get(i).getParkId());
-            applicationContext.publishEvent(new UpgradeProxyEvent(parkInfo));
+            applicationContext.publishEvent(new UpgradeProxyEvent(
+                    new UpgradeProxyEvent.Upgrade(parkInfo.getParkId(), parkInfo.getProxyVersion())));
         }
         return FINISH;
     }
