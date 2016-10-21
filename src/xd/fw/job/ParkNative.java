@@ -48,10 +48,10 @@ public class ParkNative {
         unitialized = cls.getMethod("unitialized");
         unitialized.setAccessible(true);
 
-        getParkedCarInfo = cls.getMethod("getParkedCarInfo", int.class, String.class);
+        getParkedCarInfo = cls.getMethod("getParkedCarInfo", int.class, String.class, int.class);
         getParkedCarInfo.setAccessible(true);
 
-        payParkCarFee = cls.getMethod("payParkCarFee",String.class,String.class,float.class);
+        payParkCarFee = cls.getMethod("payParkCarFee",int.class,String.class,String.class,float.class);
         payParkCarFee.setAccessible(true);
 
         initialized.invoke(null, host, dbName, user, pwd);
