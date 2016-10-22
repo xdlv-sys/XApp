@@ -67,8 +67,10 @@ public class NotifyOrderAction extends BaseAction implements IDongHui{
     public String queryFee()throws Exception{
         msg = fail;
         code = 201;
+        String payEndTime = sdf2.format(sdf.parse(currenttime));
+        logger.info("pay end time:{}", payEndTime);
         boolean ret = parkNative.payFee(carPlateColorType == 2 ? 1 : 0,carnumber
-                , sdf2.format(sdf.parse(currenttime)),parkingPrice);
+                , payEndTime,parkingPrice);
         if (ret){
             code = 200;
             msg = success;
