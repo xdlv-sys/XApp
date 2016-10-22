@@ -48,6 +48,20 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
                     handlerQuery(msg);
                 }
             }
+
+            @Override
+            public void sessionClosed(IoSession ioSession) throws Exception {
+                logger.info("session is closed");
+                session = null;
+                doExecute();
+            }
+
+            @Override
+            public void exceptionCaught(IoSession ioSession, Throwable cause) throws Exception {
+                logger.info("exception caught");
+                session = null;
+                doExecute();
+            }
         });
     }
 
@@ -111,7 +125,8 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
 
     @Override
     public void doExecute() throws Exception {
-        logger.info("start to send heart beat message");
+        logger.info("start to send heart beat message session: " +
+                "{}",session == null ? "" : "" + session.isActive());
         checkSession();
 
         TLVMessage registryMessage = new TLVMessage(REGISTRY);
@@ -133,7 +148,7 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
     private synchronized void checkSession() throws Exception {
         int count = 0;
         boolean reconnect = false;
-        while (session == null || !session.isConnected()) {
+        while (session == null) {
             reconnect = true;
             ConnectFuture future = connector.connect(inetSocketAddress());
             future.awaitUninterruptibly();

@@ -36,6 +36,8 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
     public void messageReceived(IoSession session, Object message) throws Exception {
         TLVMessage msg = (TLVMessage) message;
         int code = (int) msg.getValue();
+        logger.info("receive:" + message);
+
         if (code == REGISTRY) {
             String id = (String) msg.getNextValue(0);
             if ("000".equals(id)){
@@ -58,7 +60,6 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             handlerRegistry(msg, session);
             return;
         }
-        logger.info("receive:" + message);
 
         // message is handled already
         if (handlerMessage(msg,session)){

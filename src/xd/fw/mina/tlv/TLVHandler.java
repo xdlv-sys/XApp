@@ -17,7 +17,7 @@ public class TLVHandler extends IoHandlerAdapter implements IConst{
 
     @Override
     public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-        logger.info("session idle:" + status);
+        logger.debug("session idle:" + status);
     }
 
     @Override
