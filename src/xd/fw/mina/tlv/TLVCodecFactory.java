@@ -1,16 +1,17 @@
 package xd.fw.mina.tlv;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.*;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by xd on 2016/5/13.
  */
 public class TLVCodecFactory implements ProtocolCodecFactory {
 
-    static Logger logger = Logger.getLogger(TLVCodecFactory.class);
+    static Logger logger = LoggerFactory.getLogger(TLVCodecFactory.class);
     private ProtocolEncoder encoder;
     private ProtocolDecoder decoder;
     private String charset;

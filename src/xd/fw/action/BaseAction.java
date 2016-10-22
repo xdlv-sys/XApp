@@ -4,12 +4,13 @@ import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.beanutils.BeanUtils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.*;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import xd.fw.FwUtil;
 import xd.fw.bean.User;
@@ -41,7 +42,7 @@ public abstract class BaseAction extends ActionSupport implements IConst{
     private static Pattern SPLITE_PATTERN = Pattern.compile(",");
 
     public final static String USER_NAME = "";
-    protected Logger log = Logger.getLogger(getClass());
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected int start = 0;
     protected int limit = 0;

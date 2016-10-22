@@ -1,7 +1,7 @@
 package xd.fw;
 
-import org.apache.log4j.Logger;
-import xd.fw.FwUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xd.fw.action.BaseAction;
 
 import javax.servlet.*;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class SessionFilter implements Filter {
 
-    static Logger logger = Logger.getLogger(SessionFilter.class);
+    static Logger logger = LoggerFactory.getLogger(SessionFilter.class);
 
     String[] whiteNames;
     boolean showParameters = false;

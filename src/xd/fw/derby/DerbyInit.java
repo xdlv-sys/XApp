@@ -1,11 +1,11 @@
 package xd.fw.derby;
 
 import org.apache.derby.tools.ij;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.stereotype.Service;
 import xd.fw.FwUtil;
 import xd.fw.I18n;
 
@@ -24,9 +24,9 @@ import java.sql.SQLException;
  */
 public class DerbyInit {
 
-    static Logger logger = Logger.getLogger(DerbyInit.class);
+    static Logger logger = LoggerFactory.getLogger(DerbyInit.class);
 
-    String name;
+    //String name;
     @Autowired
     JdbcTemplate derbyTpl;
 
@@ -38,7 +38,7 @@ public class DerbyInit {
         File dbFile = new File(dbDir, "derby.bin");
         String dbName = dbFile.getCanonicalPath();
         String connectionURL = "jdbc:derby:" + dbName + ";create=true";
-        /**
+        /*
          * it's important to set url for spring bean jdbcTemplate, otherwise the derbyTpl don't work
          * because the path of database dynamically is created in runtime
           */

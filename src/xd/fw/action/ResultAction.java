@@ -1,18 +1,15 @@
 package xd.fw.action;
 
-import com.opensymphony.xwork2.ActionSupport;
-import com.sun.javafx.image.impl.IntArgb;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Controller;
-import xd.fw.FwException;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import xd.fw.FwException;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class ResultAction extends BaseAction{
 
-    static Logger logger = Logger.getLogger(ResultAction.class);
+    static Logger logger = LoggerFactory.getLogger(ResultAction.class);
     String msg = "操作成功";
     boolean success = true;
     boolean needLogin = false;
@@ -33,7 +30,7 @@ public class ResultAction extends BaseAction{
             if (!(exception instanceof FwException)){
                 logger.warn("business exception", exception);
             } else {
-                logger.info("bussiness:" + exception.getMessage());
+                logger.info("business:" + exception.getMessage());
             }
         } else {
             String msgSpecialized = (String)request.getAttribute("msg");

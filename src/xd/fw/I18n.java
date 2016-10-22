@@ -1,6 +1,7 @@
 package xd.fw;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -10,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class I18n {
 
-    static Logger logger = Logger.getLogger(I18n.class);
+    static Logger logger = LoggerFactory.getLogger(I18n.class);
     static Properties properties;
     static File webInfoDir;
 

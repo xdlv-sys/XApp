@@ -17,7 +17,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.List;
 
 public class HttpClientTpl {
 
-    static Logger logger = Logger.getLogger(HttpClientTpl.class);
+    static Logger logger = LoggerFactory.getLogger(HttpClientTpl.class);
     public static final String UTF8 = "UTF-8";
     static CloseableHttpClient httpclient = createHttpClient();
     static ContentType utf8ContentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), Consts.UTF_8);
@@ -104,7 +105,7 @@ public class HttpClientTpl {
             }
             entity = response.getEntity();
             Object res = processor.process(entity);
-            logger.debug(res);
+            logger.debug(res + "");
             return res;
         } finally {
             if (entity != null) {
