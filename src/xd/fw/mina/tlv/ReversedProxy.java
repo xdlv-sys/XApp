@@ -23,7 +23,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-@Service
 public abstract class ReversedProxy extends BaseJob implements IMinaConst {
 
     protected static Logger logger = LoggerFactory.getLogger(ReversedProxy.class);

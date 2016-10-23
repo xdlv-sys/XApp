@@ -11,7 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
-@Service
+
 public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyListener {
     @Value("${mina_timeout}")
     int minaTimeout;
@@ -26,10 +26,6 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         if (!proxyListeners.contains(listener)) {
             proxyListeners.add(listener);
         }
-    }
-
-    public ReversedHandler(){
-        addProxyListeners(this);
     }
 
     @Override
@@ -170,7 +166,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
     }
 
     protected String generateId(){
-        return String.valueOf(System.currentTimeMillis());
+        return String.valueOf(UUID.randomUUID());
     }
 
     private IoSession getSession(String id) {
