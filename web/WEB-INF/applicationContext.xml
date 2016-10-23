@@ -108,5 +108,4 @@
 
     <import resource="spring-apache-mina.xml"/>
     <import resource="spring-mybatis.xml"/>
-    <!--<import resource="spring-quartx-jobs.xml"/>-->
 </beans>

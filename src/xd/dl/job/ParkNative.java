@@ -73,7 +73,7 @@ public class ParkNative {
         });
     }
 
-    private Object executeTemplate(NativeProcess pro, Object... args){
+    private synchronized Object executeTemplate(NativeProcess pro, Object... args){
         try{
             return pro.process(args);
         } catch (Exception e) {

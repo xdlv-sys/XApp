@@ -40,9 +40,7 @@ public class MinaWrapper {
     }
 
     public void destroy() throws Exception{
-        for(IoSession session : this.acceptor.getManagedSessions().values()) {
-            session.closeOnFlush();
-        }
+        this.acceptor.getManagedSessions().values().forEach(IoSession::closeOnFlush);
         acceptor.dispose();
         acceptor.unbind();
         pool.dispose();
