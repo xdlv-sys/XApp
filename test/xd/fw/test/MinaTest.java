@@ -35,7 +35,7 @@ public class MinaTest {
 
         int number = 20000;
         for (int i=0;i<number;i++){
-            reversedProxy.doExecute();
+            reversedProxy.heartBeat();
         }
         Thread.sleep(10 * 1000);
 

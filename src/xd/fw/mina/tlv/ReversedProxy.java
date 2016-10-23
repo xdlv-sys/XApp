@@ -3,6 +3,9 @@ package xd.fw.mina.tlv;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.mina.core.future.ConnectFuture;
+import org.apache.mina.core.service.IoService;
+import org.apache.mina.core.service.IoServiceListener;
+import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
@@ -11,23 +14,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import xd.fw.FwUtil;
 import xd.fw.I18n;
 import xd.fw.job.BaseJob;
 
+import javax.annotation.PreDestroy;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-public abstract class ReversedProxy extends BaseJob implements IMinaConst {
+@Service
+public abstract class ReversedProxy implements IMinaConst {
 
     protected static Logger logger = LoggerFactory.getLogger(ReversedProxy.class);
     private SocketConnector connector;
     private IoSession session;
+    private boolean stop = false;
 
     @Qualifier("executor")
     @Autowired()
@@ -49,17 +57,10 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
             }
 
             @Override
-            public void sessionClosed(IoSession ioSession) throws Exception {
-                logger.info("session is closed");
-                session = null;
-                doExecute();
-            }
-
-            @Override
-            public void exceptionCaught(IoSession ioSession, Throwable cause) throws Exception {
-                logger.info("exception caught");
-                session = null;
-                doExecute();
+            public void sessionClosed(IoSession session) throws Exception {
+                synchronized (ReversedProxy.this){
+                    ReversedProxy.this.notifyAll();
+                }
             }
         });
     }
@@ -118,12 +119,12 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
     }
 
     public void destroy() {
-        super.destroy();
         connector.dispose();
+        stop = true;
     }
 
-    @Override
-    public void doExecute() throws Exception {
+    @Scheduled(cron="0/10 * * * * ?")
+    public void heartBeat() throws Exception {
         logger.info("start to send heart beat message session: " +
                 "{}",session == null ? "" : "" + session.isActive());
         checkSession();
@@ -144,10 +145,11 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
         session.write(response);
     }
 
-    private synchronized void checkSession() throws Exception {
+    private void checkSession() throws Exception {
         int count = 0;
         boolean reconnect = false;
-        while (session == null) {
+        while (session == null || !session.isConnected()) {
+            logger.info("try to connect center");
             reconnect = true;
             ConnectFuture future = connector.connect(inetSocketAddress());
             future.awaitUninterruptibly();
@@ -156,10 +158,12 @@ public abstract class ReversedProxy extends BaseJob implements IMinaConst {
             } catch (Exception e) {
                 logger.warn("can not connect center, try again later:" + e);
             }
+            if (stop){
+                return;
+            }
             if (count++ > 0) {
-                Thread.sleep(count * 1000);
-                if (count > 10) {
-                    count = 10;
+                synchronized (this){
+                    wait(count * 1000);
                 }
             }
         }
