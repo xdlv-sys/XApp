@@ -13,6 +13,7 @@ import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
 import xd.fw.service.ParkService;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,6 +33,10 @@ public class ParkHandler extends ReversedHandler {
     static final int QUERY_CAR = 3, PAY_FEE = 4;
     @Autowired
     ParkService parkService;
+    @PostConstruct
+    public void init(){
+        addProxyListeners(this);
+    }
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
