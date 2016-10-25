@@ -1,0 +1,119 @@
+package xd.fw.bean;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.sql.Timestamp;
+
+@Entity
+@Table(name = "t_dl_order")
+public class DlOrder {
+    @Id
+    private String outTradeNo;
+    private String tradeNo;
+    private String userNo;
+    private double totalFee;
+    private short payStatus;
+    private short notifyStatus;
+    private short payFlag;
+    private Timestamp timeStamp;
+
+    public String getOutTradeNo() {
+        return outTradeNo;
+    }
+
+    public void setOutTradeNo(String outTradeNo) {
+        this.outTradeNo = outTradeNo;
+    }
+
+    public String getTradeNo() {
+        return tradeNo;
+    }
+
+    public void setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo;
+    }
+
+    public String getUserNo() {
+        return userNo;
+    }
+
+    public void setUserNo(String userNo) {
+        this.userNo = userNo;
+    }
+
+    public double getTotalFee() {
+        return totalFee;
+    }
+
+    public void setTotalFee(double totalFee) {
+        this.totalFee = totalFee;
+    }
+
+    public short getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(short payStatus) {
+        this.payStatus = payStatus;
+    }
+
+    public short getNotifyStatus() {
+        return notifyStatus;
+    }
+
+    public void setNotifyStatus(short notifyStatus) {
+        this.notifyStatus = notifyStatus;
+    }
+
+    public short getPayFlag() {
+        return payFlag;
+    }
+
+    public void setPayFlag(short payFlag) {
+        this.payFlag = payFlag;
+    }
+
+    public Timestamp getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Timestamp timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DlOrder dlOrder = (DlOrder) o;
+
+        if (Double.compare(dlOrder.totalFee, totalFee) != 0) return false;
+        if (payStatus != dlOrder.payStatus) return false;
+        if (notifyStatus != dlOrder.notifyStatus) return false;
+        if (payFlag != dlOrder.payFlag) return false;
+        if (outTradeNo != null ? !outTradeNo.equals(dlOrder.outTradeNo) : dlOrder.outTradeNo != null) return false;
+        if (tradeNo != null ? !tradeNo.equals(dlOrder.tradeNo) : dlOrder.tradeNo != null) return false;
+        if (userNo != null ? !userNo.equals(dlOrder.userNo) : dlOrder.userNo != null) return false;
+        if (timeStamp != null ? !timeStamp.equals(dlOrder.timeStamp) : dlOrder.timeStamp != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = outTradeNo != null ? outTradeNo.hashCode() : 0;
+        result = 31 * result + (tradeNo != null ? tradeNo.hashCode() : 0);
+        result = 31 * result + (userNo != null ? userNo.hashCode() : 0);
+        temp = Double.doubleToLongBits(totalFee);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (int) payStatus;
+        result = 31 * result + (int) notifyStatus;
+        result = 31 * result + (int) payFlag;
+        result = 31 * result + (timeStamp != null ? timeStamp.hashCode() : 0);
+        return result;
+    }
+}
