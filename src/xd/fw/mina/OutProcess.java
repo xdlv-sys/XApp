@@ -16,6 +16,7 @@ public class OutProcess extends SendRequest{
         String time2 = (String) request.getNext(3).getValue();
         int color = (int)request.getNextValue(4);
         String deviceNo = (String)request.getNextValue(5);
+        int isOffLine = (int)request.getNextValue(6);
         String colorValue;
         switch(color){
             case 1:
@@ -39,12 +40,12 @@ public class OutProcess extends SendRequest{
                 {"Uniquekey",uniqueKey},
                 {"DeviceNo",deviceNo},
                 {"Price", String.valueOf(price)},
-                {"totalPrice", totalPrice},
+                {"TotalPrice", totalPrice},
                 {"Time1", time1},
                 {"Time2", time2},
                 {"Timestamp", timeStamp},
                 {"Token", md5(carNumber, timeStamp, parkingNo, uniqueKey)},
-                {"IsOffPay", price > 0 ? "0" : "1"}
+                {"IsOffPay", String.valueOf(isOffLine)}
         };
     }
 

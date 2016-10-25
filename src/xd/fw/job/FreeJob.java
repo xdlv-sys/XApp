@@ -1,15 +1,10 @@
 package xd.fw.job;
 
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import xd.fw.FwUtil;
 import xd.fw.HttpClientTpl;
 import xd.fw.service.ParkService;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Service
 public class FreeJob extends BaseJob implements IDongHui{
