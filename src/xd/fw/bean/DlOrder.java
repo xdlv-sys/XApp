@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "t_dl_order")
@@ -17,6 +18,17 @@ public class DlOrder {
     private short notifyStatus;
     private short payFlag;
     private Timestamp timeStamp;
+
+    public DlOrder(){}
+
+    public DlOrder(String outTradeNo, String tradeNo, String userNo, double totalFee, short payFlag) {
+        this.outTradeNo = outTradeNo;
+        this.tradeNo = tradeNo;
+        this.userNo = userNo;
+        this.totalFee = totalFee;
+        this.payFlag = payFlag;
+        this.timeStamp = new Timestamp(System.currentTimeMillis());
+    }
 
     public String getOutTradeNo() {
         return outTradeNo;
