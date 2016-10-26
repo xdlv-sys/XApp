@@ -71,8 +71,8 @@ public class ParkHandler extends ReversedHandler {
             logger.error("", e);
             return true;
         }
-
-        logger.info(ArrayUtils.toString(params));
+        long id = System.currentTimeMillis();
+        logger.info("before http {}:{}",id,ArrayUtils.toString(params));
 
         JSONObject jsonObject;
         String json = null;
@@ -85,6 +85,8 @@ public class ParkHandler extends ReversedHandler {
             jsonObject.put("msg", "network failure");
             jsonObject.put("code", "-1");
         }
+
+        logger.info("return from http {}: {}",id, jsonObject);
 
         TLVMessage ret = new TLVMessage(code);
         sendRequest.constructMessage(ret.setNext(generateId()).setNext(
