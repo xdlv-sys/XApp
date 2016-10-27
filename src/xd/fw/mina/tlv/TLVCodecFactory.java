@@ -1,9 +1,9 @@
 package xd.fw.mina.tlv;
 
-import org.slf4j.Logger;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.*;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**

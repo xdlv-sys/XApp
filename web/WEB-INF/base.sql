@@ -50,6 +50,19 @@ create table t_dynamic_conf(
     conf_desc varchar(128),
     dirty tinyint
 )ENGINE = INNODB;
+
+drop table IF EXISTS t_event;
+create table t_event(
+    event_id int auto_increment primary key,
+    event_type tinyint not null,
+    db_key int not null,
+    db_int int not null,
+    db_content varchar(32),
+    event_status tinyint not null,
+    try_count tinyint not null,
+    trigger_date DATETIME not null
+)ENGINE = INNODB;
+
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('appUpdating','false','升级升级前，请将此参数改为true',0);
 
 insert into t_user values(-10,'a','0cc175b9c0f1b6a831c399e269772661','a@a.com');

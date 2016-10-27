@@ -33,7 +33,7 @@
     </bean>
 
 
-    <context:component-scan base-package="xd.fw">
+    <context:component-scan base-package="xd">
         <context:exclude-filter type="annotation"
                                 expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
@@ -45,11 +45,13 @@
         <property name="mappingLocations">
             <list>
                 <value>classpath:xd/fw/bean/*.hbm.xml</value>
+                <value>classpath:xd/dl/bean/*.hbm.xml</value>
             </list>
         </property>
         <property name="packagesToScan">
             <list>
                 <value>xd.fw.bean</value>
+                <value>xd.dl.bean</value>
             </list>
         </property>
         <property name="hibernateProperties">
@@ -61,7 +63,7 @@
                 <!--<prop key="hibernate.cache.provider_configuration_file_resource_path">classpath:ehcache/ehcache.properties</prop>-->
                 <!--<prop key="hibernate.search.default.directory_provider">filesystem</prop>
                 <prop key="hibernate.search.default.indexBase">${hibernate.search.default.indexBase}</prop>-->
-                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.show_sql">true</prop>
                 <prop key="format_sql">false</prop>
                 <prop key="hibernate.dialect">${jdbc_dialect}</prop>
             </props>

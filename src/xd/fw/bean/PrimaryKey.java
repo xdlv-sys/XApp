@@ -1,7 +1,5 @@
 package xd.fw.bean;
 
-import org.hibernate.annotations.CollectionId;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;

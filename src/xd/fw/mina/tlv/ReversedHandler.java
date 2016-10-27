@@ -3,12 +3,10 @@ package xd.fw.mina.tlv;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import xd.fw.I18n;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
 

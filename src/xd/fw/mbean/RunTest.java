@@ -7,8 +7,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 import xd.fw.FwUtil;
 
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 
 @Service

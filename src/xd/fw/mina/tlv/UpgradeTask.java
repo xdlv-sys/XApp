@@ -12,12 +12,7 @@ import xd.fw.FwUtil;
 import xd.fw.I18n;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
 import java.util.concurrent.Callable;
 @Service
 public class UpgradeTask implements Callable<Integer>{

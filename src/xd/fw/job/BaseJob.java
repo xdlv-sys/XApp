@@ -2,11 +2,8 @@ package xd.fw.job;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import xd.fw.service.IConst;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public abstract class BaseJob implements IConst{

@@ -1,7 +1,5 @@
 package xd.fw.bean;
 
-import xd.fw.FwUtil;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;

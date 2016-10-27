@@ -8,5 +8,5 @@ public interface IConst {
 
     short PAY_WX = 0, PAY_ALI = 1;
 
-    byte STATUS_DONE = 1, STATUS_FAIL = 2;
+    byte STATUS_INI = 0, STATUS_DONE = 1, STATUS_FAIL = 2;
 }

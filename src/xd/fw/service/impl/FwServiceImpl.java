@@ -7,16 +7,20 @@ import org.springframework.orm.hibernate4.HibernateCallback;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xd.fw.FwUtil;
+import xd.fw.bean.Event;
 import xd.fw.bean.Mod;
 import xd.fw.bean.Role;
 import xd.fw.bean.User;
 import xd.fw.service.FwService;
+import xd.fw.service.IConst;
 
+import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
 @Service
-public class FwServiceImpl extends HibernateServiceImpl implements FwService {
+public class FwServiceImpl extends HibernateServiceImpl implements FwService, IConst {
 
     @Override
     public User userLogin(User user) throws Exception {
@@ -70,5 +74,29 @@ public class FwServiceImpl extends HibernateServiceImpl implements FwService {
         role.setMods(new HashSet<>(role.getModsL()));
 
         saveOrUpdate(role);
+    }
+
+    @Override
+    public List<Event> getTriggeringEvent(byte[] eventType, int maxTry, int limit) {
+        String events = Arrays.toString(eventType);
+        events = events.substring(1, events.length() -1);
+
+        String hsql = String.format("from Event where eventStatus in (%d,%d) " +
+                "and tryCount < %d and eventType in (%s)" +
+                " and (triggerDate is null or triggerDate < now()) order by eventId"
+                , STATUS_INI, STATUS_FAIL, maxTry, events);
+
+        return getList(hsql, null, 0, limit);
+    }
+
+    @Override
+    @Transactional
+    public void triggerEvent(Event event) {
+        event.setEventStatus(STATUS_INI);
+        event.setTryCount((byte) 0);
+        if (event.getTriggerDate() == null) {
+            event.setTriggerDate(new Timestamp(System.currentTimeMillis()));
+        }
+        save(event);
     }
 }

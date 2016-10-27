@@ -3,9 +3,6 @@ package xd.fw.mina.tlv;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.mina.core.future.ConnectFuture;
-import org.apache.mina.core.service.IoService;
-import org.apache.mina.core.service.IoServiceListener;
-import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
@@ -14,20 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import xd.fw.FwUtil;
 import xd.fw.I18n;
-import xd.fw.job.BaseJob;
 
-import javax.annotation.PreDestroy;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.InetSocketAddress;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public abstract class ReversedProxy implements IMinaConst {
