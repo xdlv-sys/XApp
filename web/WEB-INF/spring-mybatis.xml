@@ -23,6 +23,6 @@
     </bean>
     <!-- ScanMapperFiles -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="xd.fw.bean.mapper"/>
+        <property name="basePackage" value="xd.dl.bean.mapper"/>
     </bean>
 </beans>

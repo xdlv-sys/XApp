@@ -1,10 +1,11 @@
-package xd.fw.job;
+package xd.dl.job;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import xd.fw.service.ParkService;
+import xd.fw.job.BaseJob;
+import xd.dl.service.ParkService;
 
 
-public class DeleteJob extends BaseJob{
+public class DeleteJob extends BaseJob {
     @Autowired
     ParkService parkService;
     @Override

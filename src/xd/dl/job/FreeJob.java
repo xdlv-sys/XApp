@@ -1,10 +1,11 @@
-package xd.fw.job;
+package xd.dl.job;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.HttpClientTpl;
-import xd.fw.service.ParkService;
+import xd.fw.job.BaseJob;
+import xd.dl.service.ParkService;
 
 @Service
 public class FreeJob extends BaseJob implements IDongHui{

@@ -1,11 +1,10 @@
-package xd.fw.mina;
+package xd.dl.mina;
 
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import xd.fw.FwUtil;
 import xd.fw.HttpClientTpl;
 import xd.fw.mina.tlv.TLVMessage;
 

@@ -30,9 +30,9 @@
         <property name="taskExecutor" ref="quartzExecutor"/>
         <property name="triggers">
             <list>
-                <!--<ref bean="memoryCheckDoTime"/>-->
+                <!--<ref bean="memoryCheckDoTime"/>
                 <ref bean="freeJobDoTime"/>
-                <ref bean="proxyJobDoTime"/>
+                <ref bean="proxyJobDoTime"/>-->
             </list>
         </property>
     </bean>
@@ -48,7 +48,7 @@
             </bean>
         </property>
         <property name="cronExpression">
-            <value>0 5 * * * ?</value>
+            <value>0 0/5 * * * ?</value>
         </property>
     </bean>
 

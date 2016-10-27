@@ -1,4 +1,4 @@
-package xd.fw.action;
+package xd.dl.action;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -6,37 +6,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import xd.fw.job.IDongHui;
-import xd.fw.job.ParkNative;
-import xd.fw.mina.ParkHandler;
+import xd.fw.action.BaseAction;
+import xd.dl.job.IDongHui;
+import xd.dl.job.ParkNative;
+import xd.dl.mina.ParkHandler;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class NotifyOrderAction extends BaseAction implements IDongHui {
-    Logger logger = LoggerFactory.getLogger(NotifyOrderAction.class);
-
-    //SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-    //SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+public class QueryOrder extends BaseAction implements IDongHui {
     @Autowired
     ParkNative parkNative;
 
     @Autowired
     ParkHandler parkHandler;
 
-    //
+    Logger logger = LoggerFactory.getLogger(NotifyOrderAction.class);
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+
     String parkingno;
-    float parkingPrice;
     String carnumber;
     int carPlateColorType;
     String timestamp;
     String token;
-    String currenttime;
 
     int code;//	int	返回编码
     String msg;//	String	备注
+
+    float parkingprice;
+    String paystarttime, payendtime,duration,starttime;
 
     @Value("${order_success}")
     String success;
@@ -60,38 +59,33 @@ public class NotifyOrderAction extends BaseAction implements IDongHui {
         } catch (Exception e) {
             throw new IllegalArgumentException("", e);
         }
-
     }
 
-    static private String convertTime(String time) {
-        return String.format("%s-%s-%s %s:%s:%s", time.substring(0, 4)
-                , time.substring(4, 6), time.substring(6, 8)
-                , time.substring(8, 10), time.substring(10, 12), time.substring(12)); //20161026084053 2016-10-26 11:21:32
-    }
+    @Action("QueryOrder")
+    public String queryOrder() {
+        logger.info("query order {}", carnumber);
+        ParkNative.ParkedInfo parkedInfo = parkNative.getParkedInfo(carPlateColorType == 2 ? 1 : 0, carnumber,15);
 
-    @Action("QueryFee")
-    public String queryFee() throws Exception {
         msg = fail;
         code = 201;
-        String payEndTime = convertTime(currenttime);
-        logger.info("{} ->pay end time:{}", currenttime, payEndTime);
-        boolean ret = parkNative.payFee(carPlateColorType == 2 ? 1 : 0, carnumber
-                , payEndTime, parkingPrice);
-        if (ret) {
+
+        if (parkedInfo != null && parkedInfo.iReturn == 0) {
             code = 200;
             msg = success;
-            //notify all watch house
-            parkHandler.notifyWatchIdPayFee(carnumber, parkingPrice);
+
+            parkingprice = parkedInfo.fMoney;
+            starttime = parkedInfo.sInTime.replaceAll("-", ""
+            ).replaceAll(":", "").replaceAll(" ", "");
+            paystarttime = starttime;
+            payendtime = sdf.format(new Date());
+            duration = parkedInfo.iParkedTime / 60 + ":" + parkedInfo.iParkedTime % 60;
+            logger.info("price:{},duration:{}",parkingprice,duration);
         }
         return SUCCESS;
     }
 
     public void setParkingno(String parkingno) {
         this.parkingno = parkingno;
-    }
-
-    public void setParkingPrice(float parkingPrice) {
-        this.parkingPrice = parkingPrice;
     }
 
     public void setCarnumber(String carnumber) {
@@ -110,11 +104,31 @@ public class NotifyOrderAction extends BaseAction implements IDongHui {
         this.token = token;
     }
 
-    public void setCurrenttime(String currenttime) {
-        this.currenttime = currenttime;
+    public int getCode() {
+        return code;
     }
 
-    public static void main(String[] args) {
-        System.out.println(convertTime("2016-10-26 13:51:31"));
+    public String getMsg() {
+        return msg;
+    }
+
+    public float getParkingprice() {
+        return parkingprice;
+    }
+
+    public String getPaystarttime() {
+        return paystarttime;
+    }
+
+    public String getPayendtime() {
+        return payendtime;
+    }
+
+    public String getStarttime() {
+        return starttime;
+    }
+
+    public String getDuration() {
+        return duration;
     }
 }

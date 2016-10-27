@@ -1,4 +1,4 @@
-package xd.fw.mina;
+package xd.dl.mina;
 
 
 import net.sf.json.JSONObject;
@@ -7,7 +7,7 @@ import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xd.fw.HttpClientTpl;
-import xd.fw.job.ParkNative;
+import xd.dl.job.ParkNative;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
 

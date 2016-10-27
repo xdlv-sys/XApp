@@ -1,13 +1,14 @@
-package xd.fw.service;
+package xd.dl.service;
 
 import xd.fw.bean.EnterOrOutRecord;
 import xd.fw.bean.Mod;
 import xd.fw.bean.Role;
 import xd.fw.bean.User;
+import xd.fw.service.BaseService;
 
 import java.util.List;
 
-public interface ParkService extends BaseService{
+public interface ParkService extends BaseService {
 
 
     List<EnterOrOutRecord> geUploadRecords(int enterOrOut);

@@ -1,7 +1,7 @@
-package xd.fw.mina;
+package xd.dl.mina;
 
 import org.springframework.beans.factory.annotation.Value;
-import xd.fw.job.IDongHui;
+import xd.dl.job.IDongHui;
 import xd.fw.mina.tlv.TLVMessage;
 
 abstract class SendRequest implements IDongHui{

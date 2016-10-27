@@ -1,10 +1,10 @@
-package xd.fw.mina;
+package xd.dl.mina;
 
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
 
 @Service
-public class SigIn extends SendRequest {
+public class SigOut extends SendRequest {
 
     @Override
     String[][] constructParams(TLVMessage request) throws Exception {
@@ -14,12 +14,11 @@ public class SigIn extends SendRequest {
                 {"Parkingno", parkingNo},
                 {"DeviceNo",deviceNo},
                 {"Uniquekey", uniqueKey},
-                {"SigninStatus","1"},
+                {"SignoutStatus","1"},
                 {"Timestamp", timeStamp},
                 {"Token", md5(timeStamp, parkingNo, uniqueKey)}
         };
     }
-
     @Override
     void constructMessage(TLVMessage ret, TLVMessage request) {
         ret.setNext(request.getNextValue(0)).setNext(0);
@@ -27,6 +26,6 @@ public class SigIn extends SendRequest {
 
     @Override
     String svrAddress() {
-        return "http://"+dhHost+"/mobile/index.php?v=2.0&act=thirdparking&op=signin";
+        return "http://"+dhHost+"/mobile/index.php?v=2.0&act=thirdparking&op=signout";
     }
 }

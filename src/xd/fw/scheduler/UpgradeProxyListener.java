@@ -15,6 +15,7 @@ public class UpgradeProxyListener implements ApplicationListener<UpgradeProxyEve
     static Logger logger = LoggerFactory.getLogger(UpgradeProxyListener.class);
 
     @Autowired(required = false)
+    @Qualifier("tlvHandler")
     ReversedHandler reversedHandler;
 
     @Override

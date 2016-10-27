@@ -1,9 +1,7 @@
-package xd.fw.mina;
+package xd.dl.mina;
 
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
-
-import javax.annotation.PostConstruct;
 
 @Service
 public class OutProcess extends SendRequest{

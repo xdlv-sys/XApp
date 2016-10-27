@@ -1,4 +1,4 @@
-package xd.fw.mina;
+package xd.dl.mina;
 
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;

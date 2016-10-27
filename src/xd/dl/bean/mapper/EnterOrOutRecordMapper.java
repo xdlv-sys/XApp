@@ -1,4 +1,4 @@
-package xd.fw.bean.mapper;
+package xd.dl.bean.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import xd.fw.bean.EnterOrOutRecord;
