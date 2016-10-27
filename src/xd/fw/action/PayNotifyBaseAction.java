@@ -1,6 +1,7 @@
 package xd.fw.action;
 
 import com.alipay.api.internal.util.XmlUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.slf4j.Logger;
@@ -19,10 +20,12 @@ import java.util.Map;
  */
 public abstract class PayNotifyBaseAction extends BaseAction {
     Logger logger = LoggerFactory.getLogger(getClass());
-    String out_trade_no, trade_no, trade_status, total_fee, seller_id;
+    protected String out_trade_no, trade_no, trade_status, total_fee, seller_id;
+    protected boolean isWx = false;
 
     @Action("wxNotify")
     public String wxNotify() throws Exception {
+        isWx = true;
         Element rootElement = XmlUtils.getRootElementFromStream(
                 ServletActionContext.getRequest().getInputStream());
         NodeList childNodes = rootElement.getChildNodes();
@@ -40,7 +43,8 @@ public abstract class PayNotifyBaseAction extends BaseAction {
 
         if (verification) {
             boolean success = SUCCESS_FLAG.equals(params.get("return_code"));
-            processOrder(out_trade_no, params.get("transaction_id"), success);
+            total_fee = params.get("total_fee");
+            verification = processOrder(out_trade_no, params.get("transaction_id"), success);
         } else {
             logger.warn("wx verification failed:" + params);
         }
@@ -59,7 +63,7 @@ public abstract class PayNotifyBaseAction extends BaseAction {
     protected abstract String getWxKey(String out_trade_no);
 
 
-    protected abstract void processOrder(String out_trade_no, String transaction_id, boolean success);
+    protected abstract boolean processOrder(String out_trade_no, String transaction_id, boolean success);
 
 
     @Action("aliNotify")
@@ -71,8 +75,7 @@ public abstract class PayNotifyBaseAction extends BaseAction {
         String pid = getPid(out_trade_no);
         if (AliPayUtil.verify(ServletActionContext.getRequest().getParameterMap(), pid)) {
             boolean tradeSuccess = trade_status.equals("TRADE_SUCCESS");
-            processOrder(out_trade_no, trade_no, tradeSuccess);
-            return true;
+            return processOrder(out_trade_no, trade_no, tradeSuccess);
         }
         return false;
     }
@@ -105,5 +108,15 @@ public abstract class PayNotifyBaseAction extends BaseAction {
 
     public void setSeller_id(String seller_id) {
         this.seller_id = seller_id;
+    }
+
+    public float totalFee(){
+        if (StringUtils.isBlank(total_fee)){
+            return 0f;
+        }
+        if (isWx){
+            return Integer.parseInt(total_fee)/100.0f;
+        }
+        return Float.parseFloat(total_fee);
     }
 }
