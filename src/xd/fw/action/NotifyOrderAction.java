@@ -14,11 +14,11 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class NotifyOrderAction extends BaseAction implements IDongHui{
+public class NotifyOrderAction extends BaseAction implements IDongHui {
     Logger logger = LoggerFactory.getLogger(NotifyOrderAction.class);
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    //SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+    //SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     ParkNative parkNative;
@@ -45,7 +45,7 @@ public class NotifyOrderAction extends BaseAction implements IDongHui{
 
     @Override
     public void validate() {
-        if (StringUtils.isBlank(carnumber)){
+        if (StringUtils.isBlank(carnumber)) {
             throw new IllegalArgumentException("carnumberis empty");
         }
         try {
@@ -54,27 +54,32 @@ public class NotifyOrderAction extends BaseAction implements IDongHui{
             e.printStackTrace();
         }
         try {
-            if (token == null || !token.equals(md5(carnumber, timestamp,parkingno))){
+            if (token == null || !token.equals(md5(carnumber, timestamp, parkingno))) {
                 throw new IllegalArgumentException("token is wrong");
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("",e);
+            throw new IllegalArgumentException("", e);
         }
 
     }
 
+    static private String convertTime(String time) {
+        return String.format("%s-%s-%s %s:%s:%s", time.substring(0, 4)
+                , time.substring(4, 6), time.substring(6, 8)
+                , time.substring(8, 10), time.substring(10, 12), time.substring(12)); //20161026084053 2016-10-26 11:21:32
+    }
+
     @Action("QueryFee")
-    public String queryFee()throws Exception{
+    public String queryFee() throws Exception {
         msg = fail;
         code = 201;
-        String payEndTime = sdf2.format(sdf.parse(currenttime));
-        logger.info("pay end time:{}", payEndTime);
-        boolean ret = parkNative.payFee(carPlateColorType == 2 ? 1 : 0,carnumber
-                , payEndTime,parkingPrice);
-        if (ret){
+        String payEndTime = convertTime(currenttime);
+        logger.info("{} ->pay end time:{}", currenttime, payEndTime);
+        boolean ret = parkNative.payFee(carPlateColorType == 2 ? 1 : 0, carnumber
+                , payEndTime, parkingPrice);
+        if (ret) {
             code = 200;
             msg = success;
-
             //notify all watch house
             parkHandler.notifyWatchIdPayFee(carnumber, parkingPrice);
         }
@@ -107,5 +112,9 @@ public class NotifyOrderAction extends BaseAction implements IDongHui{
 
     public void setCurrenttime(String currenttime) {
         this.currenttime = currenttime;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(convertTime("2016-10-26 13:51:31"));
     }
 }
