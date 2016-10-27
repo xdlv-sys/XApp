@@ -1,13 +1,15 @@
-package xd.fw.bean;
+package xd.dl.bean;
+
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Entity
 @Table(name = "t_dl_order")
+@DynamicUpdate
 public class DlOrder {
     @Id
     private String outTradeNo;

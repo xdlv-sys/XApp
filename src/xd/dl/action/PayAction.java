@@ -1,18 +1,22 @@
-package xd.fw.action;
+package xd.dl.action;
 
 import com.alipay.api.internal.util.XmlUtils;
+import com.alipay.api.request.AlipayTradePrecreateRequest;
+import com.alipay.api.response.AlipayTradePrecreateResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.w3c.dom.Element;
+import xd.dl.AliPayClient;
+import xd.dl.bean.DlOrder;
+import xd.dl.service.DlService;
 import xd.fw.FwUtil;
 import xd.fw.HttpClientTpl;
 import xd.fw.WxUtil;
-import xd.fw.bean.DlOrder;
+import xd.fw.action.BaseAction;
 import xd.fw.bean.wx.UnifiedOrder;
-import xd.fw.service.DlService;
 
 import java.util.Base64;
 @Results({
@@ -31,8 +35,13 @@ public class PayAction extends BaseAction {
     @Value("${wx_notify_url}")
     String wxNotifyUrl;
 
+    @Value("${ali_notify_url}")
+    String aliNotifyUrl;
+
     @Autowired
     DlService dlService;
+    @Autowired
+    AliPayClient aliPayClient;
 
     float money;
     int scale = 100;
@@ -64,20 +73,40 @@ public class PayAction extends BaseAction {
         String resultCode = XmlUtils.getElementValue(rootEle, "result_code");
         String codeUrl = XmlUtils.getElementValue(rootEle, "code_url");
         if (SUCCESS_FLAG.equals(returnCode) && SUCCESS_FLAG.equals(resultCode)) {
-            DlOrder dlOrder = new DlOrder(unifiedOrder.getOut_trade_no(),donecode,userno,money,PAY_WX);
-            dlService.save(dlOrder);
-
-            byte[] data = FwUtil.qrCode(codeUrl, scale, scale);
-            String base64Data = Base64.getEncoder().encodeToString(data);
-            setRequestAttribute("data", base64Data);
-            setRequestAttribute("outTradeNo", dlOrder.getOutTradeNo());
+            retQr(codeUrl,unifiedOrder.getOut_trade_no(), PAY_WX);
         } else {
-            log.warn("failed to create order, please check the reason");
+            log.warn("failed to create wx order, please check the reason");
         }
         return "qr";
     }
+
+    private void retQr(String qr, String outTradeNo, short payType) throws Exception{
+        DlOrder dlOrder = new DlOrder(outTradeNo,donecode,userno,money,payType);
+        dlService.save(dlOrder);
+
+        byte[] data = FwUtil.qrCode(qr, scale, scale);
+        String base64Data = Base64.getEncoder().encodeToString(data);
+        setRequestAttribute("data", base64Data);
+        setRequestAttribute("outTradeNo", dlOrder.getOutTradeNo());
+    }
+
     public String aliPay() throws Exception{
-        return SUCCESS;
+        AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
+        String outTradeNo = FwUtil.createOutTradeNo();
+        request.setBizContent(String.format("{" +
+                "    \"out_trade_no\":\"%s\"," +
+                "    \"total_amount\":%.2f," +
+                "    \"subject\":\"%s\"," +
+                "    \"notify_url\":\"%s\"," +
+                "    \"store_id\":\"NJ_001\"," +
+                "    \"timeout_express\":\"90m\"}", outTradeNo, money, body,aliNotifyUrl));//设置业务参数
+        AlipayTradePrecreateResponse response = aliPayClient.getAlipayClient().execute(request);
+        if (response.isSuccess()){
+            retQr(response.getQrCode(),outTradeNo, PAY_ALI);
+        } else {
+            log.warn("failed to create ali order, please check the reason");
+        }
+        return "qr";
     }
 
     public void setMoney(float money) {
