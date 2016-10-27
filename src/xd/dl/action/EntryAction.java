@@ -15,7 +15,7 @@ public class EntryAction extends ParkBaseAction implements DlConst {
     ParkInfo parkInfo;
 
     public String execute() throws Exception {
-        parkInfo = parkService.get(ParkInfo.class,parkId);
+        parkInfo = parkService.get(ParkInfo.class, parkId);
 
         if (weixinBroswer()) {
             return "weixin";
@@ -28,10 +28,9 @@ public class EntryAction extends ParkBaseAction implements DlConst {
 
     public String getWeixinUrl() {
         return String.format("https://open.weixin.qq.com/connect/oauth2" +
-                "/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base" +
-                "&state=%s#wechat_redirect", parkInfo.getAppId(), redirectUrl
+                        "/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base" +
+                        "&state=%s#wechat_redirect", parkInfo.getAppId(), redirectUrl
                 , parkId + (StringUtils.isNotBlank(watchId) ? "-" + watchId : ""));
-
     }
 
     /*public String getAlipayUrl() {
@@ -50,12 +49,12 @@ public class EntryAction extends ParkBaseAction implements DlConst {
         //001,0001
         String[] ps = p.split("-");
         setParkId(ps[0]);
-        if (ps.length > 1){
+        if (ps.length > 1) {
             setWatchId(ps[1]);
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         System.out.println("001".split("-")[0]);
     }
 }
