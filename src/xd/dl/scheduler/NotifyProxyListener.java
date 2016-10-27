@@ -1,4 +1,4 @@
-package xd.fw.scheduler;
+package xd.dl.scheduler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,17 +8,17 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import xd.fw.bean.Const;
-import xd.fw.bean.PayOrder;
-import xd.fw.mina.ParkHandler;
-import xd.fw.service.ParkService;
-import xd.fw.service.PayService;
+import xd.dl.DlConst;
+import xd.dl.bean.PayOrder;
+import xd.dl.mina.ParkHandler;
+import xd.dl.service.PayService;
+import xd.fw.service.IConst;
 
 import java.util.Date;
 
 @Service
 @Async
-public class NotifyProxyListener implements ApplicationListener<NotifyProxyEvent>{
+public class NotifyProxyListener implements ApplicationListener<NotifyProxyEvent>, IConst{
 
     Logger logger = LoggerFactory.getLogger(NotifyProxyListener.class);
     @Autowired
@@ -54,9 +54,9 @@ public class NotifyProxyListener implements ApplicationListener<NotifyProxyEvent
                 }, new Date(System.currentTimeMillis() + delayForNotifyProxy));
                 return;
             }
-            payOrder.setNotifyStatus(Const.STATUS_FAIL);
+            payOrder.setNotifyStatus((short)STATUS_FAIL);
         } else {
-            payOrder.setNotifyStatus(Const.STATUS_SUCCESS);
+            payOrder.setNotifyStatus((short)STATUS_DONE);
         }
         logger.info("notify proxy result:{} for {}", payOrder.getNotifyStatus(), payOrder.getOutTradeNo());
         payService.updateNotifyStatus(payOrder.getOutTradeNo(), payOrder.getNotifyStatus());

@@ -1,4 +1,4 @@
-package xd.fw.bean;
+package xd.fw.bean.wx;
 
 public class WxOrder {
     String appId, timeStamp, nonceStr, prePayId, signType = "MD5", paySign;

@@ -1,17 +1,15 @@
-package xd.fw.action;
+package xd.dl.action;
 
+import com.opensymphony.xwork2.Action;
 import org.springframework.beans.factory.annotation.Autowired;
-import xd.fw.I18n;
-import xd.fw.bean.Const;
-import xd.fw.bean.ParkInfo;
-import xd.fw.bean.PayOrder;
-import xd.fw.mina.ParkHandler;
+import xd.dl.DlConst;
+import xd.dl.bean.ParkInfo;
+import xd.dl.bean.PayOrder;
+import xd.fw.action.BaseAction;
+import xd.dl.mina.ParkHandler;
 import xd.fw.scheduler.UpgradeProxyEvent;
-import xd.fw.service.ParkService;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -44,23 +42,23 @@ public class ParkAction extends ParkBaseAction {
             parkInfo.setSecret(null);
             parkInfo.setWxKey(null);
         }
-        return SUCCESS;
+        return Action.SUCCESS;
     }
 
     public String obtainPayOrders() {
         total = parkService.getAllCount(PayOrder.class, payOrder);
         payOrders = parkService.getList(PayOrder.class, payOrder, "timeStamp asc", start, limit);
-        return SUCCESS;
+        return Action.SUCCESS;
     }
 
     public String refreshStatus() {
         for (int i = 0; parkInfos != null && i < parkInfos.size(); i++) {
             ParkInfo parkInfo = parkService.get(ParkInfo.class, parkInfos.get(i).getParkId());
-            parkInfo.setProxyState(Const.PARK_PROXY_STATUS_DISCONNECT);
+            parkInfo.setProxyState(DlConst.PARK_PROXY_STATUS_DISCONNECT);
             parkInfo.setFreeCount(-1);
             parkService.saveOrUpdate(parkInfo);
         }
-        return FINISH;
+        return BaseAction.FINISH;
     }
 
     public String executeCommand() throws Exception{
@@ -69,12 +67,12 @@ public class ParkAction extends ParkBaseAction {
             byte[] content = parkHandler.pullFile(parkInfo.getParkId() ,directory,file);
             excelFile = new ByteArrayInputStream(content);
             this.fileName = writeDownloadFile(file);
-            return EXCEL;
+            return BaseAction.EXCEL;
         }
         String[] result = parkHandler.executeCmd(parkInfo.getParkId(),directory,prefix, command);
         directory = result[0];
         command = result[1];
-        return SUCCESS;
+        return Action.SUCCESS;
     }
 
     public String upgradeProxy() throws Exception{
@@ -83,12 +81,12 @@ public class ParkAction extends ParkBaseAction {
             applicationContext.publishEvent(new UpgradeProxyEvent(
                     new UpgradeProxyEvent.Upgrade(parkInfo.getParkId(), parkInfo.getProxyVersion())));
         }
-        return FINISH;
+        return BaseAction.FINISH;
     }
 
     public String saveParkInfo() {
         parkService.save(parkInfo);
-        return FINISH;
+        return BaseAction.FINISH;
     }
 
     public void setParkInfos(List<ParkInfo> parkInfos) {

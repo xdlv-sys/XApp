@@ -1,4 +1,4 @@
-package xd.fw.scheduler;
+package xd.dl.scheduler;
 
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -8,6 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import xd.fw.I18n;
+<<<<<<< ad674155dd3266a10bf86d9535f55c7cf32768c3:src/xd/fw/scheduler/WxCerts.java
+=======
+import xd.dl.bean.ParkInfo;
+import xd.dl.service.ParkService;
+>>>>>>> v1.0:src/xd/dl/scheduler/WxCerts.java
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;

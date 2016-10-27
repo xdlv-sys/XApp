@@ -1,25 +1,31 @@
-package xd.fw.action;
+package xd.dl.action;
 
 
 import com.alipay.api.AlipayConstants;
 import com.alipay.api.internal.util.XmlUtils;
+import com.opensymphony.xwork2.Action;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.w3c.dom.Element;
+import xd.dl.bean.CarParkInfo;
+import xd.dl.DlConst;
+import xd.dl.bean.ParkInfo;
+import xd.dl.bean.PayOrder;
 import xd.fw.*;
 import xd.fw.bean.*;
+import xd.fw.bean.wx.QueryOrder;
 import xd.fw.bean.wx.UnifiedOrder;
-import xd.fw.mina.ParkHandler;
+import xd.fw.bean.wx.WxOrder;
+import xd.dl.mina.ParkHandler;
 
 import javax.servlet.http.HttpSession;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PayAction extends ParkBaseAction implements Const {
+public class PayAction extends ParkBaseAction implements DlConst {
 
     @Autowired
     ParkHandler parkHandler;
@@ -107,10 +113,10 @@ public class PayAction extends ParkBaseAction implements Const {
         aliPayBean.setSign(AliPayUtil.getSign(aliPayBean, parkInfo.getAliShaRsaKey()));
 
         PayOrder payOrder = new PayOrder(aliPayBean.getOut_trade_no(), parkInfo.getParkId()
-                , carParkInfo.getCarNumber(), carParkInfo.getPrice(), STATUS_INITIAL, PAY_ALI, watchId, carType);
+                , carParkInfo.getCarNumber(), carParkInfo.getPrice(), (short)STATUS_INI, PAY_ALI, watchId, carType);
         //save the pay order
         payService.save(payOrder);
-        return SUCCESS;
+        return Action.SUCCESS;
     }
 
     public String queryCarNumber() throws Exception {
@@ -120,7 +126,7 @@ public class PayAction extends ParkBaseAction implements Const {
             carParkInfo.setWxPay(weixinBroswer() && StringUtils.isNotBlank(parkInfo.getAppId()));
             carParkInfo.setAliPay(StringUtils.isNotBlank(parkInfo.getPartnerId()));
         }
-        return SUCCESS;
+        return Action.SUCCESS;
     }
 
     public String wxPay() throws Exception {
@@ -170,14 +176,14 @@ public class PayAction extends ParkBaseAction implements Const {
             wxOrder.setPaySign(WxUtil.getSign(params, parkInfo.getWxKey()));
 
             payOrder = new PayOrder(unifiedOrder.getOut_trade_no(), parkInfo.getParkId()
-                    , carParkInfo.getCarNumber(), carParkInfo.getPrice(), STATUS_INITIAL, PAY_WX, watchId, carType);
+                    , carParkInfo.getCarNumber(), carParkInfo.getPrice(), (short)STATUS_INI, PAY_WX, watchId, carType);
             //save the pay order
             payService.save(payOrder);
 
         } else {
             log.warn("failed to create order, please check the reason");
         }
-        return SUCCESS;
+        return Action.SUCCESS;
     }
 
     private void assertCarParkInfoLegalForPay() throws Exception {
@@ -190,12 +196,12 @@ public class PayAction extends ParkBaseAction implements Const {
 
     public String queryNotifyStatus() throws Exception{
         payOrder = payService.get(PayOrder.class, payOrder.getOutTradeNo());
-        return SUCCESS;
+        return Action.SUCCESS;
     }
 
     public String queryPayStatus() throws Exception {
         payOrder = payService.get(PayOrder.class, payOrder.getOutTradeNo());
-        if (payOrder.getPayStatus() == STATUS_INITIAL && queryWxOrder) {
+        if (payOrder.getPayStatus() == STATUS_INI && queryWxOrder) {
             log.info("start to query wx order");
             ParkInfo parkInfo = parkService.get(ParkInfo.class, payOrder.getParkId());
             QueryOrder queryOrder = new QueryOrder();
@@ -216,14 +222,14 @@ public class PayAction extends ParkBaseAction implements Const {
 
             if (SUCCESS_FLAG.equals(return_code) && SUCCESS_FLAG.equals(result_code) &&
                     SUCCESS_FLAG.equals(trade_state)) {
-                payOrder.setPayStatus(STATUS_SUCCESS);
+                payOrder.setPayStatus((short)STATUS_DONE);
                 payOrder.setTradeNo(XmlUtils.getChildElement(element, "transaction_id").getTextContent());
             } else {
-                payOrder.setPayStatus(STATUS_FAIL);
+                payOrder.setPayStatus((short)STATUS_FAIL);
             }
             payService.saveOrUpdate(payOrder);
         }
-        return SUCCESS;
+        return Action.SUCCESS;
     }
 
     public void setQueryWxOrder(boolean queryWxOrder) {
