@@ -1,7 +1,8 @@
-package xd.fw.service.impl;
+package xd.dl.service;
 
 import org.springframework.stereotype.Service;
-import xd.fw.service.ParkService;
+import xd.dl.service.ParkService;
+import xd.fw.service.impl.HibernateServiceImpl;
 
 
 @Service

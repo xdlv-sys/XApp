@@ -1,6 +1,8 @@
-package xd.fw.service;
+package xd.dl.service;
 
-public interface PayService extends BaseService{
+import xd.fw.service.BaseService;
+
+public interface PayService extends BaseService {
 
     boolean updateInitialPayOrderStatus(String out_trade_no,String trade_no, short payOrderStatus);
 

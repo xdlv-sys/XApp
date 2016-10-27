@@ -1,4 +1,4 @@
-package xd.fw.scheduler;
+package xd.dl.scheduler;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -17,12 +17,16 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
+import xd.dl.DlConst;
+import xd.dl.bean.ParkInfo;
+import xd.dl.bean.PayOrder;
+import xd.dl.scheduler.RefundEvent;
+import xd.dl.scheduler.WxCerts;
+import xd.dl.service.ParkService;
+import xd.dl.service.PayService;
 import xd.fw.WxUtil;
-import xd.fw.bean.Const;
-import xd.fw.bean.ParkInfo;
-import xd.fw.bean.PayOrder;
-import xd.fw.service.ParkService;
-import xd.fw.service.PayService;
+
+import xd.fw.service.IConst;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +34,7 @@ import java.util.List;
 
 @Service
 @Async
-public class RefundListener implements ApplicationListener<RefundEvent>, Const {
+public class RefundListener implements ApplicationListener<RefundEvent>, IConst, DlConst {
 
     Logger logger = LoggerFactory.getLogger(RefundListener.class);
     @Autowired
@@ -42,7 +46,7 @@ public class RefundListener implements ApplicationListener<RefundEvent>, Const {
     WxCerts wxCerts;
 
     @Override
-    public void onApplicationEvent(RefundEvent refundEvent){
+    public void onApplicationEvent(RefundEvent refundEvent) {
         PayOrder payOrder = (PayOrder) refundEvent.getSource();
         logger.info("start to refund {} in {}", payOrder.getOutTradeNo(), payOrder.getParkId());
         ParkInfo parkInfo = parkService.get(ParkInfo.class, payOrder.getParkId());
@@ -50,7 +54,7 @@ public class RefundListener implements ApplicationListener<RefundEvent>, Const {
         boolean success = false;
 
         if (payOrder.getPayFlag() == PAY_WX) {
-            String fee = String.valueOf((int)(payOrder.getTotalFee() * 100));
+            String fee = String.valueOf((int) (payOrder.getTotalFee() * 100));
 
             List<String> paramList = new ArrayList<>();
             StringBuffer xml = new StringBuffer("<xml>");
@@ -77,14 +81,14 @@ public class RefundListener implements ApplicationListener<RefundEvent>, Const {
                 String resultCode = XmlUtils.getElementValue(rootEle, "result_code");
                 success = SUCCESS_FLAG.equals(returnCode) && SUCCESS_FLAG.equals(resultCode);
             } catch (Exception e) {
-                logger.error("",e);
+                logger.error("", e);
             }
         } else {
             //ali refund
             try {
 
                 AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do"
-                        ,parkInfo.getAliAppId(),parkInfo.getAliShaRsaKey(),"json","GBK",null);
+                        , parkInfo.getAliAppId(), parkInfo.getAliShaRsaKey(), "json", "GBK", null);
                 AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
                 request.setBizContent(String.format("{" +
                         "\"out_trade_no\":\"%s\"," +
@@ -93,13 +97,13 @@ public class RefundListener implements ApplicationListener<RefundEvent>, Const {
                 AlipayTradeRefundResponse response = alipayClient.execute(request);
                 success = response.isSuccess();
             } catch (Exception e) {
-                logger.error("",e);
+                logger.error("", e);
             }
         }
-        logger.info("refund {} for {}", success , payOrder.getOutTradeNo());
+        logger.info("refund {} for {}", success, payOrder.getOutTradeNo());
 
         short status = success ? ORDER_STATUS_REFUND_DONE : ORDER_STATUS_REFUND_FAIL;
-        payService.updatePayOrderStatus(payOrder.getOutTradeNo(),status);
+        payService.updatePayOrderStatus(payOrder.getOutTradeNo(), status);
     }
 
     void construct(List<String> paramList, StringBuffer xml, String key, String value) {
@@ -108,7 +112,7 @@ public class RefundListener implements ApplicationListener<RefundEvent>, Const {
     }
 
     String wxHttp(String parkId, String xml) throws IOException {
-        try(CloseableHttpClient httpClient = wxCerts.getClientByParkId(parkId)){
+        try (CloseableHttpClient httpClient = wxCerts.getClientByParkId(parkId)) {
             HttpPost post = new HttpPost("https://api.mch.weixin.qq.com/secapi/pay/refund");
 
             StringEntity jsonEntity = new StringEntity(xml, Consts.UTF_8);

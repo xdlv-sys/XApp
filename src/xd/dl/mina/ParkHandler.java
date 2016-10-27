@@ -1,27 +1,21 @@
-package xd.fw.mina;
+package xd.dl.mina;
 
 import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xd.fw.bean.CarParkInfo;
-import xd.fw.bean.Const;
-import xd.fw.bean.ParkInfo;
-import xd.fw.bean.PayOrder;
+import xd.dl.bean.CarParkInfo;
+import xd.dl.DlConst;
+import xd.dl.bean.ParkInfo;
+import xd.dl.bean.PayOrder;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
-import xd.fw.service.ParkService;
+import xd.dl.service.ParkService;
 
 import javax.annotation.PostConstruct;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
 
 @Service
 public class ParkHandler extends ReversedHandler {
@@ -52,7 +46,7 @@ public class ParkHandler extends ReversedHandler {
         if (msg.getNextValue(3) != null){
             parkInfo.setProxyVersion((int)msg.getNextValue(3));
         }
-        parkInfo.setProxyState(Const.PARK_PROXY_STATUS_NORMAL);
+        parkInfo.setProxyState(DlConst.PARK_PROXY_STATUS_NORMAL);
         parkInfo.setLastUpdate(new Timestamp(System.currentTimeMillis()));
         parkService.saveOrUpdate(parkInfo);
     }

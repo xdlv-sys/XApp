@@ -1,11 +1,11 @@
-package xd.fw.action;
+package xd.dl.action;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import xd.fw.bean.Const;
-import xd.fw.bean.ParkInfo;
+import xd.dl.DlConst;
+import xd.dl.bean.ParkInfo;
 
-public class EntryAction extends ParkBaseAction implements Const {
+public class EntryAction extends ParkBaseAction implements DlConst {
 
     @Value("${redirect_url}")
     String redirectUrl;

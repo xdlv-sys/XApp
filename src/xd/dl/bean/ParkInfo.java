@@ -1,4 +1,4 @@
-package xd.fw.bean;
+package xd.dl.bean;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

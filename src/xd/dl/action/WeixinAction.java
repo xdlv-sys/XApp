@@ -1,7 +1,8 @@
-package xd.fw.action;
+package xd.dl.action;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
+import xd.fw.action.BaseAction;
 
 public class WeixinAction extends BaseAction {
 

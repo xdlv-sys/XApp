@@ -1,9 +1,9 @@
 <%@ page import="xd.fw.AliPayUtil" %>
 <%@ page import="xd.fw.FwUtil" %>
-<%@ page import="xd.fw.service.ParkService" %>
-<%@ page import="xd.fw.bean.PayOrder" %>
+<%@ page import="xd.dl.service.ParkService" %>
+<%@ page import="xd.dl.bean.PayOrder" %>
 <%@ page import="org.apache.log4j.Logger" %>
-<%@ page import="xd.fw.bean.ParkInfo" %>
+<%@ page import="xd.dl.bean.ParkInfo" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
     ParkService parkService = (ParkService)FwUtil.getBean("parkService");

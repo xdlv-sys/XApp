@@ -1,4 +1,7 @@
-package xd.fw.bean;
+package xd.dl.bean;
+
+import xd.dl.DlConst;
+import xd.fw.service.IConst;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,7 +17,7 @@ public class PayOrder {
     private String parkId;
     private String carNumber;
     private Float totalFee;
-    private Short payStatus = Const.STATUS_INITIAL;
+    private Short payStatus = IConst.STATUS_INI;
 
     private Short notifyStatus;
     private Short payFlag;

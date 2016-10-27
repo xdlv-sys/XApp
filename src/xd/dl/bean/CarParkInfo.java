@@ -1,4 +1,4 @@
-package xd.fw.bean;
+package xd.dl.bean;
 
 public class CarParkInfo {
     String carNumber;

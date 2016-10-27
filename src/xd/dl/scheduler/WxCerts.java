@@ -1,4 +1,4 @@
-package xd.fw.scheduler;
+package xd.dl.scheduler;
 
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xd.fw.I18n;
-import xd.fw.bean.ParkInfo;
-import xd.fw.service.ParkService;
+import xd.dl.bean.ParkInfo;
+import xd.dl.service.ParkService;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
