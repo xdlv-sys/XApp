@@ -10,6 +10,7 @@ import xd.fw.action.PayNotifyBaseAction;
 /**
  * Created by xd on 10/27/2016.
  */
+@Deprecated
 public abstract class PayNotifyAction extends PayNotifyBaseAction {
 
     PayOrder payOrder;
