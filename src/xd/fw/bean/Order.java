@@ -23,6 +23,7 @@ public class Order {
     private byte tradeType;
     private int totalFee;
     private int balanceFee;
+    private int settlementFee = -1;
     private int storeUserId;
     private byte tradeStatus;
     private Timestamp lastDate;
@@ -89,6 +90,14 @@ public class Order {
 
     public void setBalanceFee(int balanceFee) {
         this.balanceFee = balanceFee;
+    }
+
+    public int getSettlementFee() {
+        return settlementFee;
+    }
+
+    public void setSettlementFee(int settlementFee) {
+        this.settlementFee = settlementFee;
     }
 
     public void setBalanceFee(String balanceFee) {

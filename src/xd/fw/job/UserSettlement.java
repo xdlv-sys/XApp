@@ -20,7 +20,8 @@ public class UserSettlement implements UserHandler {
         Order order = jknService.get(Order.class, event.getDbKey());
         UserDesc user = userMap.get(order.getUserId());
 
-        int totalFee = order.getTotalFee();
+        int totalFee = order.getSettlementFee() == -1
+                ? order.getTotalFee() : order.getSettlementFee();
 
         OrderSettlement orderSettlement = new OrderSettlement();
         orderSettlement.setOrderId(order.getOrderId());

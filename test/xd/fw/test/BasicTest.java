@@ -80,7 +80,8 @@ public class BasicTest implements IConst{
         return send(withdrawCount, params).getInt("withdrawCount");
     }
 
-    int assertAddTrade(int userId, int tradeType, int totalFee, int storeUserId, int balanceFee) throws Exception {
+    int assertAddTrade(int userId, int tradeType, int totalFee,
+                       int storeUserId, int balanceFee, int settlementFee) throws Exception {
         int tradeId = tradeId();
         String[][] params = {
                 {"order.orderId", String.valueOf(tradeId)},
@@ -89,6 +90,7 @@ public class BasicTest implements IConst{
                 {"order.tradeType", String.valueOf(tradeType)},
                 {"order.totalFee", String.valueOf(totalFee)},
                 {"order.balanceFee", String.valueOf(balanceFee)},
+                {"order.settlementFee", String.valueOf(settlementFee)},
                 {"order.storeUserId", String.valueOf(storeUserId)},
                 {"order.lastUpdateS", FwUtil.sdf.format(new Date())},
                 {"sign",""}

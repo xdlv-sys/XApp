@@ -34,7 +34,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst{
         TLVMessage msg = (TLVMessage) message;
         int code = (int) msg.getValue();
         if (code == REGISTRY) {
-            String ID = (String) msg.getNextValue(0);
+            String id = (String) msg.getNextValue(0);
             synchronized (sessionMap) {
                 IoSession proxySession = sessionMap.get(id);
                 if (session != proxySession) {

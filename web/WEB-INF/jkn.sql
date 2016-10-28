@@ -169,7 +169,9 @@ insert into  t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('wit
 -- vip -----
 alter table t_jkn_user add column `all_count` int null default 0 after `store_count`;
 alter table t_jkn_user add column `withdraw_count` int null default 0 after `all_count`;
--- update t_jkn_user set all_count=count;
+
+-- settlement fee --
+alter table t_jkn_order add column `settlement_fee` int null default 0 after `balance_fee`;
 
 
 

@@ -23,7 +23,7 @@ public class UserTest extends BasicTest {
         secondaryUserId = assertAddUser(rootUserId);
         thirdUserId = assertAddUser(secondaryUserId);
 
-        assertAddTrade(thirdUserId,TR_TYPE_CONSUME,5900, 0, 0);
+        assertAddTrade(thirdUserId,TR_TYPE_CONSUME,5900, 0, 0, -1);
     }
 
     @Test
@@ -32,7 +32,7 @@ public class UserTest extends BasicTest {
         int totalFee = totalFeeOne + totalFeeTwo;
 
         final int userId = assertAddUser(thirdUserId);
-        assertAddTrade(userId,TR_TYPE_CONSUME,totalFeeOne, 0, 0);
+        assertAddTrade(userId,TR_TYPE_CONSUME,totalFeeOne, 0, 0, -1);
 
         sleep(2 * 1000);
         //check user
@@ -42,7 +42,7 @@ public class UserTest extends BasicTest {
         checkUser(thirdUserId,(j)-> j.getInt("userLevel") == UL_GOLD);
 
         //vip
-        assertAddTrade(userId, TR_TYPE_CONSUME,totalFeeTwo, 0, 0);
+        assertAddTrade(userId, TR_TYPE_CONSUME,totalFeeTwo, 0, 0, -1);
         sleep(2 * 1000);
         //check user
         checkUser(userId,(j)-> j.getInt("vip") == VIP);
@@ -50,7 +50,7 @@ public class UserTest extends BasicTest {
         // 用户 thirdUser取现,当前用户的金额为 (5900 + 59000) * 0.07
         //check cash 取现
         int cash = 200;
-        assertAddTrade( thirdUserId,TR_TYPE_MONEY, cash, 0, 0);
+        assertAddTrade( thirdUserId,TR_TYPE_MONEY, cash, 0, 0, -1);
         sleep(5 * 1000);
 
         //check settlement
@@ -69,13 +69,13 @@ public class UserTest extends BasicTest {
 
         //add root user
         int userId = assertAddUser(thirdUserId);
-        assertAddTrade(userId,0,5900, 0, 0);
+        assertAddTrade(userId,0,5900, 0, 0, -1);
         sleep(2 * 1000);
 
         for (int i=1;i<=10; i++){
             int childId = assertAddUser(userId);
             //became to membership
-            assertAddTrade(childId,TR_TYPE_CONSUME,5900, 0, 0);
+            assertAddTrade(childId,TR_TYPE_CONSUME,5900, 0, 0, -1);
         }
         sleep(2 * 1000);
         // check user for white
@@ -85,12 +85,12 @@ public class UserTest extends BasicTest {
         for (int i=11;i<=20; i++){
             int childId = assertAddUser(userId + 2);
             //became to membership
-            assertAddTrade(childId,TR_TYPE_CONSUME,5900, 0, 0);
+            assertAddTrade(childId,TR_TYPE_CONSUME,5900, 0, 0, -1);
         }
 
         for (int i=21;i<=30; i++){
             int childId = assertAddUser(userId + 10 +2);
-            assertAddTrade(childId,TR_TYPE_CONSUME,5900, 0, 0);
+            assertAddTrade(childId,TR_TYPE_CONSUME,5900, 0, 0, -1);
         }
         sleep(10 * 1000);
         // check user
@@ -112,7 +112,7 @@ public class UserTest extends BasicTest {
         }
 
         int tmpUserId = assertAddUser(userId + 5);
-        assertAddTrade(tmpUserId,TR_TYPE_CONSUME,5900, 0, 0);
+        assertAddTrade(tmpUserId,TR_TYPE_CONSUME,5900, 0, 0, -1);
 
         sleep(5 * 1000);
 
@@ -124,7 +124,7 @@ public class UserTest extends BasicTest {
     @Test(dependsOnMethods = "userUpgrade3")
     public void userAreaUpgrade() throws Exception {
         final int userId = assertAddUser(thirdUserId);
-        assertAddTrade(userId,TR_TYPE_CONSUME,5900, 0, 0);
+        assertAddTrade(userId,TR_TYPE_CONSUME,5900, 0, 0, -1);
 
         int regionOne = createRegionUser(userId);
         sleep(2000);
@@ -144,7 +144,7 @@ public class UserTest extends BasicTest {
 
         //三个区代完成，验证市代，还要直推（35 -3) 32个，消费总额达到24w(60 - 12 * 3),每个用户消费7500
         for (int i=1;i<=32;i++){
-            assertAddTrade(assertAddUser(userId),TR_TYPE_CONSUME,750000, 0, 0);
+            assertAddTrade(assertAddUser(userId),TR_TYPE_CONSUME,750000, 0, 0, -1);
         }
         sleep(5 * 1000);
         checkUser(userId, (j)-> j.getInt("userLevel") == UL_DIAMOND
@@ -162,7 +162,7 @@ public class UserTest extends BasicTest {
             return true;
         });
 
-        assertAddTrade(regionThree + 1, TR_TYPE_CONSUME, 100, 0, 0);
+        assertAddTrade(regionThree + 1, TR_TYPE_CONSUME, 100, 0, 0, -1);
         sleep(5000);
         checkUser(userId, (j)->j.getInt("count") == (counts[0] + 100 * (0.09 + 0.04)));
 
@@ -175,7 +175,7 @@ public class UserTest extends BasicTest {
          *  创建一个根用户，在其下创建一个区代
          */
         final int userId = assertAddUser(thirdUserId);
-        assertAddTrade(userId,TR_TYPE_CONSUME,5900, 0, 0);
+        assertAddTrade(userId,TR_TYPE_CONSUME,5900, 0, 0, -1);
         sleep(1000);
 
         int regionOne = createRegionUser(userId);
@@ -189,7 +189,7 @@ public class UserTest extends BasicTest {
             return j.getInt("storeKeeper") == STORE_KEEPER_FIRST;
         });
 
-        assertAddTrade(assertAddUser(userId),TR_TYPE_CONSUME,5900, regionOne, 0);
+        assertAddTrade(assertAddUser(userId),TR_TYPE_CONSUME,5900, regionOne, 0, -1);
         sleep(4000);
 
         checkUser(regionOne,(j)->j.getInt("count") == counts[0] + 5900 * JKN.store_order_first_settlement );
@@ -199,7 +199,7 @@ public class UserTest extends BasicTest {
     public void withdrawCount() throws Exception {
         //创建用户 升级成VIP 验证返现
         final int userId = assertAddUser(thirdUserId);
-        assertAddTrade(userId,TR_TYPE_CONSUME,JKN.vip_cost, 0, 0);
+        assertAddTrade(userId,TR_TYPE_CONSUME,JKN.vip_cost, 0, 0, -1);
         sleep(2000);
         //返现20%
         int userCount = JKN.vip_cost * (100 - JKN.vip_discount) / 100;
@@ -211,39 +211,50 @@ public class UserTest extends BasicTest {
 
         //提现 100 帐户减少100，总量不变，己提变为100
         int money = 100;
-        assertAddTrade(userId,TR_TYPE_MONEY,money, 0, 0);
+        assertAddTrade(userId,TR_TYPE_MONEY,money, 0, 0, -1);
         sleep(2000);
         checkUser(userId, (j)->j.getInt("count") == userCount - money
                 && j.getInt("withdrawCount") == money
                 && j.getInt("allCount") == userCount);
 
         //撤销提现
-        assertAddTrade(userId,TR_TYPE_MONEY,-money, 0, 0);
+        assertAddTrade(userId,TR_TYPE_MONEY,-money, 0, 0, -1);
         sleep(2000);
         checkUser(userId, (j)->j.getInt("count") == userCount
                 && j.getInt("withdrawCount") == 0
                 && j.getInt("allCount") == userCount);
 
         //此时用余额全部消费 ， 余额为零，VIP返现20%，因此余额变为 userCount * 20%，提现即其小值
-        assertAddTrade(userId,TR_TYPE_CONSUME,userCount, 0, userCount);
+        assertAddTrade(userId,TR_TYPE_CONSUME,userCount, 0, userCount, -1);
         sleep(2000);
         assertTrue(getWithdrawCount(userId) == userCount * (100 - JKN.vip_discount)/100);
+    }
+    @Test(dependsOnMethods = "userAreaUpgrade")
+    public void settlementFeeTest() throws Exception{
+        final int userId = assertAddUser(thirdUserId);
+        assertAddTrade(userId,TR_TYPE_CONSUME,5900, 0, 0, -1);
+
+        int childId = assertAddUser(userId);
+        assertAddTrade(childId,TR_TYPE_CONSUME,5900, 0, 0, -1);
+        assertAddTrade(childId,TR_TYPE_CONSUME,5900, 0, 0, 100);
+        sleep(3000);
+        checkUser(userId,j->j.getInt("count") == (5900 + 100) * JKN.settlement_one);
     }
 
 
     private int createRegionUser(int referrer) throws Exception{
         final int userId = assertAddUser(referrer);
-        assertAddTrade(userId,TR_TYPE_CONSUME,5900, 0, 0);
+        assertAddTrade(userId,TR_TYPE_CONSUME,5900, 0, 0, -1);
 
         //create 20 child user and every child has 9 children
         for (int i=1;i<=20;i++){
             int childId = assertAddUser(userId);
             //一级用户（20人），每人消费1500 共3w
-            assertAddTrade(childId,TR_TYPE_CONSUME,150000, 0, 0);
+            assertAddTrade(childId,TR_TYPE_CONSUME,150000, 0, 0, -1);
             //二级级用户（180人），每人消费500 共9w
             for (int j =1 ; j<=9;j++){
                 int grandsonId = assertAddUser(childId);
-                assertAddTrade(grandsonId,TR_TYPE_CONSUME,50000, 0, 0);
+                assertAddTrade(grandsonId,TR_TYPE_CONSUME,50000, 0, 0, -1);
             }
         }
         return userId;
