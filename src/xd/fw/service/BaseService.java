@@ -30,6 +30,7 @@ public interface BaseService extends IConst{
     void delete (Object entity);
 
     void delete(Class<?> obj, Serializable id);
+    <T> T getOne(String where, Class<T> cls, SetParameters setParameters);
 
     <T> List<T> getLists(String hsql, SetParameters setParameters);
 

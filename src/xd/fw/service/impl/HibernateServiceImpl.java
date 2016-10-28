@@ -206,6 +206,14 @@ public class HibernateServiceImpl implements BaseService{
             }
         });
     }
+    public <T> T getOne(String where, Class<T> cls, SetParameters setParameters){
+        String hsql = "from " + cls.getSimpleName() + " where " + where;
+        List<Object> lists = getLists(hsql, setParameters);
+        if (lists == null || lists.size() < 1){
+            return null;
+        }
+        return (T)lists.get(0);
+    }
 
     public <T> T get(Class<T> tClass, Serializable id) {
         return htpl.get(tClass, id);

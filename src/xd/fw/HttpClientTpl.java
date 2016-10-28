@@ -54,6 +54,9 @@ public class HttpClientTpl {
     public static String postJson(String url, String json) throws Exception {
         return (String) execute(url, true, null, json, stringProcessor, UTF8);
     }
+    public static String postXml(String url, String xml) throws Exception {
+        return (String) execute(url, true, null, xml, stringProcessor, UTF8);
+    }
 
     public static String post(String url, String[][] params) throws Exception {
         return (String) execute(url, true, params, null, stringProcessor, UTF8);
@@ -71,7 +74,7 @@ public class HttpClientTpl {
         return execute(url, false, null, null, processor, UTF8);
     }
 
-    public static Object execute(String url, boolean post, String[][] params, String json, Processor processor, String charset) throws Exception {
+    public static Object execute(String url, boolean post, String[][] params, String jsonOrXml, Processor processor, String charset) throws Exception {
 
         CloseableHttpResponse response = null;
         HttpEntity entity = null;
@@ -89,9 +92,13 @@ public class HttpClientTpl {
 
                     ((HttpPost) request).setEntity(new UrlEncodedFormEntity(nvps, charset));
                 }
-                if (json != null) {
-                    StringEntity jsonEntity = new StringEntity(json, charset);   // 中文乱码在此解决
-                    jsonEntity.setContentType("application/json");
+                if (jsonOrXml != null) {
+                    StringEntity jsonEntity = new StringEntity(jsonOrXml, charset);   // 中文乱码在此解决
+                    if (jsonOrXml.startsWith("<")){
+                        jsonEntity.setContentType("text/xml");
+                    } else {
+                        jsonEntity.setContentType("application/json");
+                    }
                     ((HttpPost) request).setEntity(jsonEntity);
                 }
             } else {

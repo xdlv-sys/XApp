@@ -11,6 +11,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import xd.fw.FwUtil;
 import xd.fw.bean.User;
@@ -64,6 +66,9 @@ public abstract class BaseAction extends ActionSupport implements IConst{
     }
 
     String node;
+
+    @Autowired
+    protected ApplicationContext context;
 
     public String obtainFilterValue() throws Exception {
         if (filter == null) {
