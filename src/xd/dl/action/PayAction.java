@@ -3,9 +3,11 @@ package xd.dl.action;
 import com.alipay.api.internal.util.XmlUtils;
 import com.alipay.api.request.AlipayTradePrecreateRequest;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.w3c.dom.Element;
@@ -17,8 +19,11 @@ import xd.fw.HttpClientTpl;
 import xd.fw.WxUtil;
 import xd.fw.action.BaseAction;
 import xd.fw.bean.wx.UnifiedOrder;
+import xd.fw.scheduler.RefundEvent;
+import xd.fw.service.SetParameters;
 
 import java.util.Base64;
+
 @Results({
         @Result(name = "qr", type="dispatcher",location = "../../wwt/qr.jsp")
 })
@@ -107,6 +112,46 @@ public class PayAction extends BaseAction {
             log.warn("failed to create ali order, please check the reason");
         }
         return "qr";
+    }
+
+    public String cancelOrder(){
+        if (StringUtils.isBlank(donecode)){
+            return FINISH;
+        }
+
+        DlOrder order = dlService.getOne("tradeNo=?", DlOrder.class, new SetParameters() {
+            @Override
+            public void process(Query query) {
+                query.setString(0, donecode);
+            }
+        });
+        if (order == null){
+            return FINISH;
+        }
+        if (order.getPayStatus() == STATUS_DONE){
+            RefundEvent event;
+            if (order.getPayFlag() == PAY_WX){
+                event = RefundEvent.wxRefund(order.getOutTradeNo(),
+                        (float)order.getTotalFee(),appId,mchId,wxKey);
+            } else {
+                event = RefundEvent.aliRefund(order.getOutTradeNo(),
+                        (float)order.getTotalFee(),aliPayClient.getAppId(), aliPayClient.getRsaKey());
+            }
+            context.publishEvent(event);
+        } else {
+            //close order
+            RefundEvent event;
+            if (order.getPayFlag() == PAY_WX){
+                event = RefundEvent.wxRefund(order.getOutTradeNo(),
+                        (float)order.getTotalFee(),appId,mchId,wxKey);
+            } else {
+                event = RefundEvent.aliRefund(order.getOutTradeNo(),
+                        (float)order.getTotalFee(),aliPayClient.getAppId(), aliPayClient.getRsaKey());
+            }
+            context.publishEvent(event);
+        }
+
+        return FINISH;
     }
 
     public void setMoney(float money) {

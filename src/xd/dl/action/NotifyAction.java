@@ -37,7 +37,7 @@ public class NotifyAction extends PayNotifyBaseAction implements DlConst{
         dlOrder.setPayStatus(success ? STATUS_DONE : STATUS_FAIL);
 
         fwService.triggerEvent(new Event(NOTIFY_APP,0,dlOrder.getOutTradeNo()));
-        dlService.save(dlOrder);
+        dlService.saveOrUpdate(dlOrder);
     }
 
     @Override

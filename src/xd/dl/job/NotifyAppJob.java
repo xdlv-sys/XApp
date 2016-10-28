@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 /**
  * Created by xd lv on 10/27/2016.
  */
-@Service
+//@Service
 public class NotifyAppJob extends EventJob implements DlConst{
 
     @Override
