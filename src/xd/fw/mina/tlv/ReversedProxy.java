@@ -31,7 +31,7 @@ public abstract class ReversedProxy implements IMinaConst {
     private boolean stop = false;
 
     @Qualifier("executor")
-    @Autowired()
+    @Autowired
     AsyncTaskExecutor taskExecutor;
     @Autowired
     UpgradeTask upgradeTask;

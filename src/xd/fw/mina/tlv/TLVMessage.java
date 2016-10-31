@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 public class TLVMessage {
     public static final byte BYTE_TYPE = 1, INT_TYPE = 2, LONG_TYPE = 3, FLOAT_TYPE = 4, DOUBLE_TYPE = 5
             , STRING_TYPE = 6, BOOLEAN_TYPE = 7, IMG_TYPE = 8;
+    public int timeout = 0;
     //byte type;
     Object value;
     TLVMessage next;

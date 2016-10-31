@@ -93,6 +93,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
 
     public final byte[] pullFile(String id, String directory, String file) throws Exception{
         TLVMessage message = createRequest(PULL_FILE,directory,file);
+        message.timeout = 4000;
         TLVMessage result = request(id, message);
         if ("OK".equals(result.getValue())){
             return (byte[])result.getNextValue(0);
@@ -103,8 +104,8 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
     public final String[] executeCmd(String id, String directory, String prefix,String cmd) throws Exception{
         if (cmd.startsWith("cd ")){
             String subPath = cmd.substring(3);
-            if (org.apache.commons.lang.StringUtils.isNotBlank(directory)){
-                directory = new File(directory,subPath).getCanonicalPath();
+            if (StringUtils.isNotBlank(directory)){
+                directory = new File(directory,subPath).getPath();
             }
             return new String[]{directory, cmd};
         }
@@ -211,8 +212,9 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
 
         TLVMessage ret;
         int count = 0;
+        int timeout = message.timeout > 0 ? message.timeout : minaTimeout;
         while ((ret = (TLVMessage) session.removeAttribute(messageId)) == null) {
-            if (count++ > minaTimeout) {
+            if (count++ > timeout) {
                 break;
             }
             try {

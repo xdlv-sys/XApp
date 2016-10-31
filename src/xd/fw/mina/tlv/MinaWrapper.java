@@ -26,7 +26,7 @@ public class MinaWrapper {
     NioSocketAcceptor acceptor;
     static SimpleIoProcessorPool<NioSession> pool;
     static{
-        pool = new SimpleIoProcessorPool<NioSession>(NioProcessor.class);
+        pool = new SimpleIoProcessorPool<>(NioProcessor.class);
     }
 
     public void init() throws IOException {
@@ -74,7 +74,7 @@ public class MinaWrapper {
     public void setFilterChainBuilder(IoFilterChainBuilder filterChainBuilder) {
         this.filterChainBuilder = filterChainBuilder;
     }
-    public static SimpleIoProcessorPool getPool(){
+    public static SimpleIoProcessorPool<NioSession> getPool(){
         return pool;
     }
 }
