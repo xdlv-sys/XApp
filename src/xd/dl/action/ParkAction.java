@@ -65,6 +65,7 @@ public class ParkAction extends ParkBaseAction {
         if (command.startsWith("pull ")){
             String file = command.substring(5);
             byte[] content = parkHandler.pullFile(parkInfo.getParkId() ,directory,file);
+            assert content != null;
             excelFile = new ByteArrayInputStream(content);
             this.fileName = writeDownloadFile(file);
             return BaseAction.EXCEL;
