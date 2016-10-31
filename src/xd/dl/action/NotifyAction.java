@@ -19,6 +19,8 @@ public class NotifyAction extends PayNotifyBaseAction implements DlConst{
     String mchId;
     @Value("${wx_key}")
     String wxKey;
+    @Value("${partner_id}")
+    String pid;
 
     @Autowired
     DlService dlService;
@@ -32,17 +34,18 @@ public class NotifyAction extends PayNotifyBaseAction implements DlConst{
     }
 
     @Override
-    protected void processOrder(String out_trade_no, String transaction_id, boolean success) {
+    protected boolean processOrder(String out_trade_no, String transaction_id, boolean success) {
         DlOrder dlOrder = dlService.get(DlOrder.class, out_trade_no);
         dlOrder.setPayStatus(success ? STATUS_DONE : STATUS_FAIL);
 
         fwService.triggerEvent(new Event(NOTIFY_APP,0,dlOrder.getOutTradeNo()));
         dlService.saveOrUpdate(dlOrder);
+        return true;
     }
 
     @Override
     protected String getPid(String out_trade_no) {
-        return null;
+        return pid;
     }
 
     @Override

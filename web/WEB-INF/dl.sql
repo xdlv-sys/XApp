@@ -1,4 +1,4 @@
-drop table IF EXISTS t_order;
+drop table IF EXISTS t_dl_order;
 create table t_dl_order(
   out_trade_no VARCHAR(32) PRIMARY KEY not null,
   trade_no VARCHAR(32),

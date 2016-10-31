@@ -19,6 +19,7 @@ import xd.fw.HttpClientTpl;
 import xd.fw.WxUtil;
 import xd.fw.action.BaseAction;
 import xd.fw.bean.wx.UnifiedOrder;
+import xd.fw.scheduler.CloseOrderEvent;
 import xd.fw.scheduler.RefundEvent;
 import xd.fw.service.SetParameters;
 
@@ -99,12 +100,11 @@ public class PayAction extends BaseAction {
         AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
         String outTradeNo = FwUtil.createOutTradeNo();
         request.setBizContent(String.format("{" +
-                "    \"out_trade_no\":\"%s\"," +
-                "    \"total_amount\":%.2f," +
-                "    \"subject\":\"%s\"," +
-                "    \"notify_url\":\"%s\"," +
-                "    \"store_id\":\"NJ_001\"," +
-                "    \"timeout_express\":\"90m\"}", outTradeNo, money, body,aliNotifyUrl));//设置业务参数
+                "    \"out_trade_no\":\"%s\"," +
+                "    \"total_amount\":%.2f," +
+                "    \"subject\":\"%s\"," +
+                "    \"timeout_express\":\"90m\"}",outTradeNo, money,body));
+
         AlipayTradePrecreateResponse response = aliPayClient.getAlipayClient().execute(request);
         if (response.isSuccess()){
             retQr(response.getQrCode(),outTradeNo, PAY_ALI);
@@ -140,13 +140,12 @@ public class PayAction extends BaseAction {
             context.publishEvent(event);
         } else {
             //close order
-            RefundEvent event;
+            CloseOrderEvent event;
             if (order.getPayFlag() == PAY_WX){
-                event = RefundEvent.wxRefund(order.getOutTradeNo(),
-                        (float)order.getTotalFee(),appId,mchId,wxKey);
+                event = CloseOrderEvent.wxClose(order.getOutTradeNo(),appId,mchId,wxKey);
             } else {
-                event = RefundEvent.aliRefund(order.getOutTradeNo(),
-                        (float)order.getTotalFee(),aliPayClient.getAppId(), aliPayClient.getRsaKey());
+                event = CloseOrderEvent.aliClose(order.getOutTradeNo(),
+                        aliPayClient.getAppId(), aliPayClient.getRsaKey());
             }
             context.publishEvent(event);
         }
