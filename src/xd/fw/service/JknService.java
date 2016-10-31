@@ -3,6 +3,7 @@ package xd.fw.service;
 import xd.fw.bean.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by xd on 2016/7/30.
@@ -45,4 +46,5 @@ public interface JknService extends BaseService {
 
     void updateApproveStore(JknStoreApprove storeApprove);
 
+    Map<Short, Long> sumFee();
 }

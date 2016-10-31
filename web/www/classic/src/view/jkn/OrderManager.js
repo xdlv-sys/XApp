@@ -97,6 +97,15 @@ Ext.define("XApp.view.jkn.OrderManager",{
                 return v/100.0;
             }
         },{
+            text: '分润金额(元)',
+            dataIndex: 'settlementFee',
+            renderer: function(v,o,record){
+                if (v === -1){
+                    return record.get('totalFee')/100;
+                }
+                return v/100.0;
+            }
+        },{
             text: '交易状态',
             dataIndex: 'tradeStatus',
             renderer: function(v){

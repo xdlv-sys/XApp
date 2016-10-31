@@ -173,5 +173,19 @@ alter table t_jkn_user add column `withdraw_count` int null default 0 after `all
 -- settlement fee --
 alter table t_jkn_order add column `settlement_fee` int null default 0 after `balance_fee`;
 
+drop table IF EXISTS t_jkn_dept_settlement;
+create table t_jkn_dept_settlement(
+  dept_id int primary key,
+  dept_name varchar(32) not null,
+  percent tinyint not null,
+  update_date DATETIME
+)ENGINE = INNODB;
+
+insert into t_jkn_dept_settlement VALUES (1,'公益',2,now());
+insert into t_jkn_dept_settlement VALUES (2,'后勤',2,now());
+insert into t_jkn_dept_settlement VALUES (3,'灵活分配',2,now());
+insert into t_jkn_dept_settlement VALUES (4,'运营',5,now());
+
+insert into t_mod values(5,'部门收益',null,'jkn-DeptSettlement','x-fa fa-codepen',0);
 
 

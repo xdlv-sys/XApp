@@ -5,7 +5,7 @@ Ext.define('XApp.Application', {
     
     controllers: ['Root@XApp.controller'],
 
-    models: ['User','Mod','Role','DynamicConfig','JknUser','Order','JknEvent','OrderSettlement','StoreApprove'],
+    models: ['User','Mod','Role','DynamicConfig','JknUser','Order','JknEvent','OrderSettlement','StoreApprove','DeptSettlement'],
 
     stores: ['ModTree'
     ],

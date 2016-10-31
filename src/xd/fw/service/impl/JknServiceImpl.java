@@ -1,6 +1,7 @@
 package xd.fw.service.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +15,13 @@ import xd.fw.bean.*;
 import xd.fw.bean.mapper.JknUserMapper;
 import xd.fw.service.JknService;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -363,5 +367,21 @@ public class JknServiceImpl extends HibernateServiceImpl implements JknService {
             update(jknUser);
             //
         }
+    }
+
+    @Override
+    public Map<Short, Long> sumFee() {
+        Map<Short, Long> retMap = new HashMap<>();
+        List lists = (List) htpl.execute(session -> {
+            Query query = session.createSQLQuery("select b.year,sum(b.total_fee) " +
+                    "from (select * from t_jkn_order where trade_type=0) " +
+                    "b GROUP BY b.year");
+            return query.list();
+        });
+        FwUtil.safeEach(lists, l->{
+            Object[] tmp = (Object[]) l;
+            retMap.put((Short)tmp[0], ((BigDecimal)tmp[1]).longValue());
+        });
+        return retMap;
     }
 }
