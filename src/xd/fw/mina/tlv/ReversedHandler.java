@@ -16,9 +16,9 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
 
     final static List<String> discardRequests = new LinkedList<>();
 
-    static Map<String, IoSession> sessionMap = new HashMap<>();
+    final static Map<String, IoSession> sessionMap = new HashMap<>();
 
-    static List<ProxyListener> proxyListeners = new ArrayList<>();
+    final static List<ProxyListener> proxyListeners = new ArrayList<>();
 
     protected static void addProxyListeners(ProxyListener listener) {
         if (!proxyListeners.contains(listener)) {
@@ -30,7 +30,6 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
     public void messageReceived(IoSession session, Object message) throws Exception {
         TLVMessage msg = (TLVMessage) message;
         int code = (int) msg.getValue();
-        logger.info("receive:" + message);
 
         if (code == REGISTRY) {
             String id = (String) msg.getNextValue(0);
@@ -55,6 +54,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             return;
         }
 
+        logger.info("receive: {}", message);
         // message is handled already
         if (handlerMessage(msg,session)){
             return;
@@ -67,7 +67,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             discard = discardRequests.remove(messageId);
         }
         if (discard) {
-            logger.debug("discard message for timeout: " + messageId);
+            logger.debug("discard message for timeout:{} ",messageId);
         } else {
             session.setAttribute(messageId, msg);
         }
@@ -121,8 +121,8 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             return new String[]{directory, cmd};
         }
 
-        TLVMessage message = createRequest(new Object[]{EXECUTE
-                , directory == null ? "" : directory, prefix + " " + cmd});
+        TLVMessage message = createRequest(EXECUTE
+                , directory == null ? "" : directory, prefix + " " + cmd);
         TLVMessage result = request(id, message);
         if (result == null){
             return null;
@@ -198,7 +198,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
     protected TLVMessage request(String id, TLVMessage message) {
         IoSession session = getSession(id);
         if (session == null) {
-            logger.info("there is no park session:" + id);
+            logger.info("there is no park session:{}" , id);
             return null;
         }
         return doSend(session, message);
@@ -228,7 +228,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
                 discardRequests.add(messageId);
             }
 
-            logger.info("add discard message:" + messageId);
+            logger.info("add discard message:{}" , messageId);
             return null;
         }
         /*remove code adn timestamp*/

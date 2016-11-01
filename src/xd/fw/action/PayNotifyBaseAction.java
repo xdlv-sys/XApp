@@ -77,6 +77,7 @@ public abstract class PayNotifyBaseAction extends BaseAction {
             boolean tradeSuccess = trade_status.equals("TRADE_SUCCESS");
             return processOrder(out_trade_no, trade_no, tradeSuccess);
         }
+        logger.warn("fail to ali verify");
         return false;
     }
 
