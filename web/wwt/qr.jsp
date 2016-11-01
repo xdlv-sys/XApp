@@ -20,6 +20,10 @@
                 timeout ++;
                 if (data.dlOrder.payStatus === 1){
                     window.location.href="re.jsp";
+                    return;
+                }
+                if (data.dlOrder.payStatus !== 0){
+                    window.location.href="fa.jsp";
                 }
             }
         });

@@ -99,12 +99,13 @@ public class PayAction extends BaseAction {
     public String aliPay() throws Exception{
         AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
         String outTradeNo = FwUtil.createOutTradeNo();
+        request.setNotifyUrl(aliNotifyUrl);
         request.setBizContent(String.format("{" +
                 "    \"out_trade_no\":\"%s\"," +
                 "    \"total_amount\":%.2f," +
                 "    \"subject\":\"%s\"," +
                 "    \"timeout_express\":\"90m\"}",outTradeNo, money,body));
-
+        log.info("ali pay content:{}", request.getBizContent());
         AlipayTradePrecreateResponse response = aliPayClient.getAlipayClient().execute(request);
         if (response.isSuccess()){
             retQr(response.getQrCode(),outTradeNo, PAY_ALI);

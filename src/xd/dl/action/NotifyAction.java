@@ -35,6 +35,7 @@ public class NotifyAction extends PayNotifyBaseAction implements DlConst{
 
     @Override
     protected boolean processOrder(String out_trade_no, String transaction_id, boolean success) {
+        log.info("processOrder");
         DlOrder dlOrder = dlService.get(DlOrder.class, out_trade_no);
         dlOrder.setPayStatus(success ? STATUS_DONE : STATUS_FAIL);
 

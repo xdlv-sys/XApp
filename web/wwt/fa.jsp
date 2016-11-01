@@ -8,9 +8,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>交易成功</title>
+    <title>交易失败</title>
 </head>
 <body>
-<img src="success.png" style="margin: auto">
+<h1>交易己关闭，请重试</h1>
 </body>
 </html>
