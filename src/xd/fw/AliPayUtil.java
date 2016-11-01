@@ -3,7 +3,8 @@ package xd.fw;
 import com.alipay.api.AlipayConstants;
 import com.alipay.api.internal.util.AlipaySignature;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,15 +16,15 @@ import java.util.TreeMap;
  */
 public class AliPayUtil {
 
-    static Logger logger = Logger.getLogger(AliPayUtil.class);
+    static Logger logger = LoggerFactory.getLogger(AliPayUtil.class);
     static final String HTTPS_VERIFY_URL = "https://mapi.alipay.com/gateway.do?service=notify_verify";
     public static String aliPayPublicKey  = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB";
 
 
-    public static boolean verify(Map requestParams, String partner) throws Exception {
+    public static boolean verify(Map requestParams, String publicKey, String partner) throws Exception {
         Map<String,String> params = new HashMap<>();
         Iterator iterator = requestParams.keySet().iterator();
-        StringBuffer value = new StringBuffer();
+        StringBuilder value = new StringBuilder();
         String tmpValue;
         while (iterator.hasNext()){
             String name = (String) iterator.next();
@@ -51,7 +52,7 @@ public class AliPayUtil {
             logger.warn("failed to verify : notify id invalidate");
             return false;
         }
-        return AlipaySignature.rsaCheckV1(params,aliPayPublicKey,AlipayConstants.CHARSET_UTF8);
+        return AlipaySignature.rsaCheckV1(params,publicKey,AlipayConstants.CHARSET_UTF8);
     }
 
     public static String getSign(Object obj, String privateKey) throws Exception {

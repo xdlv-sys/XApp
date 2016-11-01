@@ -1,6 +1,7 @@
 package xd.fw.scheduler;
 
 import com.alipay.api.AlipayClient;
+import com.alipay.api.AlipayConstants;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.XmlUtils;
 import com.alipay.api.request.AlipayTradeRefundRequest;
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 import xd.fw.WxUtil;
@@ -69,8 +69,7 @@ public abstract class RefundListener implements ApplicationListener<RefundEvent>
         } else {
             //ali refund
             try {
-                AlipayClient alipayClient = new DefaultAlipayClient("https://openapi.alipay.com/gateway.do"
-                        ,event.getAppId(),event.getRsaKey(),"json","GBK",null);
+                AlipayClient alipayClient = alipayClient(event);
                 AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
                 request.setBizContent(String.format("{" +
                         "\"out_trade_no\":\"%s\"," +
@@ -103,5 +102,10 @@ public abstract class RefundListener implements ApplicationListener<RefundEvent>
             post.setEntity(jsonEntity);
             return EntityUtils.toString(httpClient.execute(post).getEntity(), Consts.UTF_8);
         }
+    }
+    protected AlipayClient alipayClient(RefundEvent event){
+        return new DefaultAlipayClient("https://openapi.alipay.com/gateway.do"
+                , event.getAppId(), event.getRsaKey(), "json", AlipayConstants.CHARSET_UTF8, null);
+
     }
 }

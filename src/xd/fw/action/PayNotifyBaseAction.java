@@ -39,7 +39,7 @@ public abstract class PayNotifyBaseAction extends BaseAction {
             params.put(node.getNodeName(), XmlUtils.getElementValue(rootElement, node.getNodeName()));
         }
         String out_trade_no = params.get("out_trade_no");
-        boolean verification = WxUtil.verify(params, getWxKey(out_trade_no));
+        boolean verification = WxUtil.verify(params, wxKey(out_trade_no));
 
         if (verification) {
             boolean success = SUCCESS_FLAG.equals(params.get("return_code"));
@@ -60,7 +60,7 @@ public abstract class PayNotifyBaseAction extends BaseAction {
         return XML;
     }
 
-    protected abstract String getWxKey(String out_trade_no);
+    protected abstract String wxKey(String out_trade_no);
 
 
     protected abstract boolean processOrder(String out_trade_no, String transaction_id, boolean success);
@@ -72,8 +72,13 @@ public abstract class PayNotifyBaseAction extends BaseAction {
     }
 
     private boolean processAliOrder() throws Exception {
-        String pid = getPid(out_trade_no);
-        if (AliPayUtil.verify(ServletActionContext.getRequest().getParameterMap(), pid)) {
+        if ("WAIT_BUYER_PAY".equals(trade_status)){
+            logger.info("wait user to pay.");
+            return true;
+        }
+        String pid = pid(out_trade_no);
+        String publicKey = aliPublicKey();
+        if (AliPayUtil.verify(ServletActionContext.getRequest().getParameterMap(),publicKey, pid)) {
             boolean tradeSuccess = trade_status.equals("TRADE_SUCCESS");
             return processOrder(out_trade_no, trade_no, tradeSuccess);
         }
@@ -81,7 +86,9 @@ public abstract class PayNotifyBaseAction extends BaseAction {
         return false;
     }
 
-    protected abstract String getPid(String out_trade_no);
+    protected abstract String aliPublicKey();
+
+    protected abstract String pid(String out_trade_no);
 
     @Action("aliReturn")
     public String aliReturn() throws Exception {
