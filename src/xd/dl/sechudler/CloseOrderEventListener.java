@@ -1,13 +1,19 @@
 package xd.dl.sechudler;
 
+import com.alipay.api.AlipayClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xd.dl.bean.DlOrder;
 import xd.dl.service.DlService;
+import xd.fw.AliClient;
+import xd.fw.scheduler.CloseOrderEvent;
 import xd.fw.scheduler.CloseOrderListener;
 
 @Service
 public class CloseOrderEventListener extends CloseOrderListener {
+    @Autowired
+    AliClient aliClient;
+
     @Autowired
     DlService dlService;
     @Override
@@ -18,5 +24,10 @@ public class CloseOrderEventListener extends CloseOrderListener {
             htpl.update(dlOrder);
             return null;
         });
+    }
+
+    @Override
+    protected AlipayClient alipayClient(CloseOrderEvent event) {
+        return aliClient.getAlipayClient();
     }
 }

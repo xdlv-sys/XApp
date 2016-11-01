@@ -9,3 +9,5 @@ create table t_dl_order(
   pay_flag SMALLINT not null,
   time_stamp TIMESTAMP default now()
 )ENGINE = INNODB;
+
+alter table t_dl_order add unique key(trade_no);
