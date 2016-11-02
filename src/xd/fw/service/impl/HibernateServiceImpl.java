@@ -10,10 +10,7 @@ import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import xd.fw.FwUtil;
 import xd.fw.bean.PrimaryKey;
-import xd.fw.service.BaseService;
-import xd.fw.service.ConstructHql;
-import xd.fw.service.SessionProcessor;
-import xd.fw.service.SetParameters;
+import xd.fw.service.*;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -32,6 +29,11 @@ public class HibernateServiceImpl implements BaseService{
     @Transactional
     public <T> T runInSession(SessionProcessor<T> processor) {
         return processor.process(htpl);
+    }
+
+    @Override
+    public void runSessionCommit(SessionCommit sessionCommit) {
+        sessionCommit.process(htpl);
     }
 
     public int getPrimaryKey(Class<?> cls){

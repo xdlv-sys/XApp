@@ -40,4 +40,6 @@ public interface BaseService extends IConst{
 
     <T> T runInSession(SessionProcessor<T> processor);
 
+    void runSessionCommit(SessionCommit sessionCommit);
+
 }
