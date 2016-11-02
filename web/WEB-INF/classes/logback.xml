@@ -63,6 +63,7 @@
     </appender>
 
     <logger name="org.mybatis" level="error"/>
+    <logger name="SQL" level="debug" additivity="false"/>
 
     <root level="info">
         <appender-ref ref="STDOUT" />

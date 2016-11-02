@@ -62,7 +62,7 @@
         <property name="defaultLocalAddress" value="${mina_port}"/>
         <property name="reuseAddress" value="true"/>
 
-        <property name="handler" ref="tlvHandler"/>
+        <property name="handler" ref="parkHandler"/>
         <property name="filterChainBuilder" ref="filterChainBuilder"/>
     </bean>
 </beans>

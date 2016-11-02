@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <h2 class="modal-title" id="modal-title" ng-style="{color: $modalCtl.titleColor}">{{$modalCtl.title}}</h2>
+</div>
+<div class="modal-body" id="modal-body">
+    <div ng-if="$modalCtl.payStatus === 1">
+        <div ng-if="$modalCtl.notifyStatus === 1">
+            <h4> 温馨提醒：请在15分钟内驶出停车场，否则将重新计费，谢谢</h4>
+            <h1 style="color:green" count-down mins="15"></h1>
+        </div>
+        <div ng-show="$modalCtl.notifyStatus !== 1">
+            <h3>车牌号：<span style="color:red">{{$modalCtl.carNumber}}</span></h3>
+            <h4>非常抱歉，通知岗亭失败，请保留此界面，待出口处工作人员将会处理，无须担心</h4>
+        </div>
+    </div>
+
+    <div ng-if="$modalCtl.payStatus !== 1">
+        <h3>车牌号：<span style="color:red">{{$modalCtl.carNumber}}</span></h3>
+        <h2>支付失败，请重试</h2>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="$modalCtl.ok()">确定</button>
+    <button class="btn btn-warning" type="button" ng-click="$modalCtl.cancel()" ng-disabled="$modalCtl.notifyStatus === 1">申请退款</button>
+</div>
