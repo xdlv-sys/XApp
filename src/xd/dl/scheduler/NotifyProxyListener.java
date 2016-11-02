@@ -45,12 +45,7 @@ public class NotifyProxyListener implements ApplicationListener<NotifyProxyEvent
             logger.warn("notify failed for {}" , payOrder.getOutTradeNo());
             if (first){
                 logger.warn("try 10 seconds later {}" , payOrder.getOutTradeNo());
-                scheduler.schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        execute(payOrder, false);
-                    }
-                }, new Date(System.currentTimeMillis() + delayForNotifyProxy));
+                scheduler.schedule(() -> execute(payOrder, false), new Date(System.currentTimeMillis() + delayForNotifyProxy));
                 return;
             }
             payOrder.setNotifyStatus((short)STATUS_FAIL);
@@ -58,6 +53,11 @@ public class NotifyProxyListener implements ApplicationListener<NotifyProxyEvent
             payOrder.setNotifyStatus((short)STATUS_DONE);
         }
         logger.info("notify proxy result:{} for {}", payOrder.getNotifyStatus(), payOrder.getOutTradeNo());
-        payService.updateNotifyStatus(payOrder.getOutTradeNo(), payOrder.getNotifyStatus());
+
+        payService.runSessionCommit((htpl -> {
+            PayOrder order = htpl.load(PayOrder.class, payOrder.getOutTradeNo());
+            order.setNotifyStatus(payOrder.getNotifyStatus());
+            htpl.update(order);
+        }));
     }
 }

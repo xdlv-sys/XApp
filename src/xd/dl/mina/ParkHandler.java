@@ -63,9 +63,8 @@ public class ParkHandler extends ReversedHandler {
         TLVMessage ret = request(parkId, queryMsg);
 
         if (ret != null){
-            CarParkInfo carParkInfo = new CarParkInfo((String)ret.getValue(), (float) ret.getNextValue(0)
+            return new CarParkInfo((String)ret.getValue(), (float) ret.getNextValue(0)
                     , (String) ret.getNextValue(1), (int) ret.getNextValue(2), parkId);
-            return carParkInfo;
         }
         return null;
     }

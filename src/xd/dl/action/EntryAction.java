@@ -1,7 +1,6 @@
 package xd.dl.action;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Value;
 import xd.dl.DlConst;
 import xd.dl.bean.ParkInfo;

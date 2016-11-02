@@ -37,7 +37,7 @@ public class PayServiceImpl extends HibernateServiceImpl implements PayService ,
         return true;
     }
 
-    @Transactional("transactionManager")
+    /*@Transactional("transactionManager")
     @Override
     public boolean updatePayOrderStatus(String outTradeNo, short payOrderStatus) {
         PayOrder order = htpl.load(PayOrder.class, outTradeNo);
@@ -56,5 +56,5 @@ public class PayServiceImpl extends HibernateServiceImpl implements PayService ,
         htpl.update(order);
 
         return true;
-    }
+    }*/
 }

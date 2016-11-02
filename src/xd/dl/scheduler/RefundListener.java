@@ -3,6 +3,7 @@ package xd.dl.scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import xd.dl.bean.PayOrder;
 import xd.dl.service.PayService;
 
 @Service
@@ -13,6 +14,10 @@ public class RefundListener extends xd.fw.scheduler.RefundListener {
     @Override
     protected void processRefundStatus(String outTradeNo, boolean success) {
         short status = success ? ORDER_STATUS_REFUND_DONE : ORDER_STATUS_REFUND_FAIL;
-        payService.updatePayOrderStatus(outTradeNo, status);
+        payService.runSessionCommit(htpl -> {
+            PayOrder order = htpl.load(PayOrder.class, outTradeNo);
+            order.setPayStatus(status);
+            htpl.update(order);
+        });
     }
 }
