@@ -4,7 +4,20 @@ import org.springframework.context.ApplicationEvent;
 
 public class UpgradeProxyEvent extends ApplicationEvent {
 
-    public UpgradeProxyEvent(int[] source) {
-        super(source);
+    String id;
+    int version;
+
+    public UpgradeProxyEvent(String id, int version) {
+        super(id);
+        this.id = id;
+        this.version = version;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public int getVersion() {
+        return version;
     }
 }

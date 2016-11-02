@@ -191,6 +191,10 @@ public abstract class BaseAction extends ActionSupport implements IConst{
         this.node = node;
     }
 
+    public boolean wxBrowser(){
+        return ServletActionContext.getRequest().getHeader("user-agent").contains("MicroMessenger");
+    }
+
     public static void main(String[] args) throws IllegalAccessException, InvocationTargetException {
         ReceiveXmlEntity msg = new ReceiveXmlEntity();
         BeanUtils.setProperty(msg, "toUserName", "23");
