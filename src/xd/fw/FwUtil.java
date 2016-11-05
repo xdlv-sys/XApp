@@ -231,6 +231,7 @@ public class FwUtil {
 
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        hints.put(EncodeHintType.MARGIN,0);
         BitMatrix matrix = new MultiFormatWriter().encode(content,
                 BarcodeFormat.QR_CODE, width, height, hints);
 
