@@ -38,8 +38,13 @@ public class WxCerts {
             pwd = fileName.substring(index + 1);
 
             KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            File p12File = new File(file, "apiclient_cert.p12");
+            if (!p12File.exists() || !p12File.canRead()){
+                logger.info("ignore p12 file for non-existence or no rights to read");
+                continue;
+            }
             try (FileInputStream stream = new FileInputStream(
-                    new File(file, "apiclient_cert.p12"))) {
+                    p12File)) {
                 keyStore.load(stream, pwd.toCharArray());
             }
             SSLContext sslcontext = SSLContexts.custom()

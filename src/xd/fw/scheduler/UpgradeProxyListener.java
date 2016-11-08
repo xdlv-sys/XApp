@@ -14,7 +14,7 @@ import xd.fw.mina.tlv.ReversedHandler;
 public class UpgradeProxyListener implements ApplicationListener<UpgradeProxyEvent> {
     static Logger logger = LoggerFactory.getLogger(UpgradeProxyListener.class);
 
-    @Autowired
+    @Autowired(required = false)
     ReversedHandler reversedHandler;
 
     @Override
