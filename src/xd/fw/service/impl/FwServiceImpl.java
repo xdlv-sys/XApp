@@ -69,7 +69,8 @@ public class FwServiceImpl extends HibernateServiceImpl implements FwService, IC
             role.setId(getPrimaryKey(Role.class));
         }
         for (Mod mod : role.getModsL()){
-            mod = load(Mod.class, mod.getId());
+            //check the existences of mod
+            load(Mod.class, mod.getId());
         }
         role.setMods(new HashSet<>(role.getModsL()));
 

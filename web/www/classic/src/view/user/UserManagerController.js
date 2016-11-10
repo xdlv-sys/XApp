@@ -127,7 +127,7 @@ Ext.define('XApp.view.user.UserManagerController', {
     },
     delRole: function (btn) {
         var roles = this.getGrid(btn).getSelection();
-        var ids = [];
+        var ids = {};
         Ext.each(roles, function (v, i) {
             ids['roles[' + i + '].id'] = v.get('id');
         });
