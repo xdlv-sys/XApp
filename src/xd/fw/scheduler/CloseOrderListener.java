@@ -4,7 +4,9 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.AlipayConstants;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.XmlUtils;
+import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.request.AlipayTradeCloseRequest;
+import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradeCloseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +57,12 @@ public abstract class CloseOrderListener implements ApplicationListener<CloseOrd
             //ali refund
             try {
                 AlipayClient alipayClient = alipayClient(event);
-                AlipayTradeCloseRequest request = new AlipayTradeCloseRequest();
+                AlipayTradeCancelRequest request = new AlipayTradeCancelRequest();
 
                 request.setBizContent(String.format("{" +
-                        "    \"out_trade_no\":\"%s\"," +
-                        "    \"operator_id\":\"YX01\"" +
+                        "    \"out_trade_no\":\"%s\"" +
                         "  }", event.getOutTradeNo()));
-                AlipayTradeCloseResponse response = alipayClient.execute(request);
+                AlipayTradeCancelResponse response = alipayClient.execute(request);
                 success = response.isSuccess();
             } catch (Exception e) {
                 logger.error("", e);
