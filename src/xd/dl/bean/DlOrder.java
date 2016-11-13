@@ -19,16 +19,19 @@ public class DlOrder {
     private short payStatus;
     private short notifyStatus;
     private short payFlag;
+    private String codeUrl;
     private Timestamp timeStamp;
 
     public DlOrder(){}
 
-    public DlOrder(String outTradeNo, String tradeNo, String userNo, double totalFee, short payFlag) {
+    public DlOrder(String outTradeNo, String tradeNo,String userNo, double totalFee, short payFlag, String codeUrl) {
+        this();
         this.outTradeNo = outTradeNo;
         this.tradeNo = tradeNo;
         this.userNo = userNo;
         this.totalFee = totalFee;
         this.payFlag = payFlag;
+        this.codeUrl = codeUrl;
         this.timeStamp = new Timestamp(System.currentTimeMillis());
     }
 
@@ -38,14 +41,6 @@ public class DlOrder {
 
     public void setOutTradeNo(String outTradeNo) {
         this.outTradeNo = outTradeNo;
-    }
-
-    public String getTradeNo() {
-        return tradeNo;
-    }
-
-    public void setTradeNo(String tradeNo) {
-        this.tradeNo = tradeNo;
     }
 
     public String getUserNo() {
@@ -96,6 +91,22 @@ public class DlOrder {
         this.timeStamp = timeStamp;
     }
 
+    public String getCodeUrl() {
+        return codeUrl;
+    }
+
+    public void setCodeUrl(String codeUrl) {
+        this.codeUrl = codeUrl;
+    }
+
+    public String getTradeNo() {
+        return tradeNo;
+    }
+
+    public void setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -108,7 +119,6 @@ public class DlOrder {
         if (notifyStatus != dlOrder.notifyStatus) return false;
         if (payFlag != dlOrder.payFlag) return false;
         if (outTradeNo != null ? !outTradeNo.equals(dlOrder.outTradeNo) : dlOrder.outTradeNo != null) return false;
-        if (tradeNo != null ? !tradeNo.equals(dlOrder.tradeNo) : dlOrder.tradeNo != null) return false;
         if (userNo != null ? !userNo.equals(dlOrder.userNo) : dlOrder.userNo != null) return false;
         if (timeStamp != null ? !timeStamp.equals(dlOrder.timeStamp) : dlOrder.timeStamp != null) return false;
 
@@ -120,7 +130,6 @@ public class DlOrder {
         int result;
         long temp;
         result = outTradeNo != null ? outTradeNo.hashCode() : 0;
-        result = 31 * result + (tradeNo != null ? tradeNo.hashCode() : 0);
         result = 31 * result + (userNo != null ? userNo.hashCode() : 0);
         temp = Double.doubleToLongBits(totalFee);
         result = 31 * result + (int) (temp ^ (temp >>> 32));

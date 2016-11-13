@@ -11,11 +11,14 @@ import xd.dl.service.DlService;
 public class OrderAction extends BaseAction {
     @Autowired
     DlService dlService;
+
     DlOrder dlOrder;
     boolean query;
 
+    String donecode;
+
     public String queryOrderStatus(){
-        dlOrder = dlService.get(DlOrder.class, dlOrder.getOutTradeNo());
+        dlOrder = dlService.get(DlOrder.class, donecode);
         return SUCCESS;
     }
 
@@ -29,5 +32,9 @@ public class OrderAction extends BaseAction {
 
     public void setQuery(boolean query) {
         this.query = query;
+    }
+
+    public void setDonecode(String donecode) {
+        this.donecode = donecode;
     }
 }

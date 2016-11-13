@@ -23,8 +23,6 @@ import xd.fw.scheduler.CloseOrderEvent;
 import xd.fw.scheduler.RefundEvent;
 import xd.fw.service.SetParameters;
 
-import java.util.Base64;
-
 @Results({
         @Result(name = "qr", type="dispatcher",location = "../../wwt/qr.jsp")
 })
@@ -54,13 +52,15 @@ public class PayAction extends BaseAction {
     String userno;
     String donecode;
 
-    public String wxPay() throws Exception {
+    String codeUrl;
+
+    public String wxPay() throws Exception{
         UnifiedOrder unifiedOrder = new UnifiedOrder();
         unifiedOrder.setAppid(appId);
         unifiedOrder.setMch_id(mchId);
         unifiedOrder.setNonce_str(WxUtil.getRandomStringByLength(16));
         unifiedOrder.setBody(body);
-        unifiedOrder.setOut_trade_no(FwUtil.createOutTradeNo());
+        unifiedOrder.setOut_trade_no(donecode);
         unifiedOrder.setTotal_fee((int) (money * 100));
         unifiedOrder.setSpbill_create_ip(ServletActionContext.getRequest().getRemoteAddr());
         unifiedOrder.setNotify_url(wxNotifyUrl);
@@ -77,58 +77,52 @@ public class PayAction extends BaseAction {
         Element rootEle = XmlUtils.getRootElementFromString(retXml);
         String returnCode = XmlUtils.getElementValue(rootEle, "return_code");
         String resultCode = XmlUtils.getElementValue(rootEle, "result_code");
-        String codeUrl = XmlUtils.getElementValue(rootEle, "code_url");
         if (SUCCESS_FLAG.equals(returnCode) && SUCCESS_FLAG.equals(resultCode)) {
-            retQr(codeUrl,unifiedOrder.getOut_trade_no(), PAY_WX);
+            codeUrl = XmlUtils.getElementValue(rootEle, "code_url");
+            String tradeNo = XmlUtils.getElementValue(rootEle, "prepay_id");
+            saveOrder(tradeNo, PAY_WX);
         } else {
             log.warn("failed to create wx order, please check the reason");
         }
-        return "qr";
+        return SUCCESS;
     }
 
-    private void retQr(String qr, String outTradeNo, short payType) throws Exception{
-        DlOrder dlOrder = new DlOrder(outTradeNo,donecode,userno,money,payType);
+    private void saveOrder(String tradeNo, short payType) throws Exception{
+        DlOrder dlOrder = new DlOrder(donecode,tradeNo,userno,money,payType,codeUrl);
         dlService.save(dlOrder);
 
-        byte[] data = FwUtil.qrCode(qr, scale, scale);
+        /*byte[] data = FwUtil.qrCode(qr, scale, scale);
         String base64Data = Base64.getEncoder().encodeToString(data);
         setRequestAttribute("data", base64Data);
-        setRequestAttribute("outTradeNo", dlOrder.getOutTradeNo());
+        setRequestAttribute("outTradeNo", dlOrder.getOutTradeNo());*/
     }
 
     public String aliPay() throws Exception{
         AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
-        String outTradeNo = FwUtil.createOutTradeNo();
         request.setNotifyUrl(aliNotifyUrl);
         request.setBizContent(String.format("{" +
                 "    \"out_trade_no\":\"%s\"," +
                 "    \"total_amount\":%.2f," +
                 "    \"subject\":\"%s\"," +
-                "    \"timeout_express\":\"90m\"}",outTradeNo, money,body));
+                "    \"timeout_express\":\"90m\"}",donecode, money,body));
         log.info("ali pay content:{}", request.getBizContent());
         AlipayTradePrecreateResponse response = aliPayClient.getAlipayClient().execute(request);
         if (response.isSuccess()){
-            retQr(response.getQrCode(),outTradeNo, PAY_ALI);
+            codeUrl = response.getQrCode();
+            saveOrder(response.getOutTradeNo(),PAY_ALI);
         } else {
             log.warn("failed to create ali order, please check the reason");
         }
-        return "qr";
+        return SUCCESS;
     }
 
     public String cancelOrder(){
-        if (StringUtils.isBlank(donecode)){
+        DlOrder order;
+        if (StringUtils.isBlank(donecode) ||
+                (order = dlService.get(DlOrder.class,donecode)) == null){
             return FINISH;
         }
 
-        DlOrder order = dlService.getOne("tradeNo=?", DlOrder.class, new SetParameters() {
-            @Override
-            public void process(Query query) {
-                query.setString(0, donecode);
-            }
-        });
-        if (order == null){
-            return FINISH;
-        }
         if (order.getPayStatus() == STATUS_DONE){
             RefundEvent event;
             if (order.getPayFlag() == PAY_WX){
@@ -172,4 +166,7 @@ public class PayAction extends BaseAction {
         this.donecode = donecode;
     }
 
+    public String getCodeUrl() {
+        return codeUrl;
+    }
 }

@@ -2,6 +2,7 @@ package xd.dl.action;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 import xd.dl.DlConst;
 import xd.dl.bean.DlOrder;
 import xd.dl.service.DlService;
@@ -9,6 +10,7 @@ import xd.fw.AliClient;
 import xd.fw.action.PayNotifyBaseAction;
 import xd.fw.bean.Event;
 import xd.fw.service.FwService;
+import xd.fw.service.SessionProcessor;
 
 /**
  * Created by xd Lv on 10/25/2016.
@@ -35,17 +37,20 @@ public class NotifyAction extends PayNotifyBaseAction implements DlConst {
 
     @Override
     protected boolean processOrder(String out_trade_no, String transaction_id, boolean success) {
-        String outTradeNo = dlService.runInSession((htpl -> {
-            DlOrder dlOrder = htpl.get(DlOrder.class, out_trade_no);
-            if (dlOrder.getPayStatus() != STATUS_INI) {
-                log.info("order already be processed:{}", dlOrder.getPayStatus());
-                return null;
-            }
-            dlOrder.setPayStatus(success ? STATUS_DONE : STATUS_FAIL);
-            htpl.update(dlOrder);
+        String outTradeNo = dlService.runInSession(new SessionProcessor<String>() {
+            @Override
+            public String process(HibernateTemplate htpl) {
+                DlOrder dlOrder = htpl.get(DlOrder.class, out_trade_no);
+                if (dlOrder.getPayStatus() != STATUS_INI) {
+                    log.info("order already be processed:{}", dlOrder.getPayStatus());
+                    return null;
+                }
+                dlOrder.setPayStatus(success ? STATUS_DONE : STATUS_FAIL);
+                htpl.update(dlOrder);
 
-            return dlOrder.getOutTradeNo();
-        }));
+                return dlOrder.getOutTradeNo();
+            }
+        });
         //notify app
         fwService.triggerEvent(new Event(NOTIFY_APP, 0, outTradeNo));
         return true;
