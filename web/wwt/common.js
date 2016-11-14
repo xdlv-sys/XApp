@@ -32,7 +32,7 @@ app.service('common', ['$uibModal', '$http', '$interval', function(
                 dest[i] = v;
             });
         }
-    },
+    };
 
     this.error = function(message) {
         this.open({

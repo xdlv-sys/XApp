@@ -1,4 +1,4 @@
-function carParkInfo(v) {
+function CarParkInfo(v) {
     this.price = -1;
 
     if (!v) {
@@ -24,7 +24,7 @@ function carParkInfo(v) {
     }
 }
 
-function payPara(v) {
+function PayPara(v) {
     this['carParkInfo.parkId'] = v.parkId;
     if (v.watchId) {
         this.watchId = v.watchId;
@@ -43,7 +43,7 @@ function payPara(v) {
     this.wxBrowser = ua.match(/MicroMessenger/i) == 'micromessenger';*/
 }
 
-function carInfo(v) {
+function CarInfo(v) {
     this.carProvince = '苏';
     this.carCity = 'A';
     this.carNum = '';
