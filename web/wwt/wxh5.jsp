@@ -26,7 +26,7 @@
             });
         }]);
     </script>
-    <script src="common.js"></script>
+    <script src="fw/common.js"></script>
     <style type="text/css">
     .center-modal {
         position: fixed;

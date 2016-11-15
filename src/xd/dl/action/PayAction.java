@@ -50,7 +50,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
     CarParkInfo carParkInfo;
     String watchId, parkId;
-    byte carType;
+    byte carType,carOrder = 1;
     WxOrder wxOrder;
     PayOrder payOrder;
 
@@ -124,7 +124,8 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
     public String queryCarNumber() throws Exception {
         ParkInfo parkInfo = parkService.get(ParkInfo.class, carParkInfo.getParkId());
-        carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber(), carParkInfo.getParkId(), watchId, carType);
+        carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
+                , carParkInfo.getParkId(), watchId, carType, carOrder);
         if (carParkInfo != null) {
             carParkInfo.setWxPay((wxBrowser()) && StringUtils.isNotBlank(parkInfo.getAppId()));
             carParkInfo.setAliPay(StringUtils.isNotBlank(parkInfo.getPartnerId()));
@@ -191,7 +192,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
     private void assertCarParkInfoLegalForPay() throws Exception {
         carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
-                , carParkInfo.getParkId(), watchId, carType);
+                , carParkInfo.getParkId(), watchId, carType,carOrder);
         if (carParkInfo == null || carParkInfo.getPrice() == 0) {
             throw new Exception("can not pay since price is zero or no car info");
         }
@@ -289,5 +290,9 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
     public void setCarType(byte carType) {
         this.carType = carType;
+    }
+
+    public void setCarOrder(byte carOrder) {
+        this.carOrder = carOrder;
     }
 }

@@ -1,0 +1,23 @@
+.btn-pay {
+    background-color: rgba(91,192,222,0.5);
+    width: 100px;
+
+}
+.popover {
+    max-width: 1000px;
+}
+
+.pay_img {
+    width: 40px;
+    height: 40px;
+}
+
+.query_result {
+    background: white !important;
+    color: #428BCA;
+}
+
+.center-modal {
+    position: fixed;
+    top: 30%;
+}

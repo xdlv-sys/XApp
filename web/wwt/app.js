@@ -1,92 +1,57 @@
-var app = angular.module("parkApp", ['ui.bootstrap']);
+var app = angular.module("parkApp", ['ui.bootstrap', 'ngTouch']);
 
 app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $location, common) {
-    var searchers = XAPP_DATA;
-    $scope.parkName = searchers.parkName;
+    $scope.XAPP_DATA = XAPP_DATA;
+    $scope.parkName = $scope.XAPP_DATA.parkName;
 
-    $scope.provinces = {
-        templateUrl: 'carProvinceAndCity.html',
-        provinces: ["苏", "皖", "沪", "京", "津", "冀", "豫", "云", "辽", "黑", "湘", "鲁", "新", "浙", "赣", "鄂", "桂", "甘", "晋", "蒙", "陕", "吉", "闽", "贵", "粤", "川", "青", "藏", "琼", "宁", "渝"],
-        cities: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
-        current: 0,
+    $scope.carNumber = new CarNumber(localStorage.getItem('carNumber'));
 
-        items: function () {
-            return this.current === 0 ? this.provinces : this.cities;
-        },
-        choose: function (index) {
-            if (this.current === 0) {
-                this.chooseProvince(index);
-            } else {
-                this.chooseCity(index);
-            }
-        },
-        chooseProvince: function (index) {
-            $scope.carInfo.carProvince = this.provinces[index];
-            this.current = 1;
-        },
-        chooseCity: function (index) {
-            $scope.carInfo.carCity = this.cities[index];
-            this.current = 0;
-        }
-    };
-
-    $scope.slides = new function () {
-        this.items = [{
-            src: "1.jpg",
-            id: 0
-        }];
-        this.add = function(v){
-            this.items.splice(this.items.length -1, 0, {
-                src: v.carImage,
-                id: v.carId
-            });
-        };
-        this.activeSlide = 0;
-        $scope.$watch('slides.activeSlide', function (n, o) {
-
-        });
-    };
+    $scope.slides = new CarSlide();
+    $scope.$watch('slides.activeSlide', function (n, o) {
+        console.log(n);
+    });
 
     $scope.carTypes = new function () {
         this.items = [{type: 0, name: '小车'}, {type: 1, name: '大车'}];
         this.selected = this.items[0];
-        $scope.$watch('carTypes.selected', function(v){
-            $scope.payPara.carType = v.type;
-        });
     };
 
-    $scope.carParkInfo = new CarParkInfo();
-
-    $scope.carInfo = new CarInfo(localStorage.getItem('carNumber'));
-
     $scope.queryDisabled = false;
-    $scope.$watch('carInfo.getCarNumber()', function (v) {
-        $scope.queryDisabled = !/^[\da-zA-Z]{5}$/.test($scope.carInfo.carNum);
-        $scope.payPara.setCarNumber(v);
+    $scope.$watch('carNumber.carNum', function (v) {
+        $scope.queryDisabled = !/^[\da-zA-Z]{5}$/.test(v);
     });
 
-    $scope.payPara = new PayPara(searchers);
-
-    if (!common.isBlank($scope.payPara.watchId)) {
+    if (!common.isBlank($scope.XAPP_DATA.watchId)) {
         common.interval(function () {
             $scope.query();
         }, 300, 1);
     }
+    $scope.params = function () {
+        var ret = {};
+        ret['carParkInfo.parkId'] = $scope.XAPP_DATA.parkId;
+        if ($scope.XAPP_DATA.watchId) {
+            ret.watchId = $scope.XAPP_DATA.watchId;
+        }
+        if ($scope.XAPP_DATA.openId) {
+            //need to be lower case
+            ret.openid = $scope.XAPP_DATA.openId;
+        }
+        ret['carParkInfo.carNumber'] = $scope.carNumber.getCarNumber();
+        ret.carType = $scope.carTypes.selected.type;
+        return ret;
+    };
 
-    $scope.query = function () {
-        /*showPayResult(common,{payStatus:1,notifyStatus:2
-         ,outTradeNo: '17034620160823590'});*/
+    $scope.query = function (carOrder) {
+        var params = $scope.params();
+        if (!common.isBlank(carOrder)){
+            params.carOrder = carOrder;
+        }
 
-        common.post('pay!queryCarNumber.cmd', $scope.payPara, function (data) {
-            //reset
-            $scope.carParkInfo = new CarParkInfo(data.carParkInfo);
+        common.post('pay!queryCarNumber.cmd', params, function (data) {
             if (!data.carParkInfo) {
                 common.error('未查到车辆或己出场，请重新输入车牌号');
             } else {
-                if (data.carParkInfo.carImage) {
-                    $scope.slides.add(data.carParkInfo);
-                }
-                $scope.carInfo = new CarInfo(data.carParkInfo.carNumber);
+                $scope.slides.add(new CarParkInfo(data.carParkInfo));
             }
         });
     };
@@ -144,3 +109,6 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
             });
     };
 }]);
+
+/*showPayResult(common,{payStatus:1,notifyStatus:2
+ ,outTradeNo: '17034620160823590'});*/

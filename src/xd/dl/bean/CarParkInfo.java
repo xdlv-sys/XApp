@@ -7,17 +7,24 @@ public class CarParkInfo {
     int consumedTime;
     String parkId;
 
+    String carImageData;
+    byte carOrder;
+
     boolean aliPay = false;
     boolean wxPay = false;
 
     public CarParkInfo(){}
 
-    public CarParkInfo(String carNumber, float price, String startTime,int consumedTime, String parkId) {
+    public CarParkInfo(String carNumber, float price, String startTime
+            ,int consumedTime, String parkId, String carImageData, byte carOrder) {
+        this();
         this.carNumber = carNumber;
         this.price = price;
         this.startTime = startTime;
         this.parkId = parkId;
         this.consumedTime = consumedTime;
+        this.carImageData = carImageData;
+        this.carOrder = carOrder;
     }
 
     public String getCarNumber() {
@@ -74,5 +81,13 @@ public class CarParkInfo {
 
     public void setWxPay(boolean wxPay) {
         this.wxPay = wxPay;
+    }
+
+    public String getCarImageData() {
+        return carImageData;
+    }
+
+    public byte getCarOrder() {
+        return carOrder;
     }
 }
