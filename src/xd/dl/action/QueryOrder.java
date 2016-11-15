@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import xd.dl.job.ParkedCarInfo;
 import xd.fw.action.BaseAction;
 import xd.dl.job.IDongHui;
 import xd.dl.job.ParkNative;
@@ -16,8 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class QueryOrder extends BaseAction implements IDongHui {
-    @Autowired
-    ParkNative parkNative;
 
     @Autowired
     ParkHandler parkHandler;
@@ -64,7 +63,8 @@ public class QueryOrder extends BaseAction implements IDongHui {
     @Action("QueryOrder")
     public String queryOrder() {
         logger.info("query order {}", carnumber);
-        ParkNative.ParkedInfo parkedInfo = parkNative.getParkedInfo(carPlateColorType == 2 ? 1 : 0, carnumber,15);
+        ParkedCarInfo parkedInfo = ParkNative.getParkedCarInfo(
+                carPlateColorType == 2 ? 1 : 0, carnumber,15, false,1);
 
         msg = fail;
         code = 201;

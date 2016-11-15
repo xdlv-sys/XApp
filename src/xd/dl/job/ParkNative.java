@@ -1,130 +1,88 @@
 package xd.dl.job;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-@Service
-public class ParkNative {
-
-    Logger logger = LoggerFactory.getLogger(ParkNative.class);
-
-    public static class ParkedInfo {
-        public String carNumber;
-        public String sInTime;
-        public float fMoney;
-        public int iParkedTime;
-        public int iReturn = 0;
+public class ParkNative
+{
+    public native static int initialized( String pDbIP,String pDbName,String pDbUserID,String pDbPwd );
+    public native static int unitialized();
+    public native static ParkedCarInfo getParkedCarInfo(int iCarType, String pLicense, int iFreeTime, boolean bFuzzyMatch, int iCarOrder);
+    public native static int payParkCarFee(int iCarType, String pCarLicese, String pPayTime, float fMoney);
+    static {
+        System.loadLibrary("ParkingMeter");
     }
 
-    Method initialized, unitialized, getParkedCarInfo, payParkCarFee;
+    public static void main(String[] args) {
+//        ParkNative test = new ParkNative();
+//	int iInitRtn = test.initialized("193.168.1.100","hjcsfbz","sa","sa");
+//	System.out.println("iInitRtn=" + iInitRtn);
+//	ParkedCarInfo obj = test.getParkedCarInfo(0,"ËÕA12366",15);
+//	System.out.println("money = "+obj.fMoney + "intime =" +  obj.sInTime + "parkedtime=" + obj.iParkedTime + "return val =" + obj.iReturn);
+//	test.unitialized();
 
-    @Value("${db_host}")
-    String host;
-    @Value("${db_name}")
-    String dbName;
-    @Value("${db_user}")
-    String user;
-    @Value("${db_pwd}")
-    String pwd;
-    @Value("${init_park_jni}")
-    boolean initParkJni;
 
-    @PostConstruct
-    public void init() throws Exception {
-        if (!initParkJni){
-            return;
-        }
-        Class<?> cls = Class.forName("ParkNative");
-        initialized = cls.getMethod("initialized", String.class, String.class, String.class, String.class);
-        initialized.setAccessible(true);
+        int iInitRtn = initialized("193.168.1.100","hjcsfbz","sa","sa");
+        System.out.println("iInitRtn=" + iInitRtn);
+        ParkedCarInfo obj = getParkedCarInfo(0,"ËÕA12366",15, false, 2);
+        System.out.println("CarLicense = "+obj.sCarLicense+ " money = "+obj.fMoney + " intime =" +  obj.sInTime + " parkedtime=" + obj.iParkedTime + " InPic = "+obj.sInPic + " return val =" + obj.iReturn);
 
-        unitialized = cls.getMethod("unitialized");
-        unitialized.setAccessible(true);
+        obj = getParkedCarInfo(0,"ËÕA12367",15, false, 3);
+        System.out.println("CarLicense = "+obj.sCarLicense+ " money = "+obj.fMoney + " intime =" +  obj.sInTime + " parkedtime=" + obj.iParkedTime + " InPic = "+obj.sInPic + " return val =" + obj.iReturn);
 
-        getParkedCarInfo = cls.getMethod("getParkedCarInfo", int.class, String.class, int.class);
-        getParkedCarInfo.setAccessible(true);
+        obj = getParkedCarInfo(0,"ËÕA12366",15, true, 0);
+        System.out.println("CarLicense = "+obj.sCarLicense+ " money = "+obj.fMoney + " intime =" +  obj.sInTime + " parkedtime=" + obj.iParkedTime + " InPic = "+obj.sInPic + " return val =" + obj.iReturn);
 
-        payParkCarFee = cls.getMethod("payParkCarFee",int.class,String.class,String.class,float.class);
-        payParkCarFee.setAccessible(true);
+        obj = getParkedCarInfo(0,"ËÕA12366",15, true, 1);
+        System.out.println("CarLicense = "+obj.sCarLicense+ " money = "+obj.fMoney + " intime =" +  obj.sInTime + " parkedtime=" + obj.iParkedTime + " InPic = "+obj.sInPic + " return val =" + obj.iReturn);
 
-        initialized.invoke(null, host, dbName, user, pwd);
+        obj = getParkedCarInfo(0,"ËÕA12366",15, true, 2);
+        System.out.println("CarLicense = "+obj.sCarLicense+ " money = "+obj.fMoney + " intime =" +  obj.sInTime + " parkedtime=" + obj.iParkedTime + " InPic = "+obj.sInPic + " return val =" + obj.iReturn);
+
+        obj = getParkedCarInfo(0,"ËÕA12366",15, true, 3);
+        System.out.println("CarLicense = "+obj.sCarLicense+ " money = "+obj.fMoney + " intime =" +  obj.sInTime + " parkedtime=" + obj.iParkedTime + " InPic = "+obj.sInPic + " return val =" + obj.iReturn);
+
+        obj = getParkedCarInfo(0,"ËÕA12366",15, true, 4);
+        System.out.println("CarLicense = "+obj.sCarLicense+ " money = "+obj.fMoney + " intime =" +  obj.sInTime + " parkedtime=" + obj.iParkedTime + " InPic = "+obj.sInPic + " return val =" + obj.iReturn);
+        payParkCarFee(0,"ËÕA12366","2016-10-22 14:44:57",0.1f);
+        payParkCarFee(0,"ËÕA12396","2016-10-22 14:44:57",0.1f);
+        payParkCarFee(0,"ËÕA12466","2016-10-22 14:44:57",0.1f);
+        unitialized();
+        System.out.println("unitialized1");
+// 	iInitRtn = initialized("193.168.1.100","hjcsfbz","sa","sa");
+// 	System.out.println("iInitRtn=" + iInitRtn);
+// 	obj = getParkedCarInfo(0,"ËÕA12377",15);
+// 	payParkCarFee(0,"ËÕA12377","2016-8-25 8:56:56",0.5f);
+// 	System.out.println("money = "+obj.fMoney + "intime =" +  obj.sInTime + "parkedtime=" + obj.iParkedTime + "return val =" + obj.iReturn);
+// 	unitialized();
+//
+// 	System.out.println("unitialized2");
+// 	iInitRtn = initialized("193.168.1.100","hjcsfbz","sa","sa");
+// 	obj = getParkedCarInfo(0,"ËÕA12366",15);
+// 	payParkCarFee(0,"ËÕA12366","2016-8-25 8:56:56",0.5f);
+// 	System.out.println("money = "+obj.fMoney + "intime =" +  obj.sInTime + "parkedtime=" + obj.iParkedTime + "return val =" + obj.iReturn);
+// 	unitialized();
+//
+// 	iInitRtn = initialized("193.168.1.100","hjcsfbz","sa","sa");
+// 	obj = getParkedCarInfo(0,"ËÕA12399",15);
+// 	payParkCarFee(0,"ËÕA12399","2016-8-25 8:56:56",0.5f);
+// 	System.out.println("money = "+obj.fMoney + "intime =" +  obj.sInTime + "parkedtime=" + obj.iParkedTime + "return val =" + obj.iReturn);
+// 	unitialized();
+//
+// 	iInitRtn = initialized("193.168.1.100","hjcsfbz","sa","sa");
+// 	obj = getParkedCarInfo(0,"ËÕA12311",15);
+// 	payParkCarFee(0,"ËÕA12311","2016-8-25 8:56:56",0.5f);
+// 	System.out.println("money = "+obj.fMoney + "intime =" +  obj.sInTime + "parkedtime=" + obj.iParkedTime + "return val =" + obj.iReturn);
+// 	unitialized();
+//
+// 	iInitRtn = initialized("193.168.1.100","hjcsfbz","sa","sa");
+// 	obj = getParkedCarInfo(0,"ËÕA12322",15);
+// 	payParkCarFee(0,"ËÕA12322","2016-8-25 8:56:56",0.5f);
+// 	System.out.println("money = "+obj.fMoney + "intime =" +  obj.sInTime + "parkedtime=" + obj.iParkedTime + "return val =" + obj.iReturn);
+// 	unitialized();
+//
+// 	iInitRtn = initialized("193.168.1.100","hjcsfbz","sa","sa");
+// 	obj = getParkedCarInfo(0,"ËÕA12333",15);
+// 	payParkCarFee(0,"ËÕA12333","2016-8-25 8:56:56",0.5f);
+// 	System.out.println("money = "+obj.fMoney + "intime =" +  obj.sInTime + "parkedtime=" + obj.iParkedTime + "return val =" + obj.iReturn);
+// 	unitialized();
+
     }
-
-    @PreDestroy
-    public void destroy()throws Exception{
-        if (unitialized != null){
-            unitialized.invoke(null);
-        }
-    }
-
-    public ParkedInfo getParkedInfo(int carType, String carNumber, int free) {
-        return (ParkedInfo) executeTemplate(args -> {
-            Object obj = getParkedCarInfo.invoke(null, carType, carNumber, free);
-            ParkedInfo parkedInfo = new ParkedInfo();
-            copyProperties(parkedInfo, obj);
-            return parkedInfo;
-        });
-    }
-
-    private synchronized Object executeTemplate(NativeProcess pro, Object... args){
-        try{
-            return pro.process(args);
-        } catch (Exception e) {
-            logger.error("",e);
-        }
-        return null;
-    }
-
-    public boolean payFee(int carType, String carNumber,String timeStamp, float totalFee){
-        return (boolean)executeTemplate(args-> ((int)payParkCarFee.invoke(null, carType, carNumber, timeStamp, totalFee)) == 0);
-    }
-
-    static class ParkedInfo2 {
-        public String sInTime;
-        public float fMoney;
-        public int iParkedTime;
-        public int iReturn;
-    }
-
-    interface NativeProcess{
-        Object process(Object... args) throws Exception;
-    }
-
-    private static void copyProperties(Object dest, Object origin)throws Exception{
-        Field tmp;
-        for (Field f: dest.getClass().getDeclaredFields()){
-            try{
-                tmp = origin.getClass().getDeclaredField(f.getName());
-            } catch (NoSuchFieldException e){
-                continue;
-            }
-
-            tmp.setAccessible(true);
-            if (tmp == null || tmp.get(origin) == null){
-                continue;
-            }
-            f.setAccessible(true);
-            f.set(dest,tmp.get(origin));
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        ParkedInfo2 obj = new ParkedInfo2();
-        obj.sInTime = "123";
-        obj.fMoney = 1.0f;
-        obj.iParkedTime = 1;
-        obj.iReturn = 11;
-
-
-        ParkedInfo parkedInfo = new ParkedInfo();
-        copyProperties(parkedInfo, obj);
-    }
-
 }

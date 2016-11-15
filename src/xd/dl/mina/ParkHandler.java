@@ -6,8 +6,9 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xd.fw.HttpClientTpl;
 import xd.dl.job.ParkNative;
+import xd.dl.job.ParkedCarInfo;
+import xd.fw.HttpClientTpl;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
 
@@ -97,14 +98,14 @@ public class ParkHandler extends ReversedHandler {
         return true;
     }
 
-    public ParkNative.ParkedInfo queryCarInfo(int code, String watchId, String carNumber) {
+    public ParkedCarInfo queryCarInfo(int code, String watchId, String carNumber) {
         TLVMessage message = createRequest(code, carNumber);
         logger.info("start query car by wh: " + message);
         TLVMessage ret = request(watchId, message);
         logger.info("end query car by wh: " + ret);
-        ParkNative.ParkedInfo parkedInfo = new ParkNative.ParkedInfo();
+        ParkedCarInfo parkedInfo = new ParkedCarInfo();
         if (ret != null && 200 == (int) ret.getValue()) {
-            parkedInfo.carNumber = (String) ret.getNextValue(0);
+            parkedInfo.sCarLicense = (String) ret.getNextValue(0);
             parkedInfo.fMoney = (float) ret.getNextValue(1);
             parkedInfo.sInTime = (String) ret.getNextValue(2);
             parkedInfo.iParkedTime = (int) ret.getNextValue(3);

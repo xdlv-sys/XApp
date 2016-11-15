@@ -18,10 +18,6 @@ public class NotifyOrderAction extends BaseAction implements IDongHui {
 
     //SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     //SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    @Autowired
-    ParkNative parkNative;
-
     @Autowired
     ParkHandler parkHandler;
 
@@ -74,8 +70,8 @@ public class NotifyOrderAction extends BaseAction implements IDongHui {
         code = 201;
         String payEndTime = convertTime(currenttime);
         logger.info("{} ->pay end time:{}", currenttime, payEndTime);
-        boolean ret = parkNative.payFee(carPlateColorType == 2 ? 1 : 0, carnumber
-                , payEndTime, parkingPrice);
+        boolean ret = ParkNative.payParkCarFee(carPlateColorType == 2 ? 1 : 0, carnumber
+                , payEndTime, parkingPrice) == 0;
         if (ret) {
             code = 200;
             msg = success;
