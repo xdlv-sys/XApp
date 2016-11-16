@@ -69,7 +69,7 @@ public class ParkHandler extends ReversedHandler {
         if (ret != null){
             return new CarParkInfo((String)ret.getValue(), (float) ret.getNextValue(0)
                     , (String) ret.getNextValue(1), (int) ret.getNextValue(2), parkId
-                    , Base64.getEncoder().encodeToString((byte[])ret.getNextValue(3)),carOrder);
+                    , (byte[])ret.getNextValue(3),carOrder);
         }
         return null;
     }

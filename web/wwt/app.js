@@ -7,9 +7,18 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
     $scope.carNumber = new CarNumber(localStorage.getItem('carNumber'));
 
     $scope.slides = new CarSlide();
-    $scope.$watch('slides.activeSlide', function (n, o) {
-        console.log(n);
+    $scope.$watch('slides.activeSlide', function (v) {
+        if ($scope.slides.isEnd()){
+            $scope.query(v + 1);
+        }
+        var item = $scope.slides.getItem(v);
+        if (item){
+            $scope.carNumber.parse(item.carNumber);
+        }
     });
+    $scope.selectPic = function (index) {
+        console.log(index);
+    };
 
     $scope.carTypes = new function () {
         this.items = [{type: 0, name: '小车'}, {type: 1, name: '大车'}];
@@ -43,7 +52,7 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
 
     $scope.query = function (carOrder) {
         var params = $scope.params();
-        if (!common.isBlank(carOrder)){
+        if (!common.isBlank(carOrder)) {
             params.carOrder = carOrder;
         }
 
@@ -52,6 +61,7 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
                 common.error('未查到车辆或己出场，请重新输入车牌号');
             } else {
                 $scope.slides.add(new CarParkInfo(data.carParkInfo));
+                $scope.carNumber.parse(data.carParkInfo.carNumber);
             }
         });
     };

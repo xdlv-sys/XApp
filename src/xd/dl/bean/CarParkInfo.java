@@ -1,5 +1,7 @@
 package xd.dl.bean;
 
+import java.util.Base64;
+
 public class CarParkInfo {
     String carNumber;
     float price;
@@ -16,15 +18,18 @@ public class CarParkInfo {
     public CarParkInfo(){}
 
     public CarParkInfo(String carNumber, float price, String startTime
-            ,int consumedTime, String parkId, String carImageData, byte carOrder) {
+            ,int consumedTime, String parkId, byte[] carImageRawData, byte carOrder) {
         this();
         this.carNumber = carNumber;
         this.price = price;
         this.startTime = startTime;
         this.parkId = parkId;
         this.consumedTime = consumedTime;
-        this.carImageData = carImageData;
         this.carOrder = carOrder;
+
+        if (carImageRawData != null){
+            this.carImageData = Base64.getEncoder().encodeToString(carImageRawData);
+        }
     }
 
     public String getCarNumber() {

@@ -18,6 +18,17 @@ app.config(['$locationProvider', function($locationProvider) {
         requireBase: false
     });
 }]);
+//short cut
+
+Array.prototype.contains = function (obj) {
+    var contains = false;
+    angular.forEach(this, function (v) {
+       if (v === obj){
+           contains = true;
+       }
+    });
+    return contains;
+};
 
 app.service('common', ['$uibModal', '$http', '$interval', function(
     $uibModal, $http, $interval) {

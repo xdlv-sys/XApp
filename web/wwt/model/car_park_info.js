@@ -8,7 +8,7 @@ function CarParkInfo(v){
     angular.forEach(v, function(v, i) {
         me[i] = v;
     });
-    this.carImageData = 'data:image/png;base64,' + this.carImageData;
+    this.carImageData = 'data:image/jpg;base64,' + this.carImageData;
 
     var hours = this.consumedTime / 60 | 0;
     var minutes = this.consumedTime % 60;

@@ -21,3 +21,7 @@
     position: fixed;
     top: 30%;
 }
+.carousel-control {
+    height: 50px;
+    margin: auto;
+}

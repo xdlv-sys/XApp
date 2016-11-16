@@ -15,7 +15,13 @@ function CarNumber(v) {
             return;
         }
         this.carProvince = v.substring(0, 1);
+        if (!this.provinces.contains(this.carProvince)){
+            this.carProvince = this.provinces[0];
+        }
         this.carCity = v.substring(1, 2);
+        if (!this.cities.contains(this.carCity)){
+            this.carCity = this.cities[0];
+        }
         this.carNum = v.substring(2);
     };
 

@@ -39,9 +39,26 @@
     <div id="queryResult" style="margin-top:10px;" ng-show="slides.items.length > 1">
         <div uib-carousel active="slides.activeSlide" interval="0" no-wrap="true">
             <div uib-slide ng-repeat="slide in slides.items track by slide.index" index="slide.index">
-                <img ng-src="{{slide.carImageData}}" style="margin:auto;">
-                <div class="carousel-caption">
-                    <h4>轻触图片进行支付</h4>
+                <img ng-src="{{slide.carImageData}}" style="margin:auto; width: 100%"
+                     ng-click="selectPic(slide.index)">
+                <%--<div class="carousel-caption">
+                    <h4>{{slide.text}}</h4>
+                </div>--%>
+                <div class="input-group input-group-lg" style="margin-top: 10px;">
+                    <span class="input-group-addon">时间</span>
+                    <input type="text" class="form-control query_result"
+                           readonly ng-model="slide.startTime">
+                </div>
+                <div class="input-group input-group-lg" style="margin-top:10px;">
+                    <span class="input-group-addon">时长</span>
+                    <input type="text" class="form-control query_result" readonly
+                           ng-model="slide.consumedTimeValue">
+                </div>
+                <div class="input-group input-group-lg" style="margin-top:10px;">
+                    <span class="input-group-addon">金额</span>
+                    <input type="text" class="form-control query_result" style="color:red" readonly
+                           ng-model="slide.price">
+                    <span class="input-group-addon">元</span>
                 </div>
             </div>
         </div>
