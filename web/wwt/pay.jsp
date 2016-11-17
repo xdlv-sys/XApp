@@ -4,7 +4,7 @@
 <head>
     <title></title>
     <%@ include file="js.html"%>
-    <script src="parkController.js"></script>
+    <script src="model/park_util.js"></script>
     
     <script type="text/javascript">
         var app = angular.module("pay", ['ui.bootstrap']);
@@ -12,7 +12,7 @@
             showPayResult(common,XAPP_DATA);
         }]);
     </script>
-    <script src="common-min.js"></script>
+    <script src="fw/common.js"></script>
     <style type="text/css">
     .center-modal {
         position: fixed;

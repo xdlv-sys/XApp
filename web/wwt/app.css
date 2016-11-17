@@ -21,7 +21,6 @@
     position: fixed;
     top: 30%;
 }
-.carousel-control {
-    height: 50px;
-    margin: auto;
+.splice{
+    margin-top: 10px;
 }

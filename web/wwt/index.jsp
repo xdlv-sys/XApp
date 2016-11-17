@@ -10,6 +10,7 @@
     <script src="model/car_number.js"></script>
     <script src="model/car_slide.js"></script>
     <script src="model/car_park_info.js"></script>
+    <script src="model/park_util.js.js"></script>
 </head>
 
 <body ng-app="parkApp" ng-controller="parkCtrl">
@@ -18,49 +19,45 @@
     <div style="text-align: center; padding: 8px 0;font-size:1.6em;color:white; font-weight:bold;">{{parkName}}停车缴费
     </div>
 </div>
-<div style="margin: 60px 10px 10px 10px;">
+<div style="margin: 60px 10px 0 10px;">
     <div class="input-group input-group-lg">
-            <span class="input-group-addon" style="color:#428BCA; background:white;font-weight:bold;"
-                  uib-popover-template="carNumber.templateUrl" popover-title="选择省份及城市"
-                  popover-placement="bottom-left" ng-bind="carNumber.carProvince + carNumber.carCity"
-                  popover-trigger="outsideClick" popover-is-open="carNumber.current === 1"></span>
+        <span class="input-group-addon" style="color:#428BCA; background:white;font-weight:bold;"
+              uib-popover-template="carNumber.templateUrl" popover-title="选择省份及城市"
+              popover-placement="bottom-left" ng-bind="carNumber.carProvince + carNumber.carCity"
+              popover-trigger="outsideClick" popover-is-open="carNumber.current === 1"></span>
         <input type="text" class="form-control" placeholder="车牌后5位" ng-model="carNumber.carNum" maxlength="5"
                ng-change="carNumber.carNum=carNumber.carNum.toUpperCase()">
         <span class="input-group-btn">
               <button class="btn btn-primary" type="button" ng-disabled="queryDisabled" ng-click="query()">找车</button>
-            </span>
+        </span>
     </div>
-    <div class="input-group input-group-lg" ng-hide="XAPP_DATA.watchId" style="margin-top:20px;">
+    <div class="input-group input-group-lg splice" ng-hide="XAPP_DATA.watchId">
         <span class="input-group-addon">车型</span>
         <select class="form-control" ng-model="carTypes.selected" ng-options="v.name for v in carTypes.items">
         </select>
     </div>
-    <hr>
-    <div id="queryResult" style="margin-top:10px;" ng-show="slides.items.length > 1">
+    <hr style="margin-top: 10px;margin-bottom: 10px;">
+    <div id="queryResult" ng-show="slides.items.length > 1">
         <div uib-carousel active="slides.activeSlide" interval="0" no-wrap="true">
             <div uib-slide ng-repeat="slide in slides.items track by slide.index" index="slide.index">
                 <img ng-src="{{slide.carImageData}}" style="margin:auto; width: 100%"
                      ng-click="selectPic(slide.index)">
-                <%--<div class="carousel-caption">
-                    <h4>{{slide.text}}</h4>
-                </div>--%>
-                <div class="input-group input-group-lg" style="margin-top: 10px;">
-                    <span class="input-group-addon">时间</span>
-                    <input type="text" class="form-control query_result"
-                           readonly ng-model="slide.startTime">
-                </div>
-                <div class="input-group input-group-lg" style="margin-top:10px;">
-                    <span class="input-group-addon">时长</span>
-                    <input type="text" class="form-control query_result" readonly
-                           ng-model="slide.consumedTimeValue">
-                </div>
-                <div class="input-group input-group-lg" style="margin-top:10px;">
-                    <span class="input-group-addon">金额</span>
-                    <input type="text" class="form-control query_result" style="color:red" readonly
-                           ng-model="slide.price">
-                    <span class="input-group-addon">元</span>
+                <div class="carousel-caption">
+                    <h4>点击图片进行支付</h4>
                 </div>
             </div>
+        </div>
+
+        <div class="input-group input-group-lg splice">
+            <span class="input-group-addon">时长</span>
+            <input type="text" class="form-control query_result" readonly
+                   ng-model="slides.items[slides.activeSlide].consumedTimeValue">
+        </div>
+        <div class="input-group input-group-lg splice">
+            <span class="input-group-addon">金额</span>
+            <input type="text" class="form-control query_result" style="color:red" readonly
+                   ng-model="slides.items[slides.activeSlide].price">
+            <span class="input-group-addon">元</span>
         </div>
     </div>
 </div>

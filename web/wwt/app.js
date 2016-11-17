@@ -17,7 +17,7 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
         }
     });
     $scope.selectPic = function (index) {
-        console.log(index);
+
     };
 
     $scope.carTypes = new function () {
@@ -68,7 +68,7 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
 
     $scope.payNow = function () {
         if ($scope.carParkInfo.selectedPay.type === 'wx') {
-            common.post('pay!wxPay.cmd', $scope.payPara, function (data) {
+            common.post('pay!wxPay.cmd', $scope.params(), function (data) {
                 var wxOrder = data.wxOrder;
                 if (common.isBlank(wxOrder)) {
                     common.error('无法完成支付，请重试');
@@ -77,7 +77,7 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
                 $scope.lauchWxPay(wxOrder, data.payOrder);
             });
         } else { //ali pay
-            common.post('pay!aliPay.cmd', $scope.payPara, function (data) {
+            common.post('pay!aliPay.cmd', $scope.params(), function (data) {
                 var aliPayBean = data.aliPayBean;
                 if (common.isBlank(aliPayBean)) {
                     common.error('无法完成支付，请重试');

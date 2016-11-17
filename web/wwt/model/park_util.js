@@ -1,63 +1,3 @@
-function CarParkInfo(v) {
-    this.price = -1;
-
-    if (!v) {
-        return;
-    }
-    var me = this;
-    angular.forEach(v, function(v, i) {
-        me[i] = v;
-    });
-    var hours = this.consumedTime / 60 | 0;
-    var minutes = this.consumedTime % 60;
-    this.consumedTimeValue = '' + hours + '小时' + minutes + '分钟';
-
-    this.payTypes = [];
-    if (this.wxPay) {
-        this.payTypes.push({ type: 'wx', name: '微信支付' });
-    }
-    if (this.aliPay) {
-        this.payTypes.push({ type: 'ali', name: '支付宝' });
-    }
-    if (this.payTypes.length > 0) {
-        this.selectedPay = this.payTypes[0];
-    }
-}
-
-function PayPara(v) {
-    this['carParkInfo.parkId'] = v.parkId;
-    if (v.watchId) {
-        this.watchId = v.watchId;
-    }
-    if (v.openId) {
-        //need to be lower case
-        this.openid = v.openId;
-    }
-
-    this.setCarNumber = function(carNumber) {
-        this['carParkInfo.carNumber'] = carNumber;
-    };
-    /*var ua = window.navigator.userAgent.toLowerCase();
-
-    var ua = window.navigator.userAgent.toLowerCase();
-    this.wxBrowser = ua.match(/MicroMessenger/i) == 'micromessenger';*/
-}
-
-function CarInfo(v) {
-    this.carProvince = '苏';
-    this.carCity = 'A';
-    this.carNum = '';
-
-    this.getCarNumber = function() {
-        return this.carProvince + this.carCity + this.carNum;
-    };
-    if (v) {
-        this.carProvince = v.substring(0, 1);
-        this.carCity = v.substring(1, 2);
-        this.carNum = v.substring(2);
-    }
-}
-
 function fillPayOrder(payOrder) {
     var addition = angular.copy(payOrder);
     addition.title = '支付失败';
@@ -101,7 +41,7 @@ function showResultDialog(common, payOrder) {
     common.open({
         tid: 'payResult.html',
         cancelAction: function() {
-            //make sure 
+            //make sure
             if (payOrder.notifyStatus === 1) {
                 return;
             }
