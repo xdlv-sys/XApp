@@ -25,6 +25,8 @@ import xd.fw.bean.wx.UnifiedOrder;
 import xd.fw.bean.wx.WxOrder;
 
 import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,9 +131,27 @@ public class PayAction extends ParkBaseAction implements DlConst {
         if (carParkInfo != null) {
             carParkInfo.setWxPay((wxBrowser()) && StringUtils.isNotBlank(parkInfo.getAppId()));
             carParkInfo.setAliPay(StringUtils.isNotBlank(parkInfo.getPartnerId()));
+            if (carParkInfo.carImageData() != null){
+                session().setAttribute(PIC_KEY, carParkInfo.carImageData());
+            }
         }
         return Action.SUCCESS;
     }
+
+    InputStream imgFile;
+
+    public InputStream getImgFile() {
+        return imgFile;
+    }
+
+    public String sessionImage(){
+        byte[] data = (byte[])session().getAttribute(PIC_KEY);
+        if (data != null){
+            imgFile =  new ByteArrayInputStream(data);
+        }
+        return IMG;
+    }
+
 
     public String wxPay() throws Exception {
         assertCarParkInfoLegalForPay();

@@ -18,6 +18,7 @@ import xd.fw.FwUtil;
 import xd.fw.bean.User;
 import xd.fw.service.IConst;
 
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Pattern;
@@ -30,6 +31,10 @@ import java.util.regex.Pattern;
         @Result(name = "finish", type = "chain", location = "result"),
         @Result(name = "login", location = "www/index.html"),
         @Result(name = "xml", location = "xml.jsp"),
+        @Result(name = "img", type = "stream", params = {
+                "contentType", "application/octet-stream",
+                "inputName", "imgFile"
+        }),
         @Result(name = "excel", type = "stream",
                 params = {"contentType", "application/octet-stream",
                         "inputName", "excelFile",
@@ -39,7 +44,7 @@ import java.util.regex.Pattern;
 public abstract class BaseAction extends ActionSupport implements IConst{
     private static final long serialVersionUID = 1L;
 
-    public final static String FINISH = "finish", LOGIN = "login", XML = "xml", EXCEL = "excel";
+    public final static String FINISH = "finish", LOGIN = "login", IMG = "img" ,XML = "xml", EXCEL = "excel";
     public static final String USER = "user";
     private static Pattern SPLITE_PATTERN = Pattern.compile(",");
 
@@ -193,6 +198,10 @@ public abstract class BaseAction extends ActionSupport implements IConst{
 
     public boolean wxBrowser(){
         return ServletActionContext.getRequest().getHeader("user-agent").contains("MicroMessenger");
+    }
+
+    protected HttpSession session(){
+        return ServletActionContext.getRequest().getSession();
     }
 
     public static void main(String[] args) throws IllegalAccessException, InvocationTargetException {

@@ -17,7 +17,9 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
         }
     });
     $scope.selectPic = function (index) {
-
+        if ($scope.slides.payType > -1){
+            $scope.payNow();
+        }
     };
 
     $scope.carTypes = new function () {
@@ -67,7 +69,7 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
     };
 
     $scope.payNow = function () {
-        if ($scope.carParkInfo.selectedPay.type === 'wx') {
+        if ($scope.slides.payType === 0) {
             common.post('pay!wxPay.cmd', $scope.params(), function (data) {
                 var wxOrder = data.wxOrder;
                 if (common.isBlank(wxOrder)) {

@@ -10,7 +10,7 @@
     <script src="model/car_number.js"></script>
     <script src="model/car_slide.js"></script>
     <script src="model/car_park_info.js"></script>
-    <script src="model/park_util.js.js"></script>
+    <script src="model/park_util.js"></script>
 </head>
 
 <body ng-app="parkApp" ng-controller="parkCtrl">

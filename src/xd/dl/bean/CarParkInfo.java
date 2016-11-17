@@ -9,7 +9,7 @@ public class CarParkInfo {
     int consumedTime;
     String parkId;
 
-    String carImageData;
+    byte[] carImageData;
     byte carOrder;
 
     boolean aliPay = false;
@@ -27,9 +27,7 @@ public class CarParkInfo {
         this.consumedTime = consumedTime;
         this.carOrder = carOrder;
 
-        if (carImageRawData != null){
-            this.carImageData = Base64.getEncoder().encodeToString(carImageRawData);
-        }
+        this.carImageData = carImageRawData;
     }
 
     public String getCarNumber() {
@@ -88,7 +86,7 @@ public class CarParkInfo {
         this.wxPay = wxPay;
     }
 
-    public String getCarImageData() {
+    public byte[] carImageData() {
         return carImageData;
     }
 

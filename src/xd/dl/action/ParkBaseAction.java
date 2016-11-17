@@ -22,7 +22,7 @@ import java.util.Date;
 })
 public class ParkBaseAction extends BaseAction {
     protected Logger logger = LoggerFactory.getLogger(getClass());
-    final String RET_KEY = "RET_FOR_TOUCH" ,INDEX = "index";
+    final String RET_KEY = "RET_FOR_TOUCH" ,INDEX = "index", PIC_KEY="PIC_KEY";
 
     @Autowired
     PayService payService;
