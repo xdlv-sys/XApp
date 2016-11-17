@@ -22,7 +22,7 @@ public class HibernateServiceImpl implements BaseService{
     static Map<String, int[]> primaryKeyMap = new HashMap<String, int[]>();
     final static int PRE_OCCUPY_MAX = 10;
 
-    @Autowired
+    @Autowired(required = false)
     protected HibernateTemplate htpl;
 
     @Override
@@ -32,6 +32,7 @@ public class HibernateServiceImpl implements BaseService{
     }
 
     @Override
+    @Transactional
     public void runSessionCommit(SessionCommit sessionCommit) {
         sessionCommit.process(htpl);
     }
