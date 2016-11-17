@@ -9,6 +9,7 @@ import xd.dl.job.ParkedCarInfo;
 import xd.fw.mina.tlv.ReversedProxy;
 import xd.fw.mina.tlv.TLVMessage;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,9 +38,24 @@ public class ParkProxy extends ReversedProxy {
     @Value("${version}")
     int version;
 
+    @Value("${db_host}")
+    String dbHost;
+    @Value("${db_name}")
+    String dbName;
+    @Value("${db_user}")
+    String user;
+    @Value("${db_pwd}")
+    String pwd;
+
+    @PostConstruct
+    public void init(){
+        ParkNative.initialized(dbHost,dbName,user,pwd);
+    }
+
     @PreDestroy
     public void destroy(){
         super.destroy();
+        ParkNative.unitialized();
     }
 
     @Override
