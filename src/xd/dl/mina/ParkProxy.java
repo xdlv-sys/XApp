@@ -87,7 +87,12 @@ public class ParkProxy extends ReversedProxy {
                 String watchId = (String)msg.getNextValue(2);
                 ParkedCarInfo parkedCarInfo;
                 if (StringUtils.isNotBlank(watchId)){
-                    parkedCarInfo = parkHandler.queryCarInfo(QUERY_CAR,watchId,carNumber);
+                    parkedCarInfo = new ParkedCarInfo();
+                    parkedCarInfo.sCarLicense="苏A12300";
+                    parkedCarInfo.fMoney = 0.01f;
+                    parkedCarInfo.iParkedTime = 162;
+                    parkedCarInfo.sInTime = "2017-10-10 00:00：01";
+                    //parkHandler.queryCarInfo(QUERY_CAR,watchId,carNumber);
                 } else {
                     byte carType = (byte)msg.getNextValue(3);
                     byte carOrder = (byte)msg.getNextValue(4);
@@ -99,9 +104,9 @@ public class ParkProxy extends ReversedProxy {
                     ).setNext(parkedCarInfo.sInTime
                     ).setNext(parkedCarInfo.iParkedTime);
 
-                    File picFile = new File(parkedCarInfo.sInPic);
+                    File picFile;
                     if (StringUtils.isNotBlank(parkedCarInfo.sInPic)
-                            && picFile.exists()){
+                            && (picFile = new File(parkedCarInfo.sInPic)).exists()){
                         aos.setPosition(0);
                         Thumbnails.of(picFile).scale(scale).toOutputStream(aos);
                         byte[] data = new byte[aos.getPosition()];
