@@ -1,6 +1,8 @@
 package xd.dl.mina;
 
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang.StringUtils;
+import org.apache.derby.iapi.services.io.ArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,8 @@ public class ParkProxy extends ReversedProxy {
     String user;
     @Value("${db_pwd}")
     String pwd;
+    @Value("${pic_scale}")
+    float scale;
 
     @PostConstruct
     public void init(){
@@ -68,6 +72,8 @@ public class ParkProxy extends ReversedProxy {
         return new InetSocketAddress(host, port);
     }
 
+    byte [] picBuffer = new byte[2 * 1024 * 1024];
+    private ArrayOutputStream aos = new ArrayOutputStream(picBuffer);
     @Override
     protected void handlerQuery(TLVMessage msg) throws Exception {
         logger.info("receive:" + msg);
@@ -93,14 +99,15 @@ public class ParkProxy extends ReversedProxy {
                     ).setNext(parkedCarInfo.sInTime
                     ).setNext(parkedCarInfo.iParkedTime);
 
+                    File picFile = new File(parkedCarInfo.sInPic);
                     if (StringUtils.isNotBlank(parkedCarInfo.sInPic)
-                            && new File(parkedCarInfo.sInPic).exists()){
-                        try(InputStream ins = new FileInputStream(parkedCarInfo.sInPic)){
-                            byte[] data = new byte[ins.available()];
-                            int read = ins.read(data);
-                            assert read == data.length;
-                            tmp.setNext(data);
-                        }
+                            && picFile.exists()){
+                        aos.setPosition(0);
+                        Thumbnails.of(picFile).scale(scale).toOutputStream(aos);
+                        byte[] data = new byte[aos.getPosition()];
+                        System.arraycopy(picBuffer,0,data,0,data.length);
+                        tmp.setNext(data);
+                        logger.info("compress:{},{}",picFile.length(), data.length);
                     }
                 } else {
                     //just return null
