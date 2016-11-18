@@ -61,9 +61,9 @@ public class ParkHandler extends ReversedHandler {
     }
 
     public CarParkInfo getCarParkInfo(String carNumber, String parkId, String watchId
-            , byte carType, byte carOrder){
+            , byte carType, byte carOrder, float scale){
         TLVMessage queryMsg = createRequest(QUERY_CAR, carNumber
-                , watchId == null ? "" : watchId , carType,carOrder);
+                , watchId == null ? "" : watchId , carType,carOrder, scale);
         TLVMessage ret = request(parkId, queryMsg);
 
         if (ret != null){

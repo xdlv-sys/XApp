@@ -41,6 +41,11 @@ public class Conf {
     FwService fwService;
 
     @PostConstruct
+    public void init(){
+        addPropertyChangeListener((configName -> readFromDb()));
+        readFromDb();
+    }
+
     public void readFromDb() {
         if (!loadFromDb){
             return;

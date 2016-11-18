@@ -10,6 +10,7 @@ import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.w3c.dom.Element;
+import xd.dl.DlConf;
 import xd.dl.DlConst;
 import xd.dl.bean.CarParkInfo;
 import xd.dl.bean.ParkInfo;
@@ -52,7 +53,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
     CarParkInfo carParkInfo;
     String watchId, parkId;
-    byte carType,carOrder = 1;
+    byte carType, carOrder = 1;
     WxOrder wxOrder;
     PayOrder payOrder;
 
@@ -118,7 +119,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
         aliPayBean.setSign(AliPayUtil.getSign(aliPayBean, parkInfo.getAliShaRsaKey()));
 
         PayOrder payOrder = new PayOrder(aliPayBean.getOut_trade_no(), parkInfo.getParkId()
-                , carParkInfo.getCarNumber(), carParkInfo.getPrice(), (short)STATUS_INI, PAY_ALI, watchId, carType);
+                , carParkInfo.getCarNumber(), carParkInfo.getPrice(), (short) STATUS_INI, PAY_ALI, watchId, carType);
         //save the pay order
         payService.save(payOrder);
         return Action.SUCCESS;
@@ -127,11 +128,11 @@ public class PayAction extends ParkBaseAction implements DlConst {
     public String queryCarNumber() throws Exception {
         ParkInfo parkInfo = parkService.get(ParkInfo.class, carParkInfo.getParkId());
         carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
-                , carParkInfo.getParkId(), watchId, carType, carOrder);
+                , carParkInfo.getParkId(), watchId, carType, carOrder, DlConf.proxy_pic_scale);
         if (carParkInfo != null) {
             carParkInfo.setWxPay(StringUtils.isNotBlank(parkInfo.getAppId()));
             carParkInfo.setAliPay(StringUtils.isNotBlank(parkInfo.getPartnerId()));
-            if (carParkInfo.carImageData() != null){
+            if (carParkInfo.carImageData() != null) {
                 session().setAttribute(PIC_KEY, carParkInfo.carImageData());
             }
         }
@@ -144,10 +145,10 @@ public class PayAction extends ParkBaseAction implements DlConst {
         return imgFile;
     }
 
-    public String sessionImage(){
-        byte[] data = (byte[])session().getAttribute(PIC_KEY);
-        if (data != null){
-            imgFile =  new ByteArrayInputStream(data);
+    public String sessionImage() {
+        byte[] data = (byte[]) session().getAttribute(PIC_KEY);
+        if (data != null) {
+            imgFile = new ByteArrayInputStream(data);
             session().removeAttribute(PIC_KEY);
             logger.info("sessionImage:{}", data.length);
         }
@@ -199,7 +200,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
             wxOrder.setPaySign(WxUtil.getSign(params, parkInfo.getWxKey()));
 
             payOrder = new PayOrder(unifiedOrder.getOut_trade_no(), parkInfo.getParkId()
-                    , carParkInfo.getCarNumber(), carParkInfo.getPrice(), (short)STATUS_INI, PAY_WX, watchId, carType);
+                    , carParkInfo.getCarNumber(), carParkInfo.getPrice(), (short) STATUS_INI, PAY_WX, watchId, carType);
             //save the pay order
             payService.save(payOrder);
 
@@ -211,13 +212,13 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
     private void assertCarParkInfoLegalForPay() throws Exception {
         carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
-                , carParkInfo.getParkId(), watchId, carType,carOrder);
+                , carParkInfo.getParkId(), watchId, carType, carOrder, DlConf.proxy_pic_scale);
         if (carParkInfo == null || carParkInfo.getPrice() == 0) {
             throw new Exception("can not pay since price is zero or no car info");
         }
     }
 
-    public String queryNotifyStatus() throws Exception{
+    public String queryNotifyStatus() throws Exception {
         payOrder = payService.get(PayOrder.class, payOrder.getOutTradeNo());
         return Action.SUCCESS;
     }
@@ -245,10 +246,10 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
             if (SUCCESS_FLAG.equals(return_code) && SUCCESS_FLAG.equals(result_code) &&
                     SUCCESS_FLAG.equals(trade_state)) {
-                payOrder.setPayStatus((short)STATUS_DONE);
+                payOrder.setPayStatus((short) STATUS_DONE);
                 payOrder.setTradeNo(XmlUtils.getChildElement(element, "transaction_id").getTextContent());
             } else {
-                payOrder.setPayStatus((short)STATUS_FAIL);
+                payOrder.setPayStatus((short) STATUS_FAIL);
             }
             payService.saveOrUpdate(payOrder);
         }
