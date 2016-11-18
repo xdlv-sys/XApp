@@ -48,16 +48,14 @@ public class ParkProxy extends ReversedProxy {
     String user;
     @Value("${db_pwd}")
     String pwd;
-    @Value("${pic_scale}")
-    float scale;
 
     @PostConstruct
-    public void init(){
-        ParkNative.initialized(dbHost,dbName,user,pwd);
+    public void init() {
+        ParkNative.initialized(dbHost, dbName, user, pwd);
     }
 
     @PreDestroy
-    public void destroy(){
+    public void destroy() {
         super.destroy();
         ParkNative.unitialized();
     }
@@ -72,8 +70,9 @@ public class ParkProxy extends ReversedProxy {
         return new InetSocketAddress(host, port);
     }
 
-    byte [] picBuffer = new byte[2 * 1024 * 1024];
+    byte[] picBuffer = new byte[2 * 1024 * 1024];
     private ArrayOutputStream aos = new ArrayOutputStream(picBuffer);
+
     @Override
     protected void handlerQuery(TLVMessage msg) throws Exception {
         logger.info("receive:" + msg);
@@ -81,38 +80,40 @@ public class ParkProxy extends ReversedProxy {
         //reuse msg
         int code = (int) msg.getValue();
         TLVMessage next = msg.getNext(0);
-        switch (code){
+        switch (code) {
             case QUERY_CAR:
-                String carNumber = (String)msg.getNextValue(1);
-                String watchId = (String)msg.getNextValue(2);
+                String carNumber = (String) msg.getNextValue(1);
+                String watchId = (String) msg.getNextValue(2);
                 ParkedCarInfo parkedCarInfo;
-                if (StringUtils.isNotBlank(watchId)){
-                    parkedCarInfo = new ParkedCarInfo();
-                    parkedCarInfo.sCarLicense="苏A12300";
+                if (StringUtils.isNotBlank(watchId)) {
+                    /*parkedCarInfo = new ParkedCarInfo();
+                    parkedCarInfo.sCarLicense = "苏A12300";
                     parkedCarInfo.fMoney = 0.01f;
                     parkedCarInfo.iParkedTime = 162;
-                    parkedCarInfo.sInTime = "2017-10-10 00:00：01";
-                    //parkHandler.queryCarInfo(QUERY_CAR,watchId,carNumber);
+                    parkedCarInfo.sInTime = "2017-10-10 00:00：01";*/
+                    parkedCarInfo = parkHandler.queryCarInfo(QUERY_CAR,watchId,carNumber);
                 } else {
-                    byte carType = (byte)msg.getNextValue(3);
-                    byte carOrder = (byte)msg.getNextValue(4);
+                    byte carType = (byte) msg.getNextValue(3);
+                    byte carOrder = (byte) msg.getNextValue(4);
                     parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, true, carOrder);
                 }
                 if (parkedCarInfo != null && parkedCarInfo.iReturn != 6
-                        && parkedCarInfo.iReturn != 11){
+                        && parkedCarInfo.iReturn != 11) {
+                    float scale = (float)msg.getNextValue(5);
+
                     TLVMessage tmp = next.setNext(parkedCarInfo.sCarLicense).setNext(parkedCarInfo.fMoney
                     ).setNext(parkedCarInfo.sInTime
                     ).setNext(parkedCarInfo.iParkedTime);
 
                     File picFile;
                     if (StringUtils.isNotBlank(parkedCarInfo.sInPic)
-                            && (picFile = new File(parkedCarInfo.sInPic)).exists()){
+                            && (picFile = new File(parkedCarInfo.sInPic)).exists()) {
                         aos.setPosition(0);
                         Thumbnails.of(picFile).scale(scale).toOutputStream(aos);
                         byte[] data = new byte[aos.getPosition()];
-                        System.arraycopy(picBuffer,0,data,0,data.length);
+                        System.arraycopy(picBuffer, 0, data, 0, data.length);
                         tmp.setNext(data);
-                        logger.info("compress:{},{}",picFile.length(), data.length);
+                        logger.info("compress:{},{}", picFile.length(), data.length);
                     }
                 } else {
                     //just return null
@@ -122,16 +123,16 @@ public class ParkProxy extends ReversedProxy {
                 response(msg);
                 break;
             case PAY_FEE:
-                carNumber = (String)msg.getNextValue(1);
-                float totalFee = (float)msg.getNextValue(2);
-                String timeStamp = (String)msg.getNextValue(3);
-                watchId = (String)msg.getNextValue(4);
+                carNumber = (String) msg.getNextValue(1);
+                float totalFee = (float) msg.getNextValue(2);
+                String timeStamp = (String) msg.getNextValue(3);
+                watchId = (String) msg.getNextValue(4);
                 boolean success;
-                if (StringUtils.isNotBlank(watchId)){
-                    success = parkHandler.payFee(PAY_FEE,watchId,carNumber,totalFee);
+                if (StringUtils.isNotBlank(watchId)) {
+                    success = parkHandler.payFee(PAY_FEE, watchId, carNumber, totalFee);
                 } else {
-                    byte carType = (byte)msg.getNextValue(5);
-                    success = ParkNative.payParkCarFee(carType,carNumber, timeStamp, totalFee) == 0;
+                    byte carType = (byte) msg.getNextValue(5);
+                    success = ParkNative.payParkCarFee(carType, carNumber, timeStamp, totalFee) == 0;
                 }
                 next.setNext(success ? "OK" : "FAIL");
                 response(msg);
