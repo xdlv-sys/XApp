@@ -1,7 +1,5 @@
 package xd.dl.bean;
 
-import java.util.Base64;
-
 public class CarParkInfo {
     String carNumber;
     float price;

@@ -52,12 +52,8 @@ public class NotifyProxyListener implements ApplicationListener<NotifyProxyEvent
         } else {
             payOrder.setNotifyStatus((short)STATUS_DONE);
         }
-        logger.info("notify proxy result:{} for {}", payOrder.getNotifyStatus(), payOrder.getOutTradeNo());
+        payService.saveOrUpdate(payOrder);
 
-        payService.runSessionCommit((htpl -> {
-            PayOrder order = htpl.load(PayOrder.class, payOrder.getOutTradeNo());
-            order.setNotifyStatus(payOrder.getNotifyStatus());
-            htpl.update(order);
-        }));
+        logger.info("notify proxy result:{} for {}", payOrder.getNotifyStatus(), payOrder.getOutTradeNo());
     }
 }

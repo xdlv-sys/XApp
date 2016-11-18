@@ -1,49 +1,53 @@
 function CarSlide(v) {
     this.waitItem = {
-        carImageData : "#",
+        carImageData: "#",
         index: 1,
         text: ''
     };
-    this.items = [this.waitItem];
+    this.items = [];
     this.loading = false;
 
-    if (v){
+    if (v) {
         this.add(v);
     }
     this.activeSlide = 0;
     this.payType = -1;
 
     this.add = function (carParkInfo) {
-        carParkInfo.text = '轻触图片进行支付';
-        this.items.splice(this.items.length -1,0, carParkInfo);
-        var item = [];
-
-        angular.forEach(this.items, function(v, i) {
-            v.index = i;
-            item.push(v);
-        });
-
-        this.items = item;
-        this.loading = false;
-        if (carParkInfo.wxPay){
-            this.payType = 0;
+        //return if contains
+        if (this.items.contains(carParkInfo, function (v) {
+                if (v.carNumber === carParkInfo.carNumber){
+                    v.consumedTimeValue = carParkInfo.consumedTimeValue;
+                    v.price = carParkInfo.price;
+                    return true;
+                }
+                return false;
+            })) {
+            return;
         }
-        if (carParkInfo.aliPay){
+        carParkInfo.index = this.items.length;
+        this.activeSlide = carParkInfo.index;
+        this.items.push(carParkInfo);
+        this.parsePayType(carParkInfo);
+    };
+
+    this.parsePayType = function(carParkInfo){
+        if (carParkInfo.aliPay) {
             this.payType = 1;
         }
-    }
-    if (this.aliPay) {
-    };
-    this.isEnd = function(){
-        return this.items.length > 1
-            && this.items.length - 1 === this.activeSlide;
-    };
-
-    this.getItem = function(index){
-        if (this.items[index] === this.waitItem){
-            return null;
+        
+        var ua = navigator.userAgent.toLowerCase();
+        if (carParkInfo.wxPay && 
+            ua.match(/MicroMessenger/i) == "micromessenger") {
+            this.payType = 0;
         }
-        return this.items[index];
     };
 
+    this.nextIfNeed = function(cal){
+        if (this.activeSlide === this.items.length - 1){
+            cal(this.activeSlide);
+        } else {
+            this.activeSlide++;
+        }
+    };
 }

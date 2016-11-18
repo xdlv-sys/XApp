@@ -129,7 +129,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
         carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
                 , carParkInfo.getParkId(), watchId, carType, carOrder);
         if (carParkInfo != null) {
-            carParkInfo.setWxPay((wxBrowser()) && StringUtils.isNotBlank(parkInfo.getAppId()));
+            carParkInfo.setWxPay(StringUtils.isNotBlank(parkInfo.getAppId()));
             carParkInfo.setAliPay(StringUtils.isNotBlank(parkInfo.getPartnerId()));
             if (carParkInfo.carImageData() != null){
                 session().setAttribute(PIC_KEY, carParkInfo.carImageData());
@@ -148,6 +148,8 @@ public class PayAction extends ParkBaseAction implements DlConst {
         byte[] data = (byte[])session().getAttribute(PIC_KEY);
         if (data != null){
             imgFile =  new ByteArrayInputStream(data);
+            session().removeAttribute(PIC_KEY);
+            logger.info("sessionImage:{}", data.length);
         }
         return IMG;
     }
@@ -169,10 +171,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
         unifiedOrder.setNotify_url(wxNotifyUrl);
         unifiedOrder.setLimit_pay(parkInfo.getLimitPay());
         unifiedOrder.setOpenid(openid);
-        if (!wxBrowser()){
-            unifiedOrder.setTrade_type("APP");
-            logger.info("open wx in another browser");
-        }
+
         unifiedOrder.setSign(WxUtil.getSign(unifiedOrder, parkInfo.getWxKey()));
 
         String xml = WxUtil.constructUnifiedOrderXml(unifiedOrder);

@@ -1,4 +1,4 @@
-var app = angular.module("parkApp", ['ui.bootstrap', 'ngTouch']);
+var app = angular.module("parkApp", ['ui.bootstrap', 'ngAnimate' ,'ngTouch']);
 
 app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $location, common) {
     $scope.XAPP_DATA = XAPP_DATA;
@@ -7,19 +7,14 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
     $scope.carNumber = new CarNumber(localStorage.getItem('carNumber'));
 
     $scope.slides = new CarSlide();
-    $scope.$watch('slides.activeSlide', function (v) {
-        if ($scope.slides.isEnd()){
-            $scope.query(v + 1);
-        }
-        var item = $scope.slides.getItem(v);
-        if (item){
-            $scope.carNumber.parse(item.carNumber);
-        }
-    });
+    
+    $scope.next = function(){
+        $scope.slides.nextIfNeed(function(active){
+            $scope.query(active + 2);
+        });
+    };
     $scope.selectPic = function (index) {
-        if ($scope.slides.payType > -1){
-            $scope.payNow();
-        }
+        $scope.payNow();
     };
 
     $scope.carTypes = new function () {
@@ -60,7 +55,12 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
 
         common.post('pay!queryCarNumber.cmd', params, function (data) {
             if (!data.carParkInfo) {
-                common.error('未查到车辆或己出场，请重新输入车牌号');
+                if (!common.isBlank(carOrder)){
+                    common.info('没有更多了');
+                } else {
+                    common.error('未查到车辆或己出场，请重新输入车牌号');
+                }
+                
             } else {
                 $scope.slides.add(new CarParkInfo(data.carParkInfo));
                 $scope.carNumber.parse(data.carParkInfo.carNumber);
@@ -69,6 +69,10 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
     };
 
     $scope.payNow = function () {
+        if ($scope.slides.payType === -1){
+            common.error('不支持的支付方式');
+            return;
+        }
         if ($scope.slides.payType === 0) {
             common.post('pay!wxPay.cmd', $scope.params(), function (data) {
                 var wxOrder = data.wxOrder;
