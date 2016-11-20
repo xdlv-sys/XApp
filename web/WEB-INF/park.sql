@@ -69,5 +69,7 @@ alter table t_park_info add column `ali_public_key` varchar(512) after `ali_sha_
 update t_park_info set ali_public_key='MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB' where park_id in('001','111','112');
 
 -- -------
-
 insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('proxy_pic_scale','0.13','代理进场图片清晰度',0);
+-- ---
+alter table t_pay_order add column `s_id` VARCHAR(32) after `car_type`;
+alter table t_pay_order add column `enter_time` VARCHAR(32) after `s_id`;

@@ -1,20 +1,15 @@
-function CarSlide(v) {
-    this.waitItem = {
-        carImageData: "#",
-        index: 1,
-        text: ''
-    };
+function CarSlide() {
+
     this.items = [];
     this.loading = false;
 
-    if (v) {
-        this.add(v);
-    }
     this.activeSlide = 0;
     this.payType = -1;
 
     this.add = function (carParkInfo) {
-        //return if contains
+        this.parsePayType(carParkInfo);
+
+        //return if contains the same car number
         if (this.items.contains(carParkInfo, function (v) {
                 if (v.carNumber === carParkInfo.carNumber){
                     v.consumedTimeValue = carParkInfo.consumedTimeValue;
@@ -26,9 +21,8 @@ function CarSlide(v) {
             return;
         }
         carParkInfo.index = this.items.length;
-        this.activeSlide = carParkInfo.index;
+        
         this.items.push(carParkInfo);
-        this.parsePayType(carParkInfo);
     };
 
     this.parsePayType = function(carParkInfo){
@@ -45,9 +39,13 @@ function CarSlide(v) {
 
     this.nextIfNeed = function(cal){
         if (this.activeSlide === this.items.length - 1){
+            if (cal)
             cal(this.activeSlide);
         } else {
             this.activeSlide++;
         }
+    };
+    this.getActiveItem = function(){
+        return this.activeSlide < this.items.length ? this.items[this.activeSlide] : null;
     };
 }

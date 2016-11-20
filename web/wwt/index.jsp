@@ -39,7 +39,7 @@
     </div>
     <hr style="margin-top: 10px;margin-bottom: 10px;">
     <div id="queryResult" ng-show="slides.items.length > 0">
-        <div uib-carousel active="slides.activeSlide" interval="0" no-wrap="true" ng-hide="XAPP_DATA.watchId">
+        <div uib-carousel active="slides.activeSlide" interval="0" no-wrap="true" ng-hide="XAPP_DATA.watchId || !slides.items[slides.activeSlide].hasPic">
             <div uib-slide ng-repeat="slide in slides.items track by slide.index" index="slide.index" ng-swipe-left="next()" ng-swipe-right="$parent.$parent.prev()">
                 <img ng-src="{{slide.carImageData}}" style="margin:auto; width: 100%">
                 <div class="carousel-caption">

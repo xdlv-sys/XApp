@@ -9,6 +9,7 @@ function CarParkInfo(v){
         me[i] = v;
     });
     //this.carImageData = 'data:image/jpg;base64,' + this.carImageData;
+    
     this.carImageData = 'pay!sessionImage.cmd?' + v.carNumber;
     var hours = this.consumedTime / 60 | 0;
     var minutes = this.consumedTime % 60;

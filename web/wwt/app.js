@@ -43,11 +43,17 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
             ret.openid = $scope.XAPP_DATA.openId;
         }
         ret['carParkInfo.carNumber'] = $scope.carNumber.getCarNumber();
+        var carParkInfo = $scope.slides.getActiveItem();
+        if (!common.isBlank(carParkInfo)){
+            ret['carParkInfo.startTime'] = carParkInfo.startTime;
+            ret['carParkInfo.dbId'] = carParkInfo.dbId;
+        }
+        
         ret.carType = $scope.carTypes.selected.type;
         return ret;
     };
 
-    $scope.query = function (carOrder) {
+    $scope.query = function (carOrder,s) {
         var params = $scope.params();
         if (!common.isBlank(carOrder)) {
             params.carOrder = carOrder;
@@ -64,6 +70,9 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
             } else {
                 $scope.slides.add(new CarParkInfo(data.carParkInfo));
                 $scope.carNumber.parse(data.carParkInfo.carNumber);
+                common.interval(function(){
+                    $scope.slides.nextIfNeed();
+                },50,1);
             }
         });
     };

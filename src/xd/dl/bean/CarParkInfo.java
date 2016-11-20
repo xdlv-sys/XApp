@@ -6,17 +6,20 @@ public class CarParkInfo {
     String startTime;
     int consumedTime;
     String parkId;
+    String dbId;
 
     byte[] carImageData;
     byte carOrder;
 
     boolean aliPay = false;
     boolean wxPay = false;
+    boolean hasPic = false;
 
     public CarParkInfo(){}
 
     public CarParkInfo(String carNumber, float price, String startTime
-            ,int consumedTime, String parkId, byte[] carImageRawData, byte carOrder) {
+            ,int consumedTime, String parkId, byte[] carImageRawData
+            , byte carOrder, String dbId) {
         this();
         this.carNumber = carNumber;
         this.price = price;
@@ -26,6 +29,8 @@ public class CarParkInfo {
         this.carOrder = carOrder;
 
         this.carImageData = carImageRawData;
+        this.hasPic = this.carImageData != null;
+        this.dbId = dbId;
     }
 
     public String getCarNumber() {
@@ -90,5 +95,17 @@ public class CarParkInfo {
 
     public byte getCarOrder() {
         return carOrder;
+    }
+
+    public boolean isHasPic() {
+        return hasPic;
+    }
+
+    public String getDbId() {
+        return dbId;
+    }
+
+    public void setDbId(String dbId) {
+        this.dbId = dbId;
     }
 }

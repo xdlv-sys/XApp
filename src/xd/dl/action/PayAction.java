@@ -119,7 +119,9 @@ public class PayAction extends ParkBaseAction implements DlConst {
         aliPayBean.setSign(AliPayUtil.getSign(aliPayBean, parkInfo.getAliShaRsaKey()));
 
         PayOrder payOrder = new PayOrder(aliPayBean.getOut_trade_no(), parkInfo.getParkId()
-                , carParkInfo.getCarNumber(), carParkInfo.getPrice(), (short) STATUS_INI, PAY_ALI, watchId, carType);
+                , carParkInfo.getCarNumber(), carParkInfo.getPrice()
+                , (short) STATUS_INI, PAY_ALI, watchId, carType
+                , carParkInfo.getDbId(),carParkInfo.getStartTime());
         //save the pay order
         payService.save(payOrder);
         return Action.SUCCESS;
@@ -200,7 +202,8 @@ public class PayAction extends ParkBaseAction implements DlConst {
             wxOrder.setPaySign(WxUtil.getSign(params, parkInfo.getWxKey()));
 
             payOrder = new PayOrder(unifiedOrder.getOut_trade_no(), parkInfo.getParkId()
-                    , carParkInfo.getCarNumber(), carParkInfo.getPrice(), (short) STATUS_INI, PAY_WX, watchId, carType);
+                    , carParkInfo.getCarNumber(), carParkInfo.getPrice()
+                    , (short) STATUS_INI, PAY_WX, watchId, carType,carParkInfo.getDbId(),carParkInfo.getStartTime());
             //save the pay order
             payService.save(payOrder);
 

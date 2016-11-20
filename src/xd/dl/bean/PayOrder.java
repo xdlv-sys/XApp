@@ -22,12 +22,14 @@ public class PayOrder {
     private Short payFlag;
     private String watchId;
     private byte carType;
+    private String sId;
+    private String enterTime;
     private Timestamp timeStamp;
 
     public PayOrder(){}
 
     public PayOrder(String outTradeNo, String parkId, String carNumber, Float totalFee, Short payStatus
-            , Short payFlag, String watchId, byte carType) {
+            , Short payFlag, String watchId, byte carType, String sId, String enterTime) {
         this.outTradeNo = outTradeNo;
         this.parkId = parkId;
         this.carNumber = carNumber;
@@ -36,6 +38,8 @@ public class PayOrder {
         this.payFlag = payFlag;
         this.watchId = watchId;
         this.carType = carType;
+        this.sId = sId;
+        this.enterTime = enterTime;
     }
 
     public String getOutTradeNo() {
@@ -124,6 +128,22 @@ public class PayOrder {
 
     public void setCarType(byte carType) {
         this.carType = carType;
+    }
+
+    public String getsId() {
+        return sId;
+    }
+
+    public void setsId(String sId) {
+        this.sId = sId;
+    }
+
+    public String getEnterTime() {
+        return enterTime;
+    }
+
+    public void setEnterTime(String enterTime) {
+        this.enterTime = enterTime;
     }
 
     @Override
