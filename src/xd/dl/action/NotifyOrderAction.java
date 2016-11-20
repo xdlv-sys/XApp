@@ -71,7 +71,7 @@ public class NotifyOrderAction extends BaseAction implements IDongHui {
         String payEndTime = convertTime(currenttime);
         logger.info("{} ->pay end time:{}", currenttime, payEndTime);
         boolean ret = ParkNative.payParkCarFee(carPlateColorType == 2 ? 1 : 0, carnumber
-                , payEndTime, parkingPrice) == 0;
+                , payEndTime, parkingPrice,"","",0) == 0;
         if (ret) {
             code = 200;
             msg = success;

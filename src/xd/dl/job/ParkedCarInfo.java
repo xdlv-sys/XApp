@@ -12,5 +12,7 @@ public class ParkedCarInfo {
 
     public String sCarLicense;
 
+    public String sId = "";
+
     public int iReturn;
 }

@@ -64,7 +64,7 @@ public class QueryOrder extends BaseAction implements IDongHui {
     public String queryOrder() {
         logger.info("query order {}", carnumber);
         ParkedCarInfo parkedInfo = ParkNative.getParkedCarInfo(
-                carPlateColorType == 2 ? 1 : 0, carnumber,15, false,1);
+                carPlateColorType == 2 ? 1 : 0, carnumber,15, 0,1,"","");
 
         msg = fail;
         code = 201;

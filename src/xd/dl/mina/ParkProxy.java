@@ -95,7 +95,7 @@ public class ParkProxy extends ReversedProxy {
                 } else {
                     byte carType = (byte) msg.getNextValue(3);
                     byte carOrder = (byte) msg.getNextValue(4);
-                    parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, true, carOrder);
+                    parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 1, carOrder,"","");
                 }
                 if (parkedCarInfo != null && parkedCarInfo.iReturn != 6
                         && parkedCarInfo.iReturn != 11) {
@@ -103,10 +103,10 @@ public class ParkProxy extends ReversedProxy {
 
                     TLVMessage tmp = next.setNext(parkedCarInfo.sCarLicense).setNext(parkedCarInfo.fMoney
                     ).setNext(parkedCarInfo.sInTime
-                    ).setNext(parkedCarInfo.iParkedTime);
+                    ).setNext(parkedCarInfo.iParkedTime).setNext(parkedCarInfo.sId);
 
                     File picFile;
-                    if (StringUtils.isNotBlank(parkedCarInfo.sInPic)
+                    if (scale > 0 && StringUtils.isNotBlank(parkedCarInfo.sInPic)
                             && (picFile = new File(parkedCarInfo.sInPic)).exists()) {
                         aos.setPosition(0);
                         Thumbnails.of(picFile).scale(scale).toOutputStream(aos);
@@ -132,7 +132,11 @@ public class ParkProxy extends ReversedProxy {
                     success = parkHandler.payFee(PAY_FEE, watchId, carNumber, totalFee);
                 } else {
                     byte carType = (byte) msg.getNextValue(5);
-                    success = ParkNative.payParkCarFee(carType, carNumber, timeStamp, totalFee) == 0;
+                    String sId = (String)msg.getNextValue(6);
+                    String searchTime = (String)msg.getNextValue(7);
+
+                    success = ParkNative.payParkCarFee(carType, carNumber
+                            , timeStamp, totalFee, sId, searchTime,1) == 0;
                 }
                 next.setNext(success ? "OK" : "FAIL");
                 response(msg);
