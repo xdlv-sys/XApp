@@ -12,7 +12,7 @@ public class ParkedCarInfo {
 
     public String sCarLicense;
 
-    public String sId = "";
+    public String sID = "";
 
     public int iReturn;
 }

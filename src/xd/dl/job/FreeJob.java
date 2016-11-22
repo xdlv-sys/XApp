@@ -21,13 +21,13 @@ public class FreeJob extends BaseJob implements IDongHui{
     @Override
     public void doExecute() throws Exception {
         logger.info("start to execute free job");
-        int freeParkPosition = parkService.getFreeParkStation();
+        LeftParkInfo[] infos = ParkNative.getLeftParkInfo();
 
         String timeStamp = getTimeStamp();
 
         String ret = HttpClientTpl.post(svrAddress(), new String[][]{
                 {"Parkingno", parkingNo},
-                {"Freenum", String.valueOf(freeParkPosition)},
+                {"Freenum", String.valueOf(infos[0].iLeftNum + infos[1].iLeftNum)},
                 {"Timestamp", timeStamp},
                 {"Uniquekey",uniqueKey},
                 {"Token", md5(timeStamp, parkingNo, uniqueKey)}

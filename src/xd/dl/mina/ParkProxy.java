@@ -6,6 +6,7 @@ import org.apache.derby.iapi.services.io.ArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import xd.dl.job.LeftParkInfo;
 import xd.dl.job.ParkNative;
 import xd.dl.job.ParkedCarInfo;
 import xd.fw.mina.tlv.ReversedProxy;
@@ -34,9 +35,6 @@ public class ParkProxy extends ReversedProxy {
     @Value("${park_id}")
     String parkId;
 
-    @Value("${park_name}")
-    String parkName;
-
     @Value("${version}")
     int version;
 
@@ -62,6 +60,9 @@ public class ParkProxy extends ReversedProxy {
 
     @Override
     protected void constructRegistryMessage(TLVMessage registryMessage) {
+        LeftParkInfo[] infos = ParkNative.getLeftParkInfo();
+        int leftNum = infos[0].iLeftNum + infos[1].iLeftNum;
+        String parkName = infos[0].sParkName;
         registryMessage.setNext(parkId).setNext(parkName).setNext(100).setNext(version);
     }
 
@@ -103,7 +104,7 @@ public class ParkProxy extends ReversedProxy {
 
                     TLVMessage tmp = next.setNext(parkedCarInfo.sCarLicense).setNext(parkedCarInfo.fMoney
                     ).setNext(parkedCarInfo.sInTime
-                    ).setNext(parkedCarInfo.iParkedTime).setNext(parkedCarInfo.sId);
+                    ).setNext(parkedCarInfo.iParkedTime).setNext(parkedCarInfo.sID);
 
                     File picFile;
                     if (scale > 0 && StringUtils.isNotBlank(parkedCarInfo.sInPic)
