@@ -27,6 +27,13 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
         $scope.queryDisabled = !/^[\da-zA-Z]{5}$/.test(v);
     });
 
+    $scope.$watch('slides.activeSlide', function (v) {
+        var item = $scope.slides.getActiveItem();
+        if (item){
+            $scope.carNumber = new CarNumber(item.carNumber);
+        }
+    });
+
     if (!common.isBlank($scope.XAPP_DATA.watchId)) {
         common.interval(function () {
             $scope.query();
@@ -53,7 +60,7 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
         return ret;
     };
 
-    $scope.query = function (carOrder,s) {
+    $scope.query = function (carOrder) {
         var params = $scope.params();
         if (!common.isBlank(carOrder)) {
             params.carOrder = carOrder;
@@ -68,6 +75,9 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
                 }
                 
             } else {
+                if (common.isBlank(carOrder)){
+                    $scope.slides = new CarSlide();
+                }
                 $scope.slides.add(new CarParkInfo(data.carParkInfo));
                 $scope.carNumber.parse(data.carParkInfo.carNumber);
                 common.interval(function(){

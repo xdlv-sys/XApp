@@ -215,7 +215,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
     private void assertCarParkInfoLegalForPay() throws Exception {
         carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
-                , carParkInfo.getParkId(), watchId, carType, carOrder, DlConf.proxy_pic_scale);
+                , carParkInfo.getParkId(), watchId, carType, carOrder, 0);
         if (carParkInfo == null || carParkInfo.getPrice() == 0) {
             throw new Exception("can not pay since price is zero or no car info");
         }

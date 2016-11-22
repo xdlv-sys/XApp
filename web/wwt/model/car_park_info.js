@@ -9,8 +9,12 @@ function CarParkInfo(v){
         me[i] = v;
     });
     //this.carImageData = 'data:image/jpg;base64,' + this.carImageData;
+    if (v.hasPic){
+        this.carImageData = 'pay!sessionImage.cmd?' + v.carNumber;
+    } else {
+        this.carImageData = 'd.jpg';
+    }
     
-    this.carImageData = 'pay!sessionImage.cmd?' + v.carNumber;
     var hours = this.consumedTime / 60 | 0;
     var minutes = this.consumedTime % 60;
     this.consumedTimeValue = '' + hours + '小时' + minutes + '分钟';

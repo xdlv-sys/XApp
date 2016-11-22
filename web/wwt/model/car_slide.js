@@ -8,16 +8,18 @@ function CarSlide() {
 
     this.add = function (carParkInfo) {
         this.parsePayType(carParkInfo);
-
         //return if contains the same car number
+        var index;
         if (this.items.contains(carParkInfo, function (v) {
                 if (v.carNumber === carParkInfo.carNumber){
                     v.consumedTimeValue = carParkInfo.consumedTimeValue;
                     v.price = carParkInfo.price;
+                    index = v.index;
                     return true;
                 }
                 return false;
             })) {
+            this.activeSlide = index;
             return;
         }
         carParkInfo.index = this.items.length;
