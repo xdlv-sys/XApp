@@ -11,9 +11,10 @@ function CarSlide() {
         //return if contains the same car number
         var index;
         if (this.items.contains(carParkInfo, function (v) {
-                if (v.carNumber === carParkInfo.carNumber){
+                if (v.dbId === carParkInfo.dbId){
                     v.consumedTimeValue = carParkInfo.consumedTimeValue;
                     v.price = carParkInfo.price;
+                    v.carNumber = carParkInfo.carNumber;
                     index = v.index;
                     return true;
                 }

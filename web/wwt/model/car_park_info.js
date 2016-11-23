@@ -10,7 +10,7 @@ function CarParkInfo(v){
     });
     //this.carImageData = 'data:image/jpg;base64,' + this.carImageData;
     if (v.hasPic){
-        this.carImageData = 'pay!sessionImage.cmd?' + v.carNumber;
+        this.carImageData = 'pay!sessionImage.cmd?' + v.dbId;
     } else {
         this.carImageData = 'd.jpg';
     }

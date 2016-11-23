@@ -55,7 +55,8 @@ public class ParkHandler extends ReversedHandler {
     public boolean payParkingFee(PayOrder order){
         TLVMessage message = createRequest(PAY_FEE,order.getCarNumber(),order.getTotalFee(),
                 sdf.format(order.getTimeStamp()),
-                order.getWatchId() == null ? "" : order.getWatchId(), order.getCarType());
+                order.getWatchId() == null ? "" : order.getWatchId()
+                , order.getCarType(),order.getsId(),order.getEnterTime());
         TLVMessage ret = request(order.getParkId(),message);
         return ret != null && "OK".equals(ret.getValue());
     }
