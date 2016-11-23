@@ -130,7 +130,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
     public String queryCarNumber() throws Exception {
         ParkInfo parkInfo = parkService.get(ParkInfo.class, carParkInfo.getParkId());
         carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
-                , carParkInfo.getParkId(), watchId, carType, carOrder, DlConf.proxy_pic_scale);
+                , carParkInfo.getParkId(), watchId, carType, carOrder, "","",DlConf.proxy_pic_scale);
         if (carParkInfo != null) {
             carParkInfo.setWxPay(StringUtils.isNotBlank(parkInfo.getAppId()));
             carParkInfo.setAliPay(StringUtils.isNotBlank(parkInfo.getPartnerId()));
@@ -215,7 +215,8 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
     private void assertCarParkInfoLegalForPay() throws Exception {
         carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
-                , carParkInfo.getParkId(), watchId, carType, carOrder, 0);
+                , carParkInfo.getParkId(), watchId, carType, carOrder
+                , carParkInfo.getDbId(), carParkInfo.getStartTime(),0);
         if (carParkInfo == null || carParkInfo.getPrice() == 0) {
             throw new Exception("can not pay since price is zero or no car info");
         }
