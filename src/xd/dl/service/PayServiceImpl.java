@@ -1,19 +1,13 @@
 package xd.dl.service;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import xd.dl.bean.PayOrder;
-import xd.dl.scheduler.NotifyProxyEvent;
 import xd.fw.service.IConst;
 import xd.fw.service.impl.HibernateServiceImpl;
 
 @Service
 public class PayServiceImpl extends HibernateServiceImpl implements PayService , IConst {
 
-    @Autowired
+    /*@Autowired
     ApplicationContext applicationContext;
 
     @Transactional("transactionManager")
@@ -35,7 +29,7 @@ public class PayServiceImpl extends HibernateServiceImpl implements PayService ,
             applicationContext.publishEvent(new NotifyProxyEvent(order.getOutTradeNo()));
         }
         return true;
-    }
+    }*/
 
     /*@Transactional("transactionManager")
     @Override
