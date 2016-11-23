@@ -141,12 +141,15 @@ public abstract class ReversedProxy implements IMinaConst {
     private void checkSession() throws Exception {
         int count = 0;
         boolean reconnect = false;
-        while (session == null || !session.isConnected()) {
+        while (session == null || !session.isConnected() || !session.isActive()) {
             logger.info("try to connect center");
             reconnect = true;
             ConnectFuture future = connector.connect(inetSocketAddress());
             future.awaitUninterruptibly();
             try {
+                if (session != null){
+                    session.closeNow();
+                }
                 session = future.getSession();
             } catch (Exception e) {
                 logger.warn("can not connect center, try again later:" + e);
