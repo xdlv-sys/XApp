@@ -46,6 +46,8 @@ public class ParkProxy extends ReversedProxy {
     String user;
     @Value("${db_pwd}")
     String pwd;
+    @Value("${park_name}")
+    String parkName;
 
     @PostConstruct
     public void init() {
@@ -60,9 +62,6 @@ public class ParkProxy extends ReversedProxy {
 
     @Override
     protected void constructRegistryMessage(TLVMessage registryMessage) {
-        LeftParkInfo[] infos = ParkNative.getLeftParkInfo();
-        int leftNum = infos[0].iLeftNum + infos[1].iLeftNum;
-        String parkName = infos[0].sParkName;
         registryMessage.setNext(parkId).setNext(parkName).setNext(100).setNext(version);
     }
 
