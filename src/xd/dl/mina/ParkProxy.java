@@ -95,11 +95,17 @@ public class ParkProxy extends ReversedProxy {
                 } else {
                     byte carType = (byte) msg.getNextValue(3);
                     byte carOrder = (byte) msg.getNextValue(4);
-                    parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 1, carOrder,"","");
+                    String dbId = (String)msg.getNextValue(5);
+                    String enterTime = (String)msg.getNextValue(6);
+                    if (StringUtils.isBlank(dbId)){
+                        parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 1, carOrder,"","");
+                    } else {
+                        parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 2, carOrder,dbId,enterTime);
+                    }
                 }
                 if (parkedCarInfo != null && parkedCarInfo.iReturn != 6
                         && parkedCarInfo.iReturn != 11) {
-                    float scale = (float)msg.getNextValue(5);
+                    float scale = (float)msg.getNextValue(7);
 
                     TLVMessage tmp = next.setNext(parkedCarInfo.sCarLicense).setNext(parkedCarInfo.fMoney
                     ).setNext(parkedCarInfo.sInTime
