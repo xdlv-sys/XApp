@@ -1,12 +1,51 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:s="http://www.springframework.org/schema/security"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security.xsd">
+       xmlns:s="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <s:ldap-server url="ldap://localhost:10389/dc=tax,dc=com" />
-    <s:ldap-authentication-provider user-dn-pattern="uid={0},ou=people" group-search-base="ou=groups"/>
+    <s:http auto-config='true'>
+        <s:intercept-url pattern="/**" access="ROLE_USER" />
+    </s:http>
 
+    <s:authentication-manager>
+        <s:ldap-authentication-provider
+                group-search-filter="member={0}"
+                group-search-base="ou=groups"
+                user-search-base="ou=people"
+                user-search-filter="uid={0}"
+        />
+        <s:authentication-provider ref='ldapAuthProvider' />
+    </s:authentication-manager>
+
+    <bean id="securityContextSource"
+          class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+        <constructor-arg value="ldap://localhost:10389"/>
+        <property name="userDn" value="uid=admin,ou=system"/>
+        <property name="password" value="123456"/>
+    </bean>
+
+    <bean id="ldapAuthProvider"
+          class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+        <constructor-arg>
+            <bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
+                <constructor-arg ref="securityContextSource"/>
+                <property name="userDnPatterns">
+                    <list>
+                        <value>uid={0},ou=people,dc=tax,dc=com</value>
+                    </list>
+                </property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator">
+                <constructor-arg ref="securityContextSource"/>
+                <constructor-arg value="ou=groups,dc=tax,dc=com"/>
+                <property name="groupRoleAttribute" value="ou"/>
+            </bean>
+        </constructor-arg>
+    </bean>
 
 </beans>

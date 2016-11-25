@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
 @Service
 public class Conf {
     @Value("${dynamic_config_load}")
