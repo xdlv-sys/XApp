@@ -24,14 +24,15 @@ public class FreeJob extends BaseJob implements IDongHui{
 
         String timeStamp = getTimeStamp();
 
+        int leftCount = ParkNative.getLeftCount();
         String ret = HttpClientTpl.post(svrAddress(), new String[][]{
                 {"Parkingno", parkingNo},
-                {"Freenum", String.valueOf(ParkNative.getLeftCount())},
+                {"Freenum", String.valueOf(leftCount)},
                 {"Timestamp", timeStamp},
                 {"Uniquekey",uniqueKey},
                 {"Token", md5(timeStamp, parkingNo, uniqueKey)}
         });
-        logger.info("free result:" + ret);
+        logger.info("free:{} ret:{}",leftCount,ret);
     }
 
     protected String svrAddress() {

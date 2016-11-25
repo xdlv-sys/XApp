@@ -30,8 +30,8 @@
         <property name="taskExecutor" ref="quartzExecutor"/>
         <property name="triggers">
             <list>
-                <!--<ref bean="memoryCheckDoTime"/>
                 <ref bean="freeJobDoTime"/>
+                <!--<ref bean="memoryCheckDoTime"/>
                 <ref bean="proxyJobDoTime"/>-->
             </list>
         </property>
