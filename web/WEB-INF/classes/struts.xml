@@ -21,7 +21,7 @@
     <constant name="struts.convention.action.name.lowercase" value="true"/>
 	<constant name="struts.multipart.maxSize" value="9000000"/>
 
-	<package name="xapp-default" namespace="" extends="json-default">
+	<package name="xapp-default" namespace="/" extends="json-default">
 		<global-exception-mappings>
 			<exception-mapping exception="java.lang.Exception" result="error"/>
 		</global-exception-mappings>
