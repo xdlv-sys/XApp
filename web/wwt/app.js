@@ -32,7 +32,7 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
             $scope.query();
         }, 300, 1);
     }
-    $scope.params = function () {
+    $scope.params = function (pay) {
         var ret = {};
         ret['carParkInfo.parkId'] = $scope.XAPP_DATA.parkId;
         if ($scope.XAPP_DATA.watchId) {
@@ -47,6 +47,9 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
         if (!common.isBlank(carParkInfo)){
             ret['carParkInfo.startTime'] = carParkInfo.startTime;
             ret['carParkInfo.dbId'] = carParkInfo.dbId;
+            if (pay){
+                ret['carParkInfo.carNumber'] = carParkInfo.carNumber;
+            }
         }
         
         ret.carType = $scope.carTypes.selected.type;
@@ -84,8 +87,9 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
             common.error('不支持的支付方式');
             return;
         }
+        var params = $scope.params(true);
         if ($scope.slides.payType === 0) {
-            common.post('pay!wxPay.cmd', $scope.params(), function (data) {
+            common.post('pay!wxPay.cmd', params, function (data) {
                 var wxOrder = data.wxOrder;
                 if (common.isBlank(wxOrder)) {
                     common.error('无法完成支付，请重试');
@@ -94,7 +98,7 @@ app.controller('parkCtrl', ['$scope', '$location', 'common', function ($scope, $
                 $scope.lauchWxPay(wxOrder, data.payOrder);
             });
         } else { //ali pay
-            common.post('pay!aliPay.cmd', $scope.params(), function (data) {
+            common.post('pay!aliPay.cmd', params, function (data) {
                 var aliPayBean = data.aliPayBean;
                 if (common.isBlank(aliPayBean)) {
                     common.error('无法完成支付，请重试');
