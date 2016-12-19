@@ -99,7 +99,7 @@ public class ParkProxy extends ReversedProxy {
                 }
                 if (parkedCarInfo != null && parkedCarInfo.iReturn != 6
                         && parkedCarInfo.iReturn != 11) {
-                    float scale = (float)msg.getNextValue(5);
+                    float scale = (float)msg.getNextValue(7);
 
                     TLVMessage tmp = next.setNext(parkedCarInfo.sCarLicense).setNext(parkedCarInfo.fMoney
                     ).setNext(parkedCarInfo.sInTime
