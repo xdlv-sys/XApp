@@ -32,7 +32,7 @@ public class FreeJob extends BaseJob implements IDongHui{
                 {"Uniquekey",uniqueKey},
                 {"Token", md5(timeStamp, parkingNo, uniqueKey)}
         });
-        logger.info("free:{} ret:{}",leftCount,ret);
+        logger.info("free {} result {}",leftCount,ret);
     }
 
     protected String svrAddress() {

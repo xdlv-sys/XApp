@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import xd.dl.job.LeftParkInfo;
 import xd.dl.job.ParkNative;
 import xd.dl.job.ParkedCarInfo;
+import xd.dl.job.ViewCarportRoomInfo;
 import xd.fw.mina.tlv.ReversedProxy;
 import xd.fw.mina.tlv.TLVMessage;
 
@@ -22,7 +23,7 @@ import java.net.InetSocketAddress;
 @Service
 public class ParkProxy extends ReversedProxy {
 
-    static final int QUERY_CAR = 3, PAY_FEE = 4, PAY_FEE_NOTIFY = 9;
+    static final int QUERY_CAR = 3, PAY_FEE = 4,QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9;
 
     @Autowired
     ParkHandler parkHandler;
@@ -125,7 +126,6 @@ public class ParkProxy extends ReversedProxy {
                     //just return null
                     next.setNext(NULL_MSG);
                 }
-
                 response(msg);
                 break;
             case PAY_FEE:
@@ -147,8 +147,40 @@ public class ParkProxy extends ReversedProxy {
                 next.setNext(success ? "OK" : "FAIL");
                 response(msg);
                 break;
+            case QUERY_CAR2:
+                carNumber = (String) msg.getNextValue(1);
+                ViewCarportRoomInfo[] carportInfos = ParkNative.getCarportInfo(carNumber);
+                if (carportInfos == null || carportInfos.length == 0){
+                    logger.info("there is no carportInfo for query:{}", carNumber);
+                    next.setNext(NULL_MSG);
+                    response(msg);
+                    return;
+                }
+                next.setNext(parkId);
+                next.setNext(carportInfos.length);
+                for (ViewCarportRoomInfo info : carportInfos){
+                    next.setNext(safe(info.sCarportNum));
+                    next.setNext(safe(info.sRoomNum));
+                    next.setNext(safe(info.sName));
+                    next.setNext(safe(info.sAddress));
+                    next.setNext(safe(info.sPhoneNumber));
+                    next.setNext(safe(info.sPosition));
+                    next.setNext(safe(info.sStartDate));
+                    next.setNext(safe(info.sEndDate));
+                    next.setNext(info.fDeposit);
+                    next.setNext(info.bTemporary);
+                    next.setNext(safe(info.sRemark));
+                    next.setNext(safe(info.sRentName));
+                    next.setNext(info.fRentMoney);
+                    next.setNext(safe(info.sParkName));
+                }
+                response(msg);
+                break;
             default:
                 throw new Exception("can not recognize the code:" + msg.getValue());
         }
+    }
+    String safe(String str){
+        return str == null ? "" : str;
     }
 }
