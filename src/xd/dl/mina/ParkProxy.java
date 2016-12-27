@@ -23,7 +23,7 @@ import java.net.InetSocketAddress;
 @Service
 public class ParkProxy extends ReversedProxy {
 
-    static final int QUERY_CAR = 3, PAY_FEE = 4,QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9;
+    static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9;
 
     @Autowired
     ParkHandler parkHandler;
@@ -92,21 +92,21 @@ public class ParkProxy extends ReversedProxy {
                     parkedCarInfo.fMoney = 0.01f;
                     parkedCarInfo.iParkedTime = 162;
                     parkedCarInfo.sInTime = "2017-10-10 00:00：01";*/
-                    parkedCarInfo = parkHandler.queryCarInfo(QUERY_CAR,watchId,carNumber);
+                    parkedCarInfo = parkHandler.queryCarInfo(QUERY_CAR, watchId, carNumber);
                 } else {
                     byte carType = (byte) msg.getNextValue(3);
                     byte carOrder = (byte) msg.getNextValue(4);
-                    String dbId = (String)msg.getNextValue(5);
-                    String enterTime = (String)msg.getNextValue(6);
-                    if (StringUtils.isBlank(dbId)){
-                        parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 1, carOrder,"","");
+                    String dbId = (String) msg.getNextValue(5);
+                    String enterTime = (String) msg.getNextValue(6);
+                    if (StringUtils.isBlank(dbId)) {
+                        parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 1, carOrder, "", "");
                     } else {
-                        parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 2, carOrder,dbId,enterTime);
+                        parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 2, carOrder, dbId, enterTime);
                     }
                 }
                 if (parkedCarInfo != null && parkedCarInfo.iReturn != 6
                         && parkedCarInfo.iReturn != 11) {
-                    float scale = (float)msg.getNextValue(7);
+                    float scale = (float) msg.getNextValue(7);
 
                     TLVMessage tmp = next.setNext(parkedCarInfo.sCarLicense).setNext(parkedCarInfo.fMoney
                     ).setNext(parkedCarInfo.sInTime
@@ -138,11 +138,11 @@ public class ParkProxy extends ReversedProxy {
                     success = parkHandler.payFee(PAY_FEE, watchId, carNumber, totalFee);
                 } else {
                     byte carType = (byte) msg.getNextValue(5);
-                    String sId = (String)msg.getNextValue(6);
-                    String searchTime = (String)msg.getNextValue(7);
+                    String sId = (String) msg.getNextValue(6);
+                    String searchTime = (String) msg.getNextValue(7);
 
                     success = ParkNative.payParkCarFee(carType, carNumber
-                            , timeStamp, totalFee, sId, searchTime,1) == 0;
+                            , timeStamp, totalFee, sId, searchTime, 1) == 0;
                 }
                 next.setNext(success ? "OK" : "FAIL");
                 response(msg);
@@ -150,37 +150,37 @@ public class ParkProxy extends ReversedProxy {
             case QUERY_CAR2:
                 carNumber = (String) msg.getNextValue(1);
                 ViewCarportRoomInfo[] carportInfos = ParkNative.getCarportInfo(carNumber);
-                if (carportInfos == null || carportInfos.length == 0){
+                if (carportInfos == null || carportInfos.length == 0) {
                     logger.info("there is no carportInfo for query:{}", carNumber);
                     next.setNext(NULL_MSG);
                     response(msg);
                     return;
                 }
-                next.setNext(parkId);
-                next.setNext(carportInfos.length);
-                for (ViewCarportRoomInfo info : carportInfos){
-                    next.setNext(safe(info.sCarportNum));
-                    next.setNext(safe(info.sRoomNum));
-                    next.setNext(safe(info.sName));
-                    next.setNext(safe(info.sAddress));
-                    next.setNext(safe(info.sPhoneNumber));
-                    next.setNext(safe(info.sPosition));
-                    next.setNext(safe(info.sStartDate));
-                    next.setNext(safe(info.sEndDate));
-                    next.setNext(info.fDeposit);
-                    next.setNext(info.bTemporary);
-                    next.setNext(safe(info.sRemark));
-                    next.setNext(safe(info.sRentName));
-                    next.setNext(info.fRentMoney);
-                    next.setNext(safe(info.sParkName));
+                next = next.setNext(parkId).setNext(carportInfos.length);
+                for (ViewCarportRoomInfo info : carportInfos) {
+                    next = next.setNext(safe(info.sCarportNum)).setNext(safe(info.sRoomNum))
+                            .setNext(safe(info.sName))
+                            .setNext(safe(info.sAddress))
+                            .setNext(safe(info.sPhoneNumber))
+                            .setNext(safe(info.sPosition))
+                            .setNext(safe(info.sStartDate))
+                            .setNext(safe(info.sEndDate))
+                            .setNext(info.fDeposit)
+                            .setNext(info.bTemporary)
+                            .setNext(safe(info.sRemark))
+                            .setNext(safe(info.sRentName))
+                            .setNext(info.fRentMoney)
+                            .setNext(safe(info.sParkName));
                 }
+                logger.info("return query_car-2 : {}", msg);
                 response(msg);
                 break;
             default:
                 throw new Exception("can not recognize the code:" + msg.getValue());
         }
     }
-    String safe(String str){
+
+    String safe(String str) {
         return str == null ? "" : str;
     }
 }
