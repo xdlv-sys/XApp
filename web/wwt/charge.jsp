@@ -5,7 +5,7 @@
     <title></title>
     <%@ include file="js.html" %>
     <link href="app.css" rel="stylesheet">
-    <script src="app2.js"></script>
+    <script src="charge.js"></script>
     <script src="fw/common.js"></script>
     <script src="model/car_number.js"></script>
 </head>
@@ -30,74 +30,80 @@
         </span>
     </div>
     <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">停车场</span>
-        <select class="form-control" ng-model="selectedPark" ng-options="p.name for p in parks">
+        <span class="input-group-addon">停车场名</span>
+        <select class="form-control" ng-model="selectedPark" ng-options="p.parkInfo.parkName for p in parks">
         </select>
     </div>
     <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">车位号</span>
+        <span class="input-group-addon">车位编号</span>
         <select class="form-control" ng-model="selectedSlot"
-                ng-options="s.slotName for s in selectedPark.slots">
+                ng-options="s.sCarportNum for s in selectedPark.slots">
         </select>
+        <span class="input-group-addon">
+        <input type="checkbox" ng-model="allSlot">&nbsp;全部</span>
     </div>
     <hr style="margin-top: 10px;margin-bottom: 10px;">
     <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">组号</span>
+        <span class="input-group-addon">车主姓名</span>
         <input type="text" class="form-control query_result" readonly
-               ng-model="selectedSlot.room">
+               ng-model="selectedSlot.sName">
     </div>
-    <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">姓名</span>
-        <input type="text" class="form-control query_result" readonly
-               ng-model="selectedSlot.ownerName">
-    </div>
-    <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">电话</span>
-        <input type="text" class="form-control query_result" readonly
-               ng-model="selectedSlot.telephone">
-    </div>
-    <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">地址</span>
-        <input type="text" class="form-control query_result" readonly
-               ng-model="selectedSlot.address">
-    </div>
-    <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">备注</span>
-        <input type="text" class="form-control query_result" readonly
-               ng-model="selectedSlot.remark">
-    </div>
-    <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">月租金额</span>
-        <input type="text" class="form-control query_result" readonly
-               ng-model="selectedSlot.rentMoney">
-    </div>
-
     <div class="input-group input-group-lg splice">
         <span class="input-group-addon">充值月数</span>
-        <select class="form-control" ng-model="months" ng-options="m for m in [1,2,3,4,5,6,7,8,9,10,11,12]">
+        <select class="form-control" ng-disabled="!selectedSlot" ng-model="months" ng-options="m for m in [1,2,3,4,5,6,7,8,9,10,11,12]">
         </select>
     </div>
     <div class="input-group input-group-lg splice">
         <span class="input-group-addon">充值金额</span>
         <input type="text" class="form-control query_result" readonly
                ng-model="chargeMoney">
+        <span class="input-group-btn">
+            <button class="btn btn-primary" ng-click="showAll=!showAll"> {{!showAll? '详情': '收起'}}</button>
+        </span>
     </div>
-    <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">原结束日期</span>
-        <input type="text" class="form-control query_result" readonly
-               ng-model="selectedSlot.endDate">
-    </div>
-    <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">现结束日期</span>
-        <input type="text" class="form-control query_result" readonly
-               ng-model="selectedSlot.endDate">
+
+    <div ng-show="showAll">
+        <div class="input-group input-group-lg splice">
+            <span class="input-group-addon">组号</span>
+            <input type="text" class="form-control query_result" readonly
+                   ng-model="selectedSlot.sRoomNum">
+        </div>
+        <div class="input-group input-group-lg splice">
+            <span class="input-group-addon">电话</span>
+            <input type="text" class="form-control query_result" readonly
+                   ng-model="selectedSlot.sPhoneNumber">
+        </div>
+        <div class="input-group input-group-lg splice">
+            <span class="input-group-addon">地址</span>
+            <input type="text" class="form-control query_result" readonly
+                   ng-model="selectedSlot.sPosition">
+        </div>
+        <div class="input-group input-group-lg splice">
+            <span class="input-group-addon">备注</span>
+            <input type="text" class="form-control query_result" readonly
+                   ng-model="selectedSlot.sRemark">
+        </div>
+        <div class="input-group input-group-lg splice">
+            <span class="input-group-addon">月租金额</span>
+            <input type="text" class="form-control query_result" readonly
+                   ng-model="selectedSlot.fRentMoney">
+        </div>
+        <div class="input-group input-group-lg splice">
+            <span class="input-group-addon">原结束日期</span>
+            <input type="text" class="form-control query_result" readonly
+                   ng-model="selectedSlot.sEndDate">
+        </div>
+        <div class="input-group input-group-lg splice">
+            <span class="input-group-addon">现结束日期</span>
+            <input type="text" class="form-control query_result" readonly
+                   ng-model="selectedSlot.endDate">
+        </div>
+
     </div>
 
     <div class="input-group input-group-lg splice">
             <span class="input-group-btn">
-                <button class="btn btn-danger" style="width:100%;" type="button"
-                        ng-disabled="chargeMoney <= 0"
-                        ng-click="payNow()">立即支付</button>
+                <button class="btn btn-danger" style="width:100%;" type="button" ng-disabled="chargeMoney <= 0" ng-click="payNow()">立即支付</button>
             </span>
     </div>
 </div>

@@ -73,3 +73,18 @@ insert into t_dynamic_conf(conf_name, conf_value, conf_desc, dirty) VALUE ('prox
 -- ---
 alter table t_pay_order add column `s_id` VARCHAR(32) after `car_type`;
 alter table t_pay_order add column `enter_time` VARCHAR(32) after `s_id`;
+
+-- charge manager --
+insert into t_mod values(4, '充值管理',null,'park-ChargeManager','x-fa fa-bars',1);
+
+drop table IF EXISTS t_charge;
+create table t_charge(
+  out_trade_no VARCHAR(32) PRIMARY KEY not null,
+  trade_no VARCHAR(32),
+  park_id VARCHAR(32) not null,
+  total_fee float,
+  pay_status SMALLINT DEFAULT 0,
+  notify_status SMALLINT DEFAULT 0,
+  pay_flag SMALLINT,
+  time_stamp TIMESTAMP default now()
+)ENGINE = INNODB;

@@ -121,7 +121,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
         PayOrder payOrder = new PayOrder(aliPayBean.getOut_trade_no(), parkInfo.getParkId()
                 , carParkInfo.getCarNumber(), carParkInfo.getPrice()
                 , (short) STATUS_INI, PAY_ALI, watchId, carType
-                , carParkInfo.getDbId(),carParkInfo.getStartTime());
+                , carParkInfo.getDbId(), carParkInfo.getStartTime());
         //save the pay order
         payService.save(payOrder);
         return Action.SUCCESS;
@@ -130,7 +130,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
     public String queryCarNumber() throws Exception {
         ParkInfo parkInfo = parkService.get(ParkInfo.class, carParkInfo.getParkId());
         carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
-                , carParkInfo.getParkId(), watchId, carType, carOrder, "","",DlConf.proxy_pic_scale);
+                , carParkInfo.getParkId(), watchId, carType, carOrder, "", "", DlConf.proxy_pic_scale);
         if (carParkInfo != null) {
             carParkInfo.setWxPay(StringUtils.isNotBlank(parkInfo.getAppId()));
             carParkInfo.setAliPay(StringUtils.isNotBlank(parkInfo.getPartnerId()));
@@ -162,61 +162,27 @@ public class PayAction extends ParkBaseAction implements DlConst {
         assertCarParkInfoLegalForPay();
 
         ParkInfo parkInfo = parkService.get(ParkInfo.class, carParkInfo.getParkId());
-        UnifiedOrder unifiedOrder = new UnifiedOrder();
+        String outTradeNo = createOutTradeNo();
+        WxOrder wxOrder = WxUtil.unifiedOrder(parkInfo.getAppId(), parkInfo.getMchId(), parkInfo.getWxKey()
+                , openid, parkInfo.getParkName(), outTradeNo, carParkInfo.getPrice(), wxNotifyUrl, parkInfo.getLimitPay());
 
-        unifiedOrder.setAppid(parkInfo.getAppId());
-        unifiedOrder.setMch_id(parkInfo.getMchId());
-        unifiedOrder.setNonce_str(WxUtil.getRandomStringByLength(16));
-        unifiedOrder.setBody(body);
-        unifiedOrder.setOut_trade_no(createOutTradeNo());
-        unifiedOrder.setTotal_fee((int) (carParkInfo.getPrice() * 100));
-        unifiedOrder.setSpbill_create_ip(ServletActionContext.getRequest().getRemoteAddr());
-        unifiedOrder.setNotify_url(wxNotifyUrl);
-        unifiedOrder.setLimit_pay(parkInfo.getLimitPay());
-        unifiedOrder.setOpenid(openid);
-
-        unifiedOrder.setSign(WxUtil.getSign(unifiedOrder, parkInfo.getWxKey()));
-
-        String xml = WxUtil.constructUnifiedOrderXml(unifiedOrder);
-        log.info("unifiedOrder request xml:" + xml);
-        String retXml = HttpClientTpl.postJson("https://api.mch.weixin.qq.com/pay/unifiedorder", xml);
-        log.info("unifiedOrder response xml:" + retXml);
-        Element rootEle = XmlUtils.getRootElementFromString(retXml);
-        String returnCode = XmlUtils.getElementValue(rootEle, "return_code");
-        String resultCode = XmlUtils.getElementValue(rootEle, "result_code");
-        String prePayId = XmlUtils.getElementValue(rootEle, "prepay_id");
-        if (SUCCESS_FLAG.equals(returnCode) && SUCCESS_FLAG.equals(resultCode)) {
-            //wxOrder is used to launch wx pay
-            wxOrder = new WxOrder();
-            wxOrder.setTimeStamp(String.valueOf(System.currentTimeMillis() / 1000));
-            wxOrder.setNonceStr(WxUtil.getRandomStringByLength(32));
-            wxOrder.setAppId(parkInfo.getAppId());
-            wxOrder.setPrePayId(prePayId);
-            List<String> params = new ArrayList<>();
-            params.add("appId=" + wxOrder.getAppId() + "&");
-            params.add("timeStamp=" + wxOrder.getTimeStamp() + "&");
-            params.add("nonceStr=" + wxOrder.getNonceStr() + "&");
-            params.add("package=" + wxOrder.getPackage() + "&");
-            params.add("signType=" + wxOrder.getSignType() + "&");
-
-            wxOrder.setPaySign(WxUtil.getSign(params, parkInfo.getWxKey()));
-
-            payOrder = new PayOrder(unifiedOrder.getOut_trade_no(), parkInfo.getParkId()
+        if (wxOrder != null) {
+            payOrder = new PayOrder(outTradeNo, parkInfo.getParkId()
                     , carParkInfo.getCarNumber(), carParkInfo.getPrice()
-                    , (short) STATUS_INI, PAY_WX, watchId, carType,carParkInfo.getDbId(),carParkInfo.getStartTime());
+                    , (short) STATUS_INI, PAY_WX, watchId, carType, carParkInfo.getDbId()
+                    , carParkInfo.getStartTime());
             //save the pay order
             payService.save(payOrder);
-
         } else {
             log.warn("failed to create order, please check the reason");
         }
-        return Action.SUCCESS;
+        return SUCCESS;
     }
 
     private void assertCarParkInfoLegalForPay() throws Exception {
         carParkInfo = parkHandler.getCarParkInfo(carParkInfo.getCarNumber()
                 , carParkInfo.getParkId(), watchId, carType, carOrder
-                , carParkInfo.getDbId(), carParkInfo.getStartTime(),0);
+                , carParkInfo.getDbId(), carParkInfo.getStartTime(), 0);
         if (carParkInfo == null || carParkInfo.getPrice() == 0) {
             throw new Exception("can not pay since price is zero or no car info");
         }

@@ -1,6 +1,7 @@
 package xd.dl.action;
 
 import net.sf.json.JSONObject;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -10,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import xd.dl.service.ParkService;
 import xd.dl.service.PayService;
+import xd.fw.FwUtil;
 import xd.fw.action.BaseAction;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -33,7 +36,7 @@ public class ParkBaseAction extends BaseAction {
     @Autowired
     ApplicationContext applicationContext;
 
-    protected void setRetAttribute(String key, String value) {
+    protected JSONObject setRetAttribute(String key, Object value) {
         HttpServletRequest request = ServletActionContext.getRequest();
         JSONObject jsonObject = (JSONObject) request.getAttribute(RET_KEY);
         if (jsonObject == null) {
@@ -41,6 +44,17 @@ public class ParkBaseAction extends BaseAction {
             request.setAttribute(RET_KEY, jsonObject);
         }
         jsonObject.put(key, value);
+        return jsonObject;
+    }
+
+    protected void setRetAttributeObject (String key, Object obj)throws Exception{
+        JSONObject jsonObject = setRetAttribute(key, "");
+        FwUtil.invokeBeanFields(obj, new FwUtil.BeanFieldProcess() {
+            @Override
+            public void process(Field f, Object o) {
+                setRetAttribute(f.getName(),o == null ? "" : o.toString());
+            }
+        });
     }
 
     static synchronized String createOutTradeNo(){

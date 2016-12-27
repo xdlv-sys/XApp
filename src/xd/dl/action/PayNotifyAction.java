@@ -7,6 +7,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate4.HibernateTemplate;
+import xd.dl.bean.Charge;
 import xd.dl.bean.ParkInfo;
 import xd.dl.bean.PayOrder;
 import xd.dl.scheduler.NotifyProxyEvent;
@@ -25,6 +26,8 @@ public class PayNotifyAction extends PayNotifyBaseAction {
 
     PayOrder payOrder;
     ParkInfo parkInfo;
+
+    Charge charge;
     @Autowired
     PayService payService;
     @Autowired
@@ -33,7 +36,14 @@ public class PayNotifyAction extends PayNotifyBaseAction {
     @Override
     protected String wxKey(String out_trade_no) {
         payOrder = payService.get(PayOrder.class, out_trade_no);
-        parkInfo = payService.get(ParkInfo.class, payOrder.getParkId());
+        String parkId;
+        if (payOrder == null){
+            charge = payService.get(Charge.class, out_trade_no);
+            parkId = charge.getParkId();
+        } else {
+            parkId = payOrder.getParkId();
+        }
+        parkInfo = payService.get(ParkInfo.class, parkId);
         return parkInfo.getWxKey();
     }
 
