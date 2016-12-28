@@ -18,9 +18,6 @@ import java.util.List;
         @Result(name = "index", location = "../../wwt/charge.jsp")
 })
 public class ChargeAction extends ParkBaseAction implements DlConst {
-    @Value("${charge_redirect_url}")
-    String redirectUrl;
-
     @Autowired
     ParkHandler parkHandler;
     String carNumber;
@@ -80,10 +77,6 @@ public class ChargeAction extends ParkBaseAction implements DlConst {
 
     public void setCarNumber(String carNumber) {
         this.carNumber = carNumber;
-    }
-
-    public String getRedirectUrl() {
-        return redirectUrl;
     }
 
     public List<ChargePark> getParks() {

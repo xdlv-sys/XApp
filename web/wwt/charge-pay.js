@@ -3,9 +3,10 @@ var app = angular.module("chargePayApp", ['ui.bootstrap', 'ngAnimate', 'ngTouch'
 app.controller('chargePayCtrl', ['$scope', '$location', 'common', function($scope, $location, common) {
     angular.extend($scope, XAPP_DATA);
 
-    $scope.payStatus = 0;
+    common.wait('请稍等...');
 
     function onBridgeReady() {
+        common.closeWait();
         WeixinJSBridge.invoke(
             'getBrandWCPayRequest', $scope.wxOrder,
             function(res) {
@@ -13,10 +14,11 @@ app.controller('chargePayCtrl', ['$scope', '$location', 'common', function($scop
                     common.error('微信支付失败，请重试');
                     return;
                 }
+
                 common.wait('正在确认订单');
 
                 common.interval(function(stop) {
-                    common.post('chargePay!queryPayStatus.cmd', {
+                    common.post('charge_pay!queryPayStatus.cmd', {
                         'charge.outTradeNo': $scope.charge.outTradeNo,
                         // force query wxOrder from wx in last attempt
                         queryWxOrder: true

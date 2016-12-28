@@ -4,6 +4,7 @@
 <head>
     <title></title>
     <%@ include file="js.html" %>
+    <script src="//cdn.bootcss.com/moment.js/2.17.1/moment.min.js"></script>
     <link href="app.css" rel="stylesheet">
     <script src="charge.js"></script>
     <script src="fw/common.js"></script>
@@ -96,7 +97,7 @@
         <div class="input-group input-group-lg splice">
             <span class="input-group-addon">现结束日期</span>
             <input type="text" class="form-control query_result" readonly
-                   ng-model="selectedSlot.endDate">
+                   ng-model="endDate">
         </div>
 
     </div>

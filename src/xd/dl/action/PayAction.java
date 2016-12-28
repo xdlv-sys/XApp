@@ -62,34 +62,22 @@ public class PayAction extends ParkBaseAction implements DlConst {
     AliPayBean aliPayBean;
 
     public String execute() throws Exception {
-        HttpSession session = ServletActionContext.getRequest().getSession();
+        /*HttpSession session = ServletActionContext.getRequest().getSession();
         String openIdKey = "openId";
         if (this.openid == null) {
             this.openid = (String) session.getAttribute(openIdKey);
-        }
-
+        }*/
         String[] ps = state.split("-");
         parkId = ps[0];
         if (ps.length > 1) {
             watchId = ps[1];
         }
-
         ParkInfo parkInfo = parkService.get(ParkInfo.class, parkId);
+        this.openid = WxUtil.getOpenId(parkInfo.getAppId(),parkInfo.getSecret(),code);
         if (this.openid == null) {
-            String url = String.format("https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s" +
-                            "&secret=%s&code=%s&grant_type=authorization_code"
-                    , parkInfo.getAppId(), parkInfo.getSecret(), code);
-            String retJson = HttpClientTpl.get(url);
-            JSONObject json = JSONObject.fromObject(retJson);
-            this.openid = (String) json.get("openid");
-            if (this.openid == null) {
-                throw new FwException("抱歉，网络出现问题，无法获取用户信息:openid，请重试。");
-            }
-            log.info("get openid:" + this.openid);
-            session.setAttribute(openIdKey, this.openid);
+            throw new FwException("抱歉，网络出现问题，无法获取用户信息:openid，请重试。");
         }
-
-        setRetAttribute(openIdKey, this.openid);
+        log.info("get openid:" + this.openid);
 
         setRetAttribute("parkId", parkId);
         if (watchId != null) {

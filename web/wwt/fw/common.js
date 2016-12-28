@@ -119,7 +119,7 @@ app.service('common', ['$uibModal', '$http', '$interval', function ($uibModal, $
             if (showTip) {
                 me.closeWait();
             }
-            if (!conf.error) {
+            if (conf.error) {
                 conf.error(v);
             } else {
                 this.error('网络或服务器错误，请重试');

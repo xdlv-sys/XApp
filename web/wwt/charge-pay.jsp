@@ -16,16 +16,26 @@
     </div>
 </div>
 <div style="margin: 60px 10px 0 10px;">
-    <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">充值金额</span>
-        <input type="text" class="form-control query_result" readonly
-               ng-model="charge.totalFee">
+    <div style="text-align: center;" ng-show="payStatus === 1">
+        <img src="img/success.png"/>
+        <h2>支付成功</h2>
     </div>
-    <div class="input-group input-group-lg splice">
-        <span class="input-group-addon">支付状态</span>
-        <input type="text" class="form-control query_result" readonly
-               ng-value="payStatus===1? '支付成功' : (payStatus ===2? '支付失败': '未支付')">
+    <div style="text-align: center;" ng-show="payStatus === 2">
+        <h1>支付失败，请重试</h1>
     </div>
+
+    <div class="input-group input-group-lg splice">
+        <span class="input-group-addon">支付金额</span>
+        <input type="text" class="form-control query_result" readonly
+               ng-value="charge.totalFee">
+    </div>
+
+    <div class="input-group input-group-lg splice">
+        <span class="input-group-addon">车主姓名</span>
+        <input type="text" class="form-control query_result" readonly
+               ng-value="charge.userName">
+    </div>
+
 </div>
 
 </body>

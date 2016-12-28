@@ -39,6 +39,7 @@ public abstract class PayNotifyBaseAction extends BaseAction {
             params.put(node.getNodeName(), XmlUtils.getElementValue(rootElement, node.getNodeName()));
         }
         String out_trade_no = params.get("out_trade_no");
+        logger.info("wx Notify: {}", out_trade_no);
         boolean verification = WxUtil.verify(params, wxKey(out_trade_no));
 
         if (verification) {

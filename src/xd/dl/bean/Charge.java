@@ -15,22 +15,18 @@ public class Charge {
     private String tradeNo;
     private String parkId;
     private Float totalFee;
+
+    private String carNumber;
+    private String roomNumber;
+    private String carPorts;
+    private Byte months;
+    private String userName;
+
     private Short payStatus = IConst.STATUS_INI;
 
-    private Short notifyStatus;
+    private Short notifyStatus = IConst.STATUS_INI;
     private Short payFlag;
     private Timestamp timeStamp;
-
-    public Charge(){}
-
-    public Charge(String outTradeNo, String parkId, Float totalFee, Short payStatus
-            , Short payFlag) {
-        this.outTradeNo = outTradeNo;
-        this.parkId = parkId;
-        this.totalFee = totalFee;
-        this.payStatus = payStatus;
-        this.payFlag = payFlag;
-    }
 
     public String getOutTradeNo() {
         return outTradeNo;
@@ -88,12 +84,52 @@ public class Charge {
         this.payFlag = payFlag;
     }
 
+    public String getCarNumber() {
+        return carNumber;
+    }
+
+    public void setCarNumber(String carNumber) {
+        this.carNumber = carNumber;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public String getCarPorts() {
+        return carPorts;
+    }
+
+    public void setCarPorts(String carPorts) {
+        this.carPorts = carPorts;
+    }
+
+    public Byte getMonths() {
+        return months;
+    }
+
+    public void setMonths(Byte months) {
+        this.months = months;
+    }
+
     public Timestamp getTimeStamp() {
         return timeStamp;
     }
 
     public void setTimeStamp(Timestamp timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override

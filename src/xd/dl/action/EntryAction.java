@@ -18,7 +18,7 @@ public class EntryAction extends ParkBaseAction implements DlConst {
         parkInfo = parkService.get(ParkInfo.class, parkId);
 
         if (wxBrowser()) {
-            return "wx";
+            return WX;
         }
         setRetAttribute("parkId", parkId);
         setRetAttribute("watchId", watchId);
