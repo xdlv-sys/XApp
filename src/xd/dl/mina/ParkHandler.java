@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xd.dl.DlConst;
 import xd.dl.bean.CarParkInfo;
+import xd.dl.bean.Charge;
 import xd.dl.bean.ParkInfo;
 import xd.dl.bean.PayOrder;
 import xd.dl.service.ParkService;
@@ -58,6 +59,10 @@ public class ParkHandler extends ReversedHandler {
                 , order.getCarType(), order.getsId(), order.getEnterTime());
         TLVMessage ret = request(order.getParkId(), message);
         return ret != null && "OK".equals(ret.getValue());
+    }
+
+    public boolean chargeNotify(Charge charge){
+        return true;
     }
 
     public CarParkInfo getCarParkInfo(String carNumber, String parkId, String watchId

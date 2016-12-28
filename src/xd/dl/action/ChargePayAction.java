@@ -1,6 +1,6 @@
 package xd.dl.action;
 
-import net.sf.json.JSONObject;
+import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,12 +17,12 @@ import xd.fw.bean.wx.WxOrder;
         @Result(name = "index", location = "../../wwt/charge-pay.jsp")
 })
 public class ChargePayAction extends ParkBaseAction {
-    @Value("${wx_notify_url}")
+    @Value("${charge_wx_notify_url}")
     String wxNotifyUrl;
 
-    @Value("${ali_notify_url}")
+    @Value("${charge_ali_notify_url}")
     String notifyUrl;
-    @Value("${ali_return_url}")
+    @Value("${charge_ali_return_url}")
     String returnUrl;
     @Value("${ali_show_url}")
     String showUrl;
@@ -30,7 +30,9 @@ public class ChargePayAction extends ParkBaseAction {
     String aliPayTimeout;
 
     String code, state;
+    Charge charge;
 
+    @Action("chargePay")
     public String execute() throws Exception {
         String[] ps = state.split("-");
         String parkId = ps[0];
@@ -52,11 +54,31 @@ public class ChargePayAction extends ParkBaseAction {
         Charge charge = new Charge(outTradeNo,parkId,money,(short) STATUS_INI,PAY_WX);
         payService.save(charge);
 
-        setRetAttributeObject("wxOrder", wxOrder);
-        setRetAttributeObject("charge", charge);
+        setRetAttribute("wxOrder", wxOrder);
+        setRetAttribute("charge", charge);
         return INDEX;
     }
 
+    public String queryNotifyStatus() throws Exception {
+        charge = payService.get(Charge.class, charge.getOutTradeNo());
+        return SUCCESS;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setCharge(Charge charge) {
+        this.charge = charge;
+    }
+
+    public Charge getCharge() {
+        return charge;
+    }
     /*public String aliPay() throws Exception {
         *//*assertCarParkInfoLegalForPay();
         ParkInfo parkInfo = parkService.get(ParkInfo.class, carParkInfo.getParkId());
@@ -84,4 +106,6 @@ public class ChargePayAction extends ParkBaseAction {
         payService.save(payOrder);
         return Action.SUCCESS;
     }*/
+
+
 }

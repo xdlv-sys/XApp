@@ -46,17 +46,6 @@ public class ParkBaseAction extends BaseAction {
         jsonObject.put(key, value);
         return jsonObject;
     }
-
-    protected void setRetAttributeObject (String key, Object obj)throws Exception{
-        JSONObject jsonObject = setRetAttribute(key, "");
-        FwUtil.invokeBeanFields(obj, new FwUtil.BeanFieldProcess() {
-            @Override
-            public void process(Field f, Object o) {
-                setRetAttribute(f.getName(),o == null ? "" : o.toString());
-            }
-        });
-    }
-
     static synchronized String createOutTradeNo(){
         return String.valueOf(sdf.format(new Date()));
     }

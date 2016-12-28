@@ -45,8 +45,12 @@ app.controller('chargeCtrl', ['$scope', '$location', 'common', function($scope, 
     };
 
     $scope.payNow = function(){
-        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?' +
+        var url = 'https://open.weixin.qq.com/connect/oauth2/authorize?' +
             'appid='+ $scope.selectedPark.parkInfo.appId +'&redirect_uri=' +
-            $scope.redirectUrl + '&response_type=code&scope=SCOPE&state=STATE#wechat_redirect';
+            $scope.redirectUrl + '&response_type=code&scope=snsapi_base&state=' +
+            $scope.selectedPark.parkInfo.parkId + '-' + $scope.chargeMoney+ '#wechat_redirect';
+
+            console.log(url);
+            window.location.href = url;
     };
 }]);
