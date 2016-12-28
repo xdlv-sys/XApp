@@ -19,12 +19,12 @@
     <div class="input-group input-group-lg splice">
         <span class="input-group-addon">充值金额</span>
         <input type="text" class="form-control query_result" readonly
-               ng-model="wxOrder.totalFee">
+               ng-model="charge.totalFee">
     </div>
     <div class="input-group input-group-lg splice">
         <span class="input-group-addon">支付状态</span>
         <input type="text" class="form-control query_result" readonly
-               ng-model="status">
+               ng-value="payStatus===1? '支付成功' : (payStatus ===2? '支付失败': '未支付')">
     </div>
 </div>
 

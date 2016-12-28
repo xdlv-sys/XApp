@@ -3,7 +3,7 @@ var app = angular.module("chargePayApp", ['ui.bootstrap', 'ngAnimate', 'ngTouch'
 app.controller('chargePayCtrl', ['$scope', '$location', 'common', function($scope, $location, common) {
     angular.extend($scope, XAPP_DATA);
 
-    $scope.status = '正在支付';
+    $scope.payStatus = 0;
 
     function onBridgeReady() {
         WeixinJSBridge.invoke(
@@ -25,7 +25,7 @@ app.controller('chargePayCtrl', ['$scope', '$location', 'common', function($scop
                         if (charge && charge.payStatus != 0) {
                             stop();
                             common.closeWait();
-                            window.loaction.href = 'charge.cmd';
+                            $scope.payStatus = charge.payStatus;
                         }
                     }, { tip: false });
                 }, 1000, 1);

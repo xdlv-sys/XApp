@@ -59,7 +59,7 @@ public class ChargePayAction extends ParkBaseAction {
         return INDEX;
     }
 
-    public String queryNotifyStatus() throws Exception {
+    public String queryPayStatus() throws Exception {
         charge = payService.get(Charge.class, charge.getOutTradeNo());
         return SUCCESS;
     }
