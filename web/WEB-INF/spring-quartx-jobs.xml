@@ -32,6 +32,8 @@
             <list>
                 <ref bean="freeJobDoTime"/>
                 <!--<ref bean="memoryCheckDoTime"/>
+                <ref bean="freeJobDoTime"/>
+                <ref bean="memoryCheckDoTime"/>
                 <ref bean="proxyJobDoTime"/>-->
             </list>
         </property>
@@ -51,20 +53,4 @@
             <value>0 0/5 * * * ?</value>
         </property>
     </bean>
-
-
-    <bean id="proxyJobDoTime"
-          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail">
-            <bean parent="baseJobDetail">
-                <property name="targetObject">
-                    <ref bean="parkProxy"/>
-                </property>
-            </bean>
-        </property>
-        <property name="cronExpression">
-            <value>0/50 * * * * ?</value>
-        </property>
-    </bean>
-
 </beans>

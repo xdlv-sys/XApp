@@ -87,6 +87,10 @@ public class TLVMessage {
                 } catch (UnsupportedEncodingException e) {
                     throw new IllegalArgumentException(e);
                 }
+            case BOOLEAN_TYPE:
+                bytes = new byte[buffer.getInt()];
+                buffer.get(bytes);
+                return new TLVMessage(Boolean.parseBoolean(new String(bytes)));
             case IMG_TYPE:
                 length = buffer.getInt();
                 bytes = new byte[length];
@@ -140,6 +144,13 @@ public class TLVMessage {
             } catch (UnsupportedEncodingException e) {
                 throw new IllegalArgumentException(e);
             }
+            return;
+        }
+        if (value instanceof Boolean) {
+            byte[] bytes = String.valueOf(value).getBytes();
+            buffer.put(BOOLEAN_TYPE);
+            buffer.putInt(bytes.length);
+            buffer.put(bytes);
             return;
         }
         if (value instanceof byte[]){
