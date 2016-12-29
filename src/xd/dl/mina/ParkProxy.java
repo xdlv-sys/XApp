@@ -182,7 +182,7 @@ public class ParkProxy extends ReversedProxy {
                 String roomNumber = (String) msg.getNextValue(3);
                 String carPorts = (String) msg.getNextValue(4);
                 String payTime = (String) msg.getNextValue(5);
-                int months = (int) msg.getNextValue(6);
+                int months = (Byte) msg.getNextValue(6);
                 totalFee = (float) msg.getNextValue(7);
 
                 String[] carPortArray = carPorts.split(",");
