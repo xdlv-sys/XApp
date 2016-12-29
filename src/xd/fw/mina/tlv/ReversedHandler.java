@@ -13,6 +13,7 @@ import java.util.*;
 public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyListener {
     @Value("${mina_timeout}")
     int minaTimeout;
+    protected final String PROXY_VERSION = "proxy_version";
 
     final static List<String> discardRequests = new LinkedList<>();
 
@@ -194,7 +195,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         }
     }
 
-    protected List<TLVMessage> notifyAllId(TLVMessage message){
+    protected List<TLVMessage> notifyAllId(TLVMessage message, int supportVersion){
         List<TLVMessage> messages = new ArrayList<>();
         Collection<IoSession> sessions = new HashSet<>();
         synchronized (sessionMap) {
@@ -202,6 +203,10 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         }
         TLVMessage ret;
         for (IoSession session : sessions){
+            if (((int)session.getAttribute(PROXY_VERSION)) < supportVersion){
+                //ignore the low proxy in case crash
+                continue;
+            }
             ret = doSend(session, message);
             if (ret == null){
                 logger.warn("fail to notify {}" , session.getAttribute(ID_KEY));

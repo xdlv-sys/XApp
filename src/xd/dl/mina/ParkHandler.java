@@ -15,16 +15,17 @@ import xd.fw.mina.tlv.TLVMessage;
 import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class ParkHandler extends ReversedHandler {
 
     //static Logger logger = LoggerFactory.getLogger(ParkHandler.class);
+    final SimpleDateFormat sdfForPayParkingFee = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    final SimpleDateFormat sdfForNotifyCharge = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13;
+    static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, CHARGE_NOTIFY = 15;
     @Autowired
     ParkService parkService;
 
@@ -45,7 +46,9 @@ public class ParkHandler extends ReversedHandler {
         parkInfo.setFreeCount((int) msg.getNextValue(2));
 
         if (msg.getNextValue(3) != null) {
-            parkInfo.setProxyVersion((int) msg.getNextValue(3));
+            int proxyVersion = (int) msg.getNextValue(3);
+            parkInfo.setProxyVersion(proxyVersion);
+            session.setAttribute(PROXY_VERSION, proxyVersion);
         }
         parkInfo.setProxyState(DlConst.PARK_PROXY_STATUS_NORMAL);
         parkInfo.setLastUpdate(new Timestamp(System.currentTimeMillis()));
@@ -54,7 +57,7 @@ public class ParkHandler extends ReversedHandler {
 
     public boolean payParkingFee(PayOrder order) {
         TLVMessage message = createRequest(PAY_FEE, order.getCarNumber(), order.getTotalFee(),
-                sdf.format(order.getTimeStamp()),
+                sdfForPayParkingFee.format(order.getTimeStamp()),
                 order.getWatchId() == null ? "" : order.getWatchId()
                 , order.getCarType(), order.getsId(), order.getEnterTime());
         TLVMessage ret = request(order.getParkId(), message);
@@ -62,7 +65,13 @@ public class ParkHandler extends ReversedHandler {
     }
 
     public boolean chargeNotify(Charge charge){
-        return true;
+        TLVMessage notifyCharge = createRequest(CHARGE_NOTIFY, charge.getOutTradeNo()
+                , charge.getCarNumber()
+                , charge.getRoomNumber(), charge.getCarPorts()
+                , sdfForNotifyCharge.format(new Date(charge.getTimeStamp().getTime()))
+                , charge.getMonths(), charge.getTotalFee());
+        TLVMessage ret = request(charge.getParkId(), notifyCharge);
+        return ret != null && "OK".equals(ret.getValue());
     }
 
     public CarParkInfo getCarParkInfo(String carNumber, String parkId, String watchId
@@ -81,6 +90,6 @@ public class ParkHandler extends ReversedHandler {
 
     public List<TLVMessage> queryCarInfoFromAllProxy(String carNumber) {
         TLVMessage message = createRequest(QUERY_CAR2, carNumber);
-        return super.notifyAllId(message);
+        return super.notifyAllId(message, 2);
     }
 }

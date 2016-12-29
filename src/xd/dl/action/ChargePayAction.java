@@ -43,6 +43,7 @@ public class ChargePayAction extends ParkBaseAction {
     Charge charge;
 
     String wxUrl;
+    AliPayBean aliPayBean;
 
     public String saveChargePay() throws Exception {
         charge.setOutTradeNo(createOutTradeNo());
@@ -86,7 +87,7 @@ public class ChargePayAction extends ParkBaseAction {
         charge = payService.get(Charge.class, charge.getOutTradeNo());
         ParkInfo parkInfo = parkService.get(ParkInfo.class, charge.getParkId());
 
-        AliPayBean aliPayBean = new AliPayBean();
+        aliPayBean = new AliPayBean();
         aliPayBean.setOut_trade_no(createOutTradeNo());
         aliPayBean.setPartner(parkInfo.getPartnerId());
         aliPayBean.setSubject(parkInfo.getParkName());
@@ -127,5 +128,9 @@ public class ChargePayAction extends ParkBaseAction {
 
     public String getWxUrl() {
         return wxUrl;
+    }
+
+    public AliPayBean getAliPayBean() {
+        return aliPayBean;
     }
 }

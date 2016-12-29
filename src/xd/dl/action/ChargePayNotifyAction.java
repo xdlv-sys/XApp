@@ -1,6 +1,5 @@
 package xd.dl.action;
 
-import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -22,7 +21,7 @@ import xd.fw.service.SessionCommit;
         @Result(name = "pay", location = "../../wwt/charge-pay.jsp")
 })
 public class ChargePayNotifyAction extends PayNotifyBaseAction {
-    final String RET_KEY = "RET_FOR_TOUCH" , PAY = "pay";
+    final String PAY = "pay";
 
     Charge charge;
     ParkInfo parkInfo;
@@ -91,7 +90,7 @@ public class ChargePayNotifyAction extends PayNotifyBaseAction {
 
     @Override
     protected String aliReturnHook(String out_trade_no){
-        setRequestAttribute(RET_KEY, JSONObject.fromObject(charge).toString());
+        setRetAttribute("charge", charge);
         return PAY;
     }
 

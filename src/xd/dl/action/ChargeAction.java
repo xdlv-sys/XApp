@@ -5,9 +5,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import xd.dl.DlConst;
-import xd.dl.bean.ChargePark;
-import xd.dl.bean.ParkInfo;
-import xd.dl.bean.ViewCarportRoomInfo;
+import xd.dl.bean.*;
 import xd.dl.mina.ParkHandler;
 import xd.fw.mina.tlv.TLVMessage;
 
@@ -23,6 +21,15 @@ public class ChargeAction extends ParkBaseAction implements DlConst {
     String carNumber;
 
     List<ChargePark> parks;
+
+    List<Charge> charges;
+    Charge charge;
+
+    public String obtainCharges() throws Exception{
+        total = parkService.getAllCount(Charge.class, charge);
+        charges = parkService.getList(Charge.class, charge, "timeStamp asc", start, limit);
+        return SUCCESS;
+    }
 
     public String execute() throws Exception {
         return INDEX;
@@ -81,5 +88,21 @@ public class ChargeAction extends ParkBaseAction implements DlConst {
 
     public List<ChargePark> getParks() {
         return parks;
+    }
+
+    public List<Charge> getCharges() {
+        return charges;
+    }
+
+    public void setCharges(List<Charge> charges) {
+        this.charges = charges;
+    }
+
+    public Charge getCharge() {
+        return charge;
+    }
+
+    public void setCharge(Charge charge) {
+        this.charge = charge;
     }
 }

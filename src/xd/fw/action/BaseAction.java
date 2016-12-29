@@ -1,23 +1,26 @@
 package xd.fw.action;
 
 import com.opensymphony.xwork2.ActionSupport;
+import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtils;
-
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.convention.annotation.*;
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Controller;
 import xd.fw.FwUtil;
 import xd.fw.bean.User;
 import xd.fw.service.IConst;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -44,11 +47,10 @@ import java.util.regex.Pattern;
 public abstract class BaseAction extends ActionSupport implements IConst{
     private static final long serialVersionUID = 1L;
 
-    public final static String FINISH = "finish", LOGIN = "login", IMG = "img" ,XML = "xml", EXCEL = "excel";
-    public static final String USER = "user";
-    private static Pattern SPLITE_PATTERN = Pattern.compile(",");
+    public final static String FINISH = "finish", IMG = "img" ,XML = "xml", EXCEL = "excel";
+    public static final String USER = "user", RET_KEY = "RET_FOR_TOUCH";
+    private static Pattern SPLITTER_PATTERN = Pattern.compile(",");
 
-    public final static String USER_NAME = "";
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected int start = 0;
@@ -75,7 +77,7 @@ public abstract class BaseAction extends ActionSupport implements IConst{
     @Autowired
     protected ApplicationContext context;
 
-    public String obtainFilterValue() throws Exception {
+    /*public String obtainFilterValue() throws Exception {
         if (filter == null) {
             return null;
         }
@@ -84,7 +86,7 @@ public abstract class BaseAction extends ActionSupport implements IConst{
             return fl.substring(start, fl.indexOf(",", start));
         }
         return null;
-    }
+    }*/
 
     public int getStart() {
         return start;
@@ -127,7 +129,7 @@ public abstract class BaseAction extends ActionSupport implements IConst{
     }
 
     protected int[] parseStatus(String st) {
-        String[] status = SPLITE_PATTERN.split(st, 0);
+        String[] status = SPLITTER_PATTERN.split(st, 0);
         int[] ret = new int[status.length];
         for (int i = 0; i < status.length; i++) {
             ret[i] = Integer.parseInt(status[i]);
@@ -150,7 +152,6 @@ public abstract class BaseAction extends ActionSupport implements IConst{
                             , String.class).invoke(msg, child.getText());
                 } catch (Exception e) {
                     log.error("can not invoke:set" + child.getName(), e);
-                    continue;
                 }
 
             }
@@ -163,10 +164,18 @@ public abstract class BaseAction extends ActionSupport implements IConst{
     protected void setRequestAttribute(String key, String value) {
         ServletActionContext.getRequest().setAttribute(key, value);
     }
+    protected JSONObject setRetAttribute(String key, Object value) {
+        HttpServletRequest request = ServletActionContext.getRequest();
+        JSONObject jsonObject = (JSONObject) request.getAttribute(RET_KEY);
+        if (jsonObject == null) {
+            jsonObject = new JSONObject();
+            request.setAttribute(RET_KEY, jsonObject);
+        }
+        jsonObject.put(key, value);
+        return jsonObject;
+    }
 
     enum BROWSER {IE, FIREFOX, CHROME}
-
-    ;
 
     protected BROWSER getBrowser() {
         String userAgent = ServletActionContext.getRequest().getHeader("USER-AGENT");

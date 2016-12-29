@@ -6,10 +6,10 @@ Ext.define('XApp.model.Charge', {
         , {name: 'payFlag', type: 'int'},{name: 'notifyStatus', type: 'int'}, 'timeStamp'],
 
     proxy: {
-        url: 'park!obtainPayOrders.cmd',
+        url: 'charge!obtainCharges.cmd',
         reader: {
             type: 'json',
-            rootProperty: 'payOrders'
+            rootProperty: 'charges'
         }
     }
 });

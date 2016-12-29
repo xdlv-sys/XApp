@@ -22,7 +22,7 @@ app.controller('chargeCtrl', ['$scope', '$location', 'common', function($scope, 
             $scope.carPorts = [];
             angular.forEach($scope.selectedPark.slots, function(s) {
                 price += s.fRentMoney;
-                carPorts.push(s.sCarportNum);
+                $scope.carPorts.push(s.sCarportNum);
             });
         }
         //convert end date
