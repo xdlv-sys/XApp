@@ -20,7 +20,7 @@
         <img src="img/success.png"/>
         <h2>支付成功</h2>
     </div>
-    <div style="text-align: center;" ng-show="charge,payStatus === 2">
+    <div style="text-align: center;" ng-show="charge.payStatus === 2">
         <h1>支付失败，请重试</h1>
     </div>
 

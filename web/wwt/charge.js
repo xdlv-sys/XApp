@@ -3,6 +3,7 @@ var app = angular.module("chargeApp", ['ui.bootstrap', 'ngAnimate', 'ngTouch']);
 app.controller('chargeCtrl', ['$scope', '$location', 'common', function($scope, $location, common) {
     $scope.carNumber = new CarNumber(localStorage.getItem('carNumber'));
     $scope.chargeMoney = 0;
+    $scope.months = 1;
 
     $scope.queryDisabled = false;
     $scope.$watch('carNumber.carNum', function(v) {

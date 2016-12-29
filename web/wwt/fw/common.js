@@ -1,5 +1,5 @@
-app.config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.defaults.transformRequest = function (obj) {
+app.config(['$httpProvider', function($httpProvider) {
+    $httpProvider.defaults.transformRequest = function(obj) {
         var str = [];
         for (var p in obj) {
             str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
@@ -12,7 +12,7 @@ app.config(['$httpProvider', function ($httpProvider) {
     };
 }]);
 
-app.config(['$locationProvider', function ($locationProvider) {
+app.config(['$locationProvider', function($locationProvider) {
     $locationProvider.html5Mode({
         enabled: true,
         requireBase: false
@@ -20,61 +20,67 @@ app.config(['$locationProvider', function ($locationProvider) {
 }]);
 //short cut
 
-Array.prototype.contains = function (obj, compare) {
+Array.prototype.contains = function(obj, compare) {
     var contains = false;
-    for (var i in this){
+    for (var i in this) {
         if (compare) {
-            contains = compare(this[i],obj);
+            contains = compare(this[i], obj);
         } else {
             contains = this[i] === obj;
         }
-        if (contains){
+        if (contains) {
             break;
         }
     }
     return contains;
 };
 
-app.service('common', ['$uibModal', '$http', '$interval', function ($uibModal, $http, $interval) {
+app.service('common', ['$uibModal', '$http', '$interval', function($uibModal, $http, $interval) {
 
-    this.isBlank = function (v) {
+    this.isBlank = function(v) {
         return (v === null) || (v === undefined) || (v === '') || (Array.isArray(v) && v.length === 0);
     };
-    this.copy = function (dest, src) {
+    this.copy = function(dest, src) {
         dest = dest || {};
         if (src) {
-            angular.forEach(src, function (v, i) {
+            angular.forEach(src, function(v, i) {
                 dest[i] = v;
             });
         }
     };
 
-    this.error = function (message) {
+    this.error = function(message) {
         this.open({
             title: '错误',
             message: message
         });
     };
-    this.info = function (message) {
+    this.info = function(message) {
         this.open({
             title: '提示',
             message: message
         });
     };
-    this.wait = function (title) {
+    this.wait = function(title) {
         this.closeWait(); //close anyway
         this.waitInstance = this.open({
             title: title ? title : '请稍等',
             tid: 'waitDialog.html'
         });
     };
-    this.closeWait = function () {
+    this.first = true;
+
+    this.closeWait = function() {
+        var me = this;
         if (this.waitInstance) {
-            this.waitInstance.close();
+            this.waitInstance.opened.then(function() {
+                me.waitInstance.close();
+            });
         }
+
     };
 
-    this.open = function (conf, addition) {
+    this.open = function(conf, addition) {
         var allConf = angular.copy(conf);
         this.copy(allConf, addition);
 
@@ -88,34 +94,34 @@ app.service('common', ['$uibModal', '$http', '$interval', function ($uibModal, $
             controllerAs: '$modalCtl',
             size: conf.size ? conf.size : 'lg',
             resolve: {
-                conf: function () {
+                conf: function() {
                     return allConf;
                 }
             }
         });
     };
 
-    this.post = function (url, params, success, conf) {
+    this.post = function(url, params, success, conf) {
         var paramWithoutFunction = {};
         //remove function in params
-        angular.forEach(params, function (v, i) {
+        angular.forEach(params, function(v, i) {
             if (!angular.isFunction(v)) {
                 paramWithoutFunction[i] = v;
             }
         });
         var me = this;
         //  default show tip
-        var showTip = !conf || !conf.tip || conf.tip === true;
+        var showTip = !conf || conf.tip === true;
         if (showTip) {
             me.wait();
         }
 
-        $http.post(url, paramWithoutFunction).success(function (data) {
+        $http.post(url, paramWithoutFunction).success(function(data) {
             if (showTip) {
                 me.closeWait();
             }
             success(data);
-        }).error(function (v) {
+        }).error(function(v) {
             if (showTip) {
                 me.closeWait();
             }
@@ -127,24 +133,24 @@ app.service('common', ['$uibModal', '$http', '$interval', function ($uibModal, $
         });
     };
 
-    this.interval = function (run, i, times) {
-        var timer = $interval(function () {
-            run(function () {
+    this.interval = function(run, i, times) {
+        var timer = $interval(function() {
+            run(function() {
                 $interval.cancel(timer);
             });
         }, i, times);
         return timer;
     };
 }]);
-app.controller('modalInstanceCtrl', ['$uibModalInstance', 'conf', function ($uibModalInstance, conf) {
-    this.ok = function () {
+app.controller('modalInstanceCtrl', ['$uibModalInstance', 'conf', function($uibModalInstance, conf) {
+    this.ok = function() {
         $uibModalInstance.close();
         if (this.okAction) {
             this.okAction();
         }
     };
 
-    this.cancel = function () {
+    this.cancel = function() {
         $uibModalInstance.dismiss('cancel');
         if (this.cancelAction) {
             this.cancelAction();
@@ -152,18 +158,18 @@ app.controller('modalInstanceCtrl', ['$uibModalInstance', 'conf', function ($uib
     };
 
     var me = this;
-    angular.forEach(conf, function (v, i) {
+    angular.forEach(conf, function(v, i) {
         me[i] = v;
     });
 }]);
 
-app.directive('countDown', ['$interval', function ($interval) {
+app.directive('countDown', ['$interval', function($interval) {
     return {
         restrict: 'A',
-        link: function ($scope, iElm, iAttrs, controller) {
+        link: function($scope, iElm, iAttrs, controller) {
             $scope.seconds = parseInt(iAttrs.mins) * 60;
 
-            $scope.promise = $interval(function () {
+            $scope.promise = $interval(function() {
                 $scope.seconds--;
                 if ($scope.seconds === 0) {
                     $interval.cancel($scope.promise);

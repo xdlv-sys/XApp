@@ -88,7 +88,7 @@ public class ChargePayAction extends ParkBaseAction {
         ParkInfo parkInfo = parkService.get(ParkInfo.class, charge.getParkId());
 
         aliPayBean = new AliPayBean();
-        aliPayBean.setOut_trade_no(createOutTradeNo());
+        aliPayBean.setOut_trade_no(charge.getOutTradeNo());
         aliPayBean.setPartner(parkInfo.getPartnerId());
         aliPayBean.setSubject(parkInfo.getParkName());
         aliPayBean.setNotify_url(notifyUrl);

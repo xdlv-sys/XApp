@@ -83,6 +83,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
         if (watchId != null) {
             setRetAttribute("watchId", watchId);
         }
+        setRetAttribute("openId", this.openid);
         setRetAttribute("parkName", parkInfo.getParkName());
         return INDEX;
     }
@@ -151,7 +152,7 @@ public class PayAction extends ParkBaseAction implements DlConst {
 
         ParkInfo parkInfo = parkService.get(ParkInfo.class, carParkInfo.getParkId());
         String outTradeNo = createOutTradeNo();
-        WxOrder wxOrder = WxUtil.unifiedOrder(parkInfo.getAppId(), parkInfo.getMchId(), parkInfo.getWxKey()
+        wxOrder = WxUtil.unifiedOrder(parkInfo.getAppId(), parkInfo.getMchId(), parkInfo.getWxKey()
                 , openid, parkInfo.getParkName(), outTradeNo, carParkInfo.getPrice(), wxNotifyUrl, parkInfo.getLimitPay());
 
         if (wxOrder != null) {
