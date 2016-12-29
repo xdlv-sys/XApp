@@ -13,7 +13,7 @@ public class ParkNative {
 
     public native static ViewCarportRoomInfo[] getCarportInfo(String pLicense);
 
-    public native static int payCarportRent(String pCarLicense, String pRoomNum, String pCarportNum, String[] aCarportNum, String pPayTime, int iMonthCnt, float fMoney, boolean bPayAllCarport);
+    public native static int payCarportRent(String pCarLicense, String pRoomNum, String pCarportNum, String[] aCarportNum, String pPayTime, String pSerialNumber, int iMonthCnt, float fMoney, boolean bPayAllCarport);
 
     public static int getLeftCount() {
         LeftParkInfo[] leftInfos = getLeftParkInfo();

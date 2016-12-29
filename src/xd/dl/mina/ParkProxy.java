@@ -23,7 +23,8 @@ import java.net.InetSocketAddress;
 @Service
 public class ParkProxy extends ReversedProxy {
 
-    static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9;
+    static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9, CHARGE_NOTIFY = 15;
+    ;
 
     @Autowired
     ParkHandler parkHandler;
@@ -173,6 +174,22 @@ public class ParkProxy extends ReversedProxy {
                             .setNext(safe(info.sParkName));
                 }
                 logger.info("return query_car-2 : {}", msg);
+                response(msg);
+                break;
+            case CHARGE_NOTIFY:
+                String outTradeNo = (String) msg.getNextValue(1);
+                carNumber = (String) msg.getNextValue(2);
+                String roomNumber = (String) msg.getNextValue(3);
+                String carPorts = (String) msg.getNextValue(4);
+                String payTime = (String) msg.getNextValue(5);
+                int months = (int) msg.getNextValue(6);
+                totalFee = (float) msg.getNextValue(7);
+
+                String[] carPortArray = carPorts.split(",");
+                success = ParkNative.payCarportRent(carNumber, roomNumber, carPortArray[0]
+                        , carPortArray, payTime, outTradeNo, months, totalFee, carPortArray.length > 1) == 0;
+
+                next.setNext(success ? "OK" : "FAIL");
                 response(msg);
                 break;
             default:
