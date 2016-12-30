@@ -10,6 +10,12 @@ Ext.define('XApp.view.park.ChargeManagerController', {
         this.getStore('Charge').loadPage(1,{
             params: params
         });
+    },
+
+    queryCharge: function(view){
+        var me = this;
+        Ext.defer(function(){
+            me.queryOrder(view.down('button[name=query]'));
+        },1000);
     }
-    
 });

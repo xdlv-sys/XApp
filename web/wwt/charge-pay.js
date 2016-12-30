@@ -12,7 +12,6 @@ app.controller('chargePayCtrl', ['$scope', '$location', 'common', function($scop
                 // force query wxOrder from wx in last attempt
                 queryWxOrder: true
             }, function(data) {
-                console.log('-----------');
                 var charge = data.charge;
                 if (charge && charge.payStatus != 0) {
                     stop();

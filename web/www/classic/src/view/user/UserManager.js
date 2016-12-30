@@ -30,6 +30,9 @@ Ext.define("XApp.view.user.UserManager", {
         }, {
             text: "邮箱",
             dataIndex: 'mail'
+        },{
+            text: "扩展",
+            dataIndex: 'addition'
         }]
     }, {
         title: '角色管理',

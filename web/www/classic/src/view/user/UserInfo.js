@@ -34,6 +34,11 @@ Ext.define("XApp.view.user.UserInfo", {
         fieldLabel: '邮箱',
         bind: '{user.mail}'
     }, {
+        xtype: 'textfield',
+        name: 'user.addition',
+        fieldLabel: '扩展',
+        bind: '{user.addition}'
+    }, {
         xtype: 'grid',
         fieldLabel: '角色',
         disabled: true,

@@ -27,7 +27,7 @@ public class ChargeAction extends ParkBaseAction implements DlConst {
 
     public String obtainCharges() throws Exception{
         total = parkService.getAllCount(Charge.class, charge);
-        charges = parkService.getList(Charge.class, charge, "timeStamp asc", start, limit);
+        charges = parkService.getList(Charge.class, charge, "timeStamp desc", start, limit);
         return SUCCESS;
     }
 
@@ -77,6 +77,7 @@ public class ChargeAction extends ParkBaseAction implements DlConst {
                 slot.sRentName= (String)msg.getNextValue(index++);		//包月类型
                 slot.fRentMoney= (Float)msg.getNextValue(index++);		//包月金额
                 slot.sParkName= (String)msg.getNextValue(index++);
+                parkInfo.setParkName(slot.sParkName);
             }
         }
         return SUCCESS;

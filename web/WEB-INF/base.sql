@@ -85,6 +85,8 @@ insert into t_role_mod values(-9,-2,-99);
 insert into t_role_mod values(-8,-2,-98);
 
 alter table t_role add unique key `uni_name` (`name`);
+-- ----------------------
+alter table t_user add column `addition` varchar(128) after `mail`;
 
 
 

@@ -8,7 +8,7 @@ Ext.define('XApp.view.park.ChargeManagerModel', {
         Charge:{
             model: 'Charge',
             session : true,
-            autoLoad: true
+            autoLoad: false
         }
     }
 

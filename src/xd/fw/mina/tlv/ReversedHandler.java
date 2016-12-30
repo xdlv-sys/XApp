@@ -209,7 +209,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             }
             ret = doSend(session, message);
             if (ret == null){
-                logger.warn("fail to notify {}" , session.getAttribute(ID_KEY));
+                logger.info("fail to notify {}" , session.getAttribute(ID_KEY));
             } else {
                 messages.add(ret);
             }

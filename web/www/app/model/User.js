@@ -1,7 +1,7 @@
 Ext.define('XApp.model.User', {
 	extend : 'XApp.model.Base',
 
-	fields : [ 'name', 'password', 'mail'],
+	fields : [ 'name', 'password', 'mail','addition'],
 	
     proxy: {
         url: 'user!obtainUsers.cmd',

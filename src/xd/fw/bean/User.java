@@ -18,6 +18,8 @@ public class User {
     @Column(name="mail")
     private String mail;
 
+    private String addition;
+
     @ManyToMany(cascade={CascadeType.PERSIST},fetch=FetchType.EAGER)
     @JoinTable(name="t_user_role" ,joinColumns={@JoinColumn(name="user_id")}
             ,inverseJoinColumns={@JoinColumn(name="role_id")})
@@ -53,6 +55,14 @@ public class User {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public void setAddition(String addition) {
+        this.addition = addition;
+    }
+
+    public String getAddition() {
+        return addition;
     }
 
     public Set<Role> getRoles() {

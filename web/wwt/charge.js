@@ -27,9 +27,10 @@ app.controller('chargeCtrl', ['$scope', '$location', 'common', function($scope, 
             });
         }
         //convert end date
-        $scope.chargeMoney = price * $scope.months;
+        $scope.chargeMoney = (price * $scope.months).toFixed(2);
         var currentDate = new Date($scope.selectedSlot.sEndDate);
         var endDateMoment = moment(currentDate);
+        $scope.selectedSlot.sEndDate = endDateMoment.format('YYYY-MM-DD');
         endDateMoment.add($scope.months, 'months');
         $scope.endDate = endDateMoment.format('YYYY-MM-DD');
     });

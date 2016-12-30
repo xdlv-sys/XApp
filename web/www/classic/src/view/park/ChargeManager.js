@@ -16,6 +16,9 @@ Ext.define("XApp.view.park.ChargeManager",{
         type: 'vbox',
         align: 'stretch'
     },
+    listeners: {
+        render : 'queryCharge'
+    },
 
     items: [{
         xtype: 'form',
@@ -30,7 +33,11 @@ Ext.define("XApp.view.park.ChargeManager",{
                 xtype: 'textfield',
                 fieldLabel: '停车场ID',
                 name: 'charge.parkId',
-                flex: 1
+                flex: 1,
+                bind: {
+                    hidden: '{currentUser.addition}',
+                    value: '{currentUser.addition}'
+                }
             },{
                 xtype: 'textfield',
                 fieldLabel: '车牌号',
@@ -60,6 +67,7 @@ Ext.define("XApp.view.park.ChargeManager",{
             },{
                 xtype: 'button',
                 text: '查询',
+                name: 'query',
                 handler: 'queryOrder'
             }]
         }]
