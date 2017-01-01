@@ -59,6 +59,7 @@ Ext.define("XApp.view.user.UserInfo", {
 
         var grid = this.down('grid');
         grid.setDisabled(!config.roleEditable);
+        this.down('textfield[name=user.addition]').setDisabled(!config.roleEditable);
 
         if (!this.getViewModel().getData().user){
             return;

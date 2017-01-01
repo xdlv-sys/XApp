@@ -1,5 +1,6 @@
 package xd.dl.action;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import xd.dl.DlConst;
 import xd.dl.bean.*;
 import xd.dl.mina.ParkHandler;
+import xd.dl.scheduler.ChargeNotifyProxyEvent;
+import xd.fw.FwUtil;
+import xd.fw.bean.User;
 import xd.fw.mina.tlv.TLVMessage;
 
 import java.util.ArrayList;
@@ -26,9 +30,26 @@ public class ChargeAction extends ParkBaseAction implements DlConst {
     Charge charge;
 
     public String obtainCharges() throws Exception{
+        User user = currentUser();
+        if ( StringUtils.isNotBlank(user.getAddition())){
+            if (charge == null){
+                charge = new Charge();
+            }
+            charge.setParkId(user.getAddition());
+        }
         total = parkService.getAllCount(Charge.class, charge);
         charges = parkService.getList(Charge.class, charge, "timeStamp desc", start, limit);
         return SUCCESS;
+    }
+
+    public String notifyCenter(){
+        FwUtil.safeEach(charges, new FwUtil.SafeEachProcess<Charge>() {
+            @Override
+            public void process(Charge charge) {
+                applicationContext.publishEvent(new ChargeNotifyProxyEvent(charge.getOutTradeNo()));
+            }
+        });
+        return FINISH;
     }
 
     public String execute() throws Exception {

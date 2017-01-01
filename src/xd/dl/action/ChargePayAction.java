@@ -58,6 +58,8 @@ public class ChargePayAction extends ParkBaseAction {
         } else {
             charge.setPayFlag(PAY_ALI);
         }
+        charge.setPayStatus((short)STATUS_INI);
+        charge.setNotifyStatus((short)STATUS_INI);
         payService.save(charge);
         return SUCCESS;
     }

@@ -22,9 +22,9 @@ public class Charge {
     private Byte months;
     private String userName;
 
-    private Short payStatus = IConst.STATUS_INI;
+    private Short payStatus;
 
-    private Short notifyStatus = IConst.STATUS_INI;
+    private Short notifyStatus;
     private Short payFlag;
     private Timestamp timeStamp;
 

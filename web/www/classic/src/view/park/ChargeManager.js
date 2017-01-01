@@ -16,13 +16,21 @@ Ext.define("XApp.view.park.ChargeManager",{
         type: 'vbox',
         align: 'stretch'
     },
-    listeners: {
+    /*listeners: {
         render : 'queryCharge'
-    },
+    },*/
 
     items: [{
         xtype: 'form',
         items: [{
+            xtype: 'button',
+            name : 'notify',
+            text: '通知管理中心',
+            handler: 'notifyManagerCenter',
+            bind: {
+                disabled : '{notifyDisabled}'
+            }
+        },{
             xtype: 'container',
             layout: 'hbox',
             defaults: {
@@ -77,6 +85,9 @@ Ext.define("XApp.view.park.ChargeManager",{
         modelName: '订单',
         model: 'Charge',
         hiddenButtons: ['del','mod','add'],
+        listeners: {
+            selectionchange: 'selectionChanged'
+        },
 
         columns: [{
             text: "订单编号",
