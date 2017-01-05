@@ -121,7 +121,7 @@
     </update>
     <update id="updateDzListAutomatic" parameterType="java.lang.Integer" databaseId="oracle">
         <!-- 5 day-->
-        update t_dzList set isok='A' where impdate &lt; (sysdate - interval '5' DAY)
+        update t_dzList set isok='A' where impdate &lt; (sysdate - interval '5' DAY) and isok='N'
     </update>
 
     <delete id="deleteDzlistForImport" parameterType="xd.fw.bean.Dzlist">
