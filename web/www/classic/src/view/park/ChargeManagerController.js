@@ -13,8 +13,8 @@ Ext.define('XApp.view.park.ChargeManagerController', {
         if (params['charge.payStatus'] === -1){
             delete params['charge.payStatus'];
         }
-        Ext.forEach(params,function(v,k){
-            if (Ext.isBlank(v)){
+        Ext.each(params,function(v,k){
+            if (Ext.isEmpty(v)){
                 delete params[k];
             }
         });
