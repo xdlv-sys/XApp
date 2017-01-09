@@ -34,6 +34,7 @@ Ext.define('XApp.view.login.LoginController', {
 					recordCreator : session.recordCreator
 				});
 		if (users.getRecords().length < 1) {
+			Ext.MessageBox.alert('错误','密码或用户名不正确，请重试');
             return;
         }
         var user = users.getRecords()[0];

@@ -41,7 +41,7 @@ Ext.define("XApp.view.user.UserInfo", {
     }, {
         xtype: 'grid',
         fieldLabel: '角色',
-        disabled: true,
+        disabled: false,
         store: {
             model: 'Role',
             autoLoad: true
