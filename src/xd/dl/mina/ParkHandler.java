@@ -4,13 +4,12 @@ import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xd.dl.DlConst;
-import xd.dl.bean.CarParkInfo;
-import xd.dl.bean.Charge;
-import xd.dl.bean.ParkInfo;
-import xd.dl.bean.PayOrder;
+import xd.dl.bean.*;
 import xd.dl.service.ParkService;
+import xd.fw.FwUtil;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
+import xd.fw.service.SessionProcessor;
 
 import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
@@ -53,6 +52,51 @@ public class ParkHandler extends ReversedHandler {
         parkInfo.setProxyState(DlConst.PARK_PROXY_STATUS_NORMAL);
         parkInfo.setLastUpdate(new Timestamp(System.currentTimeMillis()));
         parkService.saveOrUpdate(parkInfo);
+    }
+
+    @Override
+    protected boolean handlerMessage(TLVMessage msg, IoSession session) {
+        if (((int)msg.getValue()) != WHITE_PUBLISH ){
+            return false;
+        }
+        String parkId = (String)msg.getNextValue(0);
+        String ip = (String)msg.getNextValue(1);
+        int channelNumber = (int)msg.getNextValue(2);
+
+       List<GroupItem> whites = parkService.runInSession(htpl -> {
+            ParkGroup group = new ParkGroup();
+            group.setParkId(parkId);
+            group.setIp(ip);
+            group.setChannelNumber(channelNumber);
+            List<ParkGroup> groups =  htpl.findByExample(group);
+           if (groups == null || groups.size() < 1){
+               return null;
+           }
+           group = groups.get(0);
+           GroupItem white = new GroupItem();
+           white.setGroupId(group.getId());
+           //record the last publish
+           group.setRetrieveTime(new Timestamp(System.currentTimeMillis()));
+           htpl.update(group);
+
+           return htpl.findByExample(white);
+        });
+        TLVMessage ret = createRequest(WHITE_PUBLISH);
+        TLVMessage next;
+        if (whites == null){
+            ret.setNext(0);
+        } else {
+            next = ret.setNext(whites.size());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (GroupItem white : whites){
+                next = next.setNext(white.getCarNumber()).setNext(sdf.format(
+                        white.getStartDate())).setNext(sdf.format(white.getEndDate()));
+            }
+        }
+        logger.debug("white list publish:{}", ret);
+
+        session.write(ret).awaitUninterruptibly();
+        return true;
     }
 
     public boolean payParkingFee(PayOrder order) {

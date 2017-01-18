@@ -1,5 +1,7 @@
 package xd.dl.bean;
 
+import org.apache.struts2.json.annotations.JSON;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -60,6 +62,7 @@ public class ParkGroup {
         this.channelNumber = channelNumber;
     }
 
+    @JSON(format="yyyy-MM-dd HH:mm:ss")
     public Timestamp getRetrieveTime() {
         return retrieveTime;
     }

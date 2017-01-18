@@ -16,97 +16,80 @@ Ext.define("XApp.view.park.WhiteManager", {
 
     items: [{
         title: '白名单列表',
-        xtype: 'container',
-        layout: {
-            type: 'vbox',
-            align: 'stretch'
-        },
-        items: [{
-            xtype: 'container',
+        xtype: 'cduGrid',
+        flex: 1,
+        modelName: '白名单',
+        model: 'White',
+        tbarButtons: [{
+            xtype: 'form',
             layout: 'hbox',
-            defaults: {
-                margin: '0 10 0 0'
-            },
+            flex: 1,
             items: [{
-                xtype: 'button',
-                name: 'notify',
-                text: '新增车辆',
-                handler: 'addCar'
-            }, {
-                xtype: 'button',
-                name: 'notify',
-                text: '删除车辆',
-                handler: 'deleteCar'
-            }, {
                 fieldLabel: '组号',
                 labelWidth: 50,
                 xtype: 'combo',
-                name: 'group',
-                store: Ext.create('Ext.data.Store', {
+                name: 'white.groupId',
+                store: {
                     model: 'ParkGroup'
-                }),
+                },
                 queryMode: 'remote',
                 displayField: 'name',
                 valueField: 'id',
                 value: 1,
                 editable: false,
-                flex: 1
+                flex: 1,
+                margin: '0 10 0 10'
             }, {
                 fieldLabel: '车牌号',
                 labelWidth: 50,
                 xtype: 'textfield',
-                name: 'carNumber',
+                name: 'white.carNumber',
                 flex: 1
             }, {
                 xtype: 'button',
                 text: '查询',
                 name: 'query',
-                handler: 'queryWhite'
+                handler: 'queryWhite',
+                margin: '0 0 0 10'
             }]
+        }],
+        hiddenButtons: ['mod', 'add'],
+        columns: [{
+            text: '车牌号',
+            dataIndex: 'carNumber'
         }, {
-            xtype: 'cduGrid',
-            flex: 1,
-            modelName: '白名单',
-            model: 'White',
-            hiddenButtons: ['del', 'mod', 'add'],
-            columns: [{
-                text: '车牌号',
-                dataIndex: 'carNumber'
-            }, {
-                text: '开始日期',
-                dataIndex: 'startDate',
-                flex: 1
-            }, {
-                text: '结束日期',
-                dataIndex: 'endDate',
-                flex: 1
-            }]
+            text: '开始日期',
+            dataIndex: 'startDate',
+            flex: 1
+        }, {
+            text: '结束日期',
+            dataIndex: 'endDate',
+            flex: 1
         }]
+
     }, {
-        title: 'BB',
-        xtype: 'filefield',
-        name: 'photo',
-        fieldLabel: 'Photo',
-        labelWidth: 50,
-        msgTarget: 'side',
-        allowBlank: false,
-        anchor: '100%',
-        buttonText: 'Select Photo...'
-    },{
         xtype: 'cduGrid',
-        title: '组',
+        title: '所有组',
         flex: 1,
         modelName: '组',
         model: 'ParkGroup',
-        tbarButtons:[{
-            xtype: 'filefield',
-            name: 'photo',
-            fieldLabel: 'Photo',
-            labelWidth: 50,
-            msgTarget: 'side',
-            allowBlank: false,
-            anchor: '100%',
-            buttonText: 'Select Photo...'
+        tbarButtons: [{
+            xtype: 'form',
+            layout: 'hbox',
+            flex: 1,
+            items: [{
+                xtype: 'filefield',
+                name: 'groupFile',
+                fieldLabel: '白名单文件',
+                labelWidth: 80,
+                buttonText: '选择文件',
+                flex: 1,
+                margin: '0 10 0 10'
+            }, {
+                xtype: 'button',
+                text: '上传',
+                handler: 'uploadFile'
+            }]
         }],
         columns: [{
             text: '组名',
@@ -120,6 +103,11 @@ Ext.define("XApp.view.park.WhiteManager", {
             text: '道口号',
             dataIndex: 'channelNumber',
             flex: 1
+        },{
+            text: '上次获取时间',
+            dataIndex: 'retrieveTime',
+            flex: 1
+
         }]
     }]
 });

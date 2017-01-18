@@ -1,5 +1,7 @@
 package xd.dl.bean;
 
+import org.apache.struts2.json.annotations.JSON;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -45,6 +47,7 @@ public class GroupItem {
         this.groupId = groupId;
     }
 
+    @JSON(format="yyyy-MM-dd HH:mm:ss")
     public Timestamp getStartDate() {
         return startDate;
     }
@@ -52,7 +55,7 @@ public class GroupItem {
     public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
     }
-
+    @JSON(format="yyyy-MM-dd HH:mm:ss")
     public Timestamp getEndDate() {
         return endDate;
     }

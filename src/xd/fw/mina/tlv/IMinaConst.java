@@ -9,4 +9,6 @@ public interface IMinaConst {
     int EXECUTE = -9;
     int PUSH_FILE = -8;
     int PULL_FILE = -7;
+
+    int WHITE_PUBLISH = 12;
 }

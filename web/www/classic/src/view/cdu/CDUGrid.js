@@ -18,7 +18,7 @@ Ext.define("XApp.view.cdu.CDUGrid", {
 
     constructor: function (config) {
         config.tbar = {
-            margin: '0 0 10 10',
+            margin: '0 0 10 0',
             xtype: 'container',
             layout: 'hbox',
             items: [{

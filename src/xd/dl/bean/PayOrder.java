@@ -1,5 +1,6 @@
 package xd.dl.bean;
 
+import org.apache.struts2.json.annotations.JSON;
 import xd.fw.service.IConst;
 
 import javax.persistence.Entity;
@@ -106,6 +107,7 @@ public class PayOrder {
         this.payFlag = payFlag;
     }
 
+    @JSON(format="yyyy-MM-dd HH:mm:ss")
     public Timestamp getTimeStamp() {
         return timeStamp;
     }
