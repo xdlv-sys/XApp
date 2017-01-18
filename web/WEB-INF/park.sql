@@ -93,3 +93,27 @@ create table t_charge(
   pay_flag SMALLINT,
   time_stamp TIMESTAMP default now()
 )ENGINE = INNODB;
+
+-- ------
+insert into t_mod values(5, '白名单',null,'park-WhiteManager','x-fa fa-file-text',1);
+
+drop table IF EXISTS t_park_group;
+create table t_park_group(
+  id int PRIMARY KEY,
+  park_id VARCHAR(32) not null,
+  name varchar(64),
+  ip varchar(32),
+  channel_number int,
+  retrieve_time DATETIME
+)ENGINE = INNODB;
+
+drop table IF EXISTS t_group_item;
+create table t_group_item(
+  id int PRIMARY KEY,
+  group_id int,
+  car_number varchar(16),
+  start_date DATETIME,
+  end_date DATETIME,
+  color TINYINT,
+  plate_type TINYINT
+)ENGINE = INNODB;
