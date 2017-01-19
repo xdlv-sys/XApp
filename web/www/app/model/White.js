@@ -3,7 +3,7 @@ Ext.define('XApp.model.White', {
 
     fields: [{name: 'id', type: 'int'}
         , {name: 'groupId', type: 'int'}, 'carNumber'
-        , 'startDate', 'endDate'],
+        , 'startDate', 'endDate','name','roomNumber','tel'],
 
     proxy: {
         url: 'white!obtainWhites.cmd',

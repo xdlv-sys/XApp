@@ -58,6 +58,15 @@ Ext.define("XApp.view.park.WhiteManager", {
             text: '车牌号',
             dataIndex: 'carNumber'
         }, {
+            text: '姓名',
+            dataIndex: 'name'
+        },{
+            text: '房间号',
+            dataIndex: 'roomNumber'
+        },{
+            text: '电话',
+            dataIndex: 'tel'
+        },{
             text: '开始日期',
             dataIndex: 'startDate',
             flex: 1
@@ -92,7 +101,7 @@ Ext.define("XApp.view.park.WhiteManager", {
             }]
         }],
         columns: [{
-            text: '组名',
+            text: '终端机名称',
             dataIndex: 'name',
             flex: 1
         }, {

@@ -1,5 +1,6 @@
 package xd.dl.action;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -16,6 +17,7 @@ import xd.dl.mina.ParkHandler;
 import xd.fw.FwUtil;
 import xd.fw.bean.User;
 import xd.fw.service.SessionCommit;
+import xd.fw.service.SessionProcessor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WhiteAction extends ParkBaseAction implements DlConst {
+
+    @Override
+    public void validate() {
+        if (StringUtils.isBlank(currentUser().getAddition())) {
+            throw new IllegalArgumentException("");
+        }
+    }
+
     @Autowired
     ParkHandler parkHandler;
 
@@ -35,81 +45,146 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
 
     File groupFile;
 
-
-    public String importGroup() throws Exception{
+    public String importGroup() throws Exception {
         Workbook wb = parseFile(groupFile);
         Sheet sheet = wb.getSheetAt(0);
         Cell cell;
         Row row;
-        String value;
         List<GroupItem> groupItemList = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        for (int i = 1; ; i++) {
+        List<ParkGroup> allGroups = parkService.runInSession(new SessionProcessor<List<ParkGroup>>() {
+            @Override
+            public List<ParkGroup> process(HibernateTemplate htpl) {
+                ParkGroup pgForGroups = new ParkGroup();
+                pgForGroups.setParkId(currentUser().getAddition());
+                return htpl.findByExample(pgForGroups);
+            }
+        });
+
+        int ALL_GROUP = -10010;
+
+;        for (int i = 3; ; i++) {
             row = sheet.getRow(i);
-            if (row == null || StringUtils.isBlank(getCellValue(row.getCell(0)))) {
+            if (row == null || row.getCell(1) == null ||
+                    StringUtils.isBlank(row.getCell(1).getStringCellValue())) {
                 break;
             }
             GroupItem groupItem = new GroupItem();
-            groupItem.setGroupId(parkGroup.getId());
             groupItemList.add(groupItem);
 
-            for (int j = 0; j < 3; j++) {
+            for (int j = 1; j < 14; j++) {
                 cell = row.getCell(j);
-                value = getCellValue(cell);
-                if (StringUtils.isEmpty(value)) {
+                if (cell == null){
                     continue;
                 }
-
-                switch (j){
-                    case 0 :
-                        groupItem.setCarNumber(value);
-                        break;
+                switch (j) {
                     case 1:
-                        groupItem.setStartDate(new Timestamp(sdf.parse(value).getTime()));
+                        groupItem.setCarNumber(cell.getStringCellValue());
                         break;
                     case 2:
-                        groupItem.setEndDate(new Timestamp(sdf.parse(value).getTime()));
+                        groupItem.setStartDate(new Timestamp(cell.getDateCellValue().getTime()));
+                        break;
+                    case 3:
+                        groupItem.setEndDate(new Timestamp(cell.getDateCellValue().getTime()));
+                        break;
+                    case 4:
+                        groupItem.setName(cell.getStringCellValue());
+                        break;
+                    case 5:
+                        groupItem.setSex("男".equals(cell.getStringCellValue()) ? (byte) 1 : (byte) 0);
+                        break;
+                    case 6:
+                        groupItem.setRoomNumber(cell.getStringCellValue());
+                        break;
+                    case 8:
+                        groupItem.setTel(cell.getStringCellValue());
+                        break;
+                    case 13:
+                        String value = cell.getStringCellValue();
+
+                        if (value.equals("全部")) {
+                            //duplicate groupItem
+                            groupItem.setGroupId(ALL_GROUP);
+                        } else {
+                            // find the group
+                            final String groupName = value;
+                            Integer groupId = parkService.runInSession(new SessionProcessor<Integer>() {
+                                @Override
+                                public Integer process(HibernateTemplate htpl) {
+                                    ParkGroup parkGroup = new ParkGroup();
+                                    parkGroup.setParkId(currentUser().getAddition());
+                                    parkGroup.setName(groupName);
+                                    List<ParkGroup> gs = htpl.findByExample(parkGroup);
+                                    if (gs == null || gs.size() < 1) {
+                                        return null;
+                                    }
+                                    return gs.get(0).getId();
+                                }
+                            });
+                            groupItem.setGroupId(groupId);
+                        }
                         break;
                 }
             }
         }
         int[] count = {0, 0};
+
+        //process all group
+        List<GroupItem> otherGroupItems = new ArrayList<>();
+        for (GroupItem item : groupItemList) {
+            if (item.getGroupId() != ALL_GROUP) {
+                otherGroupItems.add(item);
+                continue;
+            }
+            for (ParkGroup pg : allGroups) {
+                GroupItem duplicate = new GroupItem();
+                BeanUtils.copyProperties(duplicate, item);
+                duplicate.setGroupId(pg.getId());
+                otherGroupItems.add(duplicate);
+            }
+        }
+
         parkService.runSessionCommit(new SessionCommit() {
             @Override
             public void process(HibernateTemplate htpl) {
                 GroupItem example = new GroupItem();
                 List<GroupItem> records;
                 GroupItem record;
-                for (GroupItem gi : groupItemList){
+                for (GroupItem gi : otherGroupItems) {
                     example.setCarNumber(gi.getCarNumber());
                     example.setGroupId(gi.getGroupId());
                     records = htpl.findByExample(example);
-                    if (records == null || records.size() < 1){
+                    if (records == null || records.size() < 1) {
                         htpl.save(gi);
-                        count[0] ++;
+                        count[0]++;
                     } else {
                         record = records.get(0);
                         record.setStartDate(gi.getStartDate());
                         record.setEndDate(gi.getEndDate());
+                        record.setTel(gi.getTel());
+                        record.setRoomNumber(gi.getRoomNumber());
+                        record.setName(gi.getName());
+                        record.setSex(gi.getSex());
                         htpl.update(record);
-                        count[1] ++;
+                        count[1]++;
                     }
                 }
             }
         });
 
         setRequestAttribute(
-                "msg", String.format("新建%d条记录，更新%d条记录.",count[0],count[1]));
+                "msg", String.format("新建%d条记录，更新%d条记录.", count[0], count[1]));
         return FINISH;
     }
 
-    public String saveParkGroup(){
+    public String saveParkGroup() {
         parkGroup.setParkId(currentUser().getAddition());
         parkService.saveOrUpdate(parkGroup);
         return FINISH;
     }
-    public String deleteParkGroup(){
+
+    public String deleteParkGroup() {
         FwUtil.safeEach(groups, new FwUtil.SafeEachProcess<ParkGroup>() {
             @Override
             public void process(ParkGroup parkGroup) {
@@ -118,7 +193,8 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         });
         return FINISH;
     }
-    public String deleteWhite(){
+
+    public String deleteWhite() {
         FwUtil.safeEach(whites, new FwUtil.SafeEachProcess<GroupItem>() {
             @Override
             public void process(GroupItem item) {
@@ -128,10 +204,10 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         return FINISH;
     }
 
-    public String obtainGroups() throws Exception{
+    public String obtainGroups() throws Exception {
         User user = currentUser();
-        if ( StringUtils.isNotBlank(user.getAddition())){
-            if (parkGroup == null){
+        if (StringUtils.isNotBlank(user.getAddition())) {
+            if (parkGroup == null) {
                 parkGroup = new ParkGroup();
                 parkGroup.setParkId(user.getAddition());
             }
@@ -141,18 +217,18 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         return SUCCESS;
     }
 
-    public String obtainWhites() throws Exception{
+    public String obtainWhites() throws Exception {
         User user = currentUser();
-        if (white == null){
+        if (white == null) {
             white = new GroupItem();
         }
 
-        if ( white.getGroupId() == null && StringUtils.isNotBlank(user.getAddition())){
+        if (white.getGroupId() == null && StringUtils.isNotBlank(user.getAddition())) {
             //set first group to retrieve white lists
             ParkGroup parkGroup = new ParkGroup();
             parkGroup.setParkId(user.getAddition());
             List<ParkGroup> parkGroupList = parkService.getList(ParkGroup.class, parkGroup, null, -1, -1);
-            if (parkGroupList != null && parkGroupList.size() > 0){
+            if (parkGroupList != null && parkGroupList.size() > 0) {
                 white.setGroupId(parkGroupList.get(0).getId());
             }
         }
@@ -211,26 +287,5 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
             }
         }
         return book;
-    }
-
-    private String getCellValue(Cell cell) {
-        if (cell == null) {
-            return null;
-        }
-        String value = null;
-        try{
-            value = String.valueOf(cell.getStringCellValue());
-        } catch(IllegalStateException e){
-            try{
-                value = String.valueOf(cell.getNumericCellValue());
-            } catch(IllegalStateException e1){
-                try{
-                    value = String.valueOf(cell.getBooleanCellValue());
-                } catch(IllegalStateException e2){
-                    value = null;
-                }
-            }
-        }
-        return value == null || "无".equals(value) ? null : value.trim();
     }
 }

@@ -18,6 +18,10 @@ public class GroupItem {
     private Integer id;
     private Integer groupId;
     private String carNumber;
+    private String name;
+    private Byte sex;
+    private String roomNumber;
+    private String tel;
     private Timestamp startDate;
     private Timestamp endDate;
     private Byte color;
@@ -26,7 +30,6 @@ public class GroupItem {
     public String getCarNumber() {
         return carNumber;
     }
-
     public void setCarNumber(String carNumber) {
         this.carNumber = carNumber;
     }
@@ -78,6 +81,38 @@ public class GroupItem {
 
     public void setPlateType(Byte plateType) {
         this.plateType = plateType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Byte getSex() {
+        return sex;
+    }
+
+    public void setSex(Byte sex) {
+        this.sex = sex;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
     @Override

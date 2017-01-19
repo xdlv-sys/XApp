@@ -25,7 +25,7 @@ Ext.define('XApp.view.park.WhiteManagerController', {
             }, {
                 name: 'parkGroup.name',
                 xtype: 'textfield',
-                fieldLabel: '组名',
+                fieldLabel: '终端机名称',
                 bind: '{parkGroup.name}'
             }, {
                 name: 'parkGroup.ip',
@@ -93,14 +93,8 @@ Ext.define('XApp.view.park.WhiteManagerController', {
     },
 
     uploadFile : function(btn){
-        var parkGroups = btn.up('grid').getSelection();
-        if (parkGroups.length !== 1){
-            Ext.MessageBox.alert('错误','请选择一个分组');
-            return;
-        }
         btn.up('form').getForm().submit({
             clientValidation: true,
-            params: {'parkGroup.id' : parkGroups[0].get('id')},
             url: 'white!importGroup.cmd',
             waitTitle:"请稍候",
             waitMsg:"正在导入文件，请稍候。。。。。。",
