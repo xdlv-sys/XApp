@@ -22,7 +22,6 @@ import xd.fw.service.SessionProcessor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +51,6 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         Cell cell;
         Row row;
         List<GroupItem> groupItemList = new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         List<ParkGroup> allGroups = parkService.runInSession(new SessionProcessor<List<ParkGroup>>() {
             @Override

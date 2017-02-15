@@ -56,47 +56,59 @@ public class ParkHandler extends ReversedHandler {
 
     @Override
     protected boolean handlerMessage(TLVMessage msg, IoSession session) {
-        if (((int)msg.getValue()) != WHITE_PUBLISH ){
+        if (((int) msg.getValue()) != WHITE_PUBLISH) {
             return false;
         }
-        String parkId = (String)msg.getNextValue(0);
-        String ip = (String)msg.getNextValue(1);
-        int channelNumber = (int)msg.getNextValue(2);
+        String parkId = (String) msg.getNextValue(0);
+        String ip = (String) msg.getNextValue(1);
+        int channelNumber = (int) msg.getNextValue(2);
 
-       List<GroupItem> whites = parkService.runInSession(htpl -> {
+        List<GroupItem> whites = parkService.runInSession(htpl -> {
             ParkGroup group = new ParkGroup();
             group.setParkId(parkId);
             group.setIp(ip);
             group.setChannelNumber(channelNumber);
-            List<ParkGroup> groups =  htpl.findByExample(group);
-           if (groups == null || groups.size() < 1){
-               return null;
-           }
-           group = groups.get(0);
-           GroupItem white = new GroupItem();
-           white.setGroupId(group.getId());
-           //record the last publish
-           group.setRetrieveTime(new Timestamp(System.currentTimeMillis()));
-           htpl.update(group);
+            List<ParkGroup> groups = htpl.findByExample(group);
+            if (groups == null || groups.size() < 1) {
+                return null;
+            }
+            group = groups.get(0);
+            GroupItem white = new GroupItem();
+            white.setGroupId(group.getId());
+            //record the last publish
+            group.setRetrieveTime(new Timestamp(System.currentTimeMillis()));
+            htpl.update(group);
 
-           return htpl.findByExample(white);
+            return htpl.findByExample(white);
         });
         TLVMessage ret = createRequest(WHITE_PUBLISH);
         TLVMessage next;
-        if (whites == null){
+        if (whites == null) {
             ret.setNext(0);
         } else {
-            next = ret.setNext(whites.size());
+            next = ret.setNext(whites.size()).setNext(parkId).setNext(ip).setNext(channelNumber);
+            StringBuilder users = new StringBuilder();
+            StringBuilder cars = new StringBuilder();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            for (GroupItem white : whites){
-                next = next.setNext(white.getCarNumber()).setNext(sdf.format(
-                        white.getStartDate())).setNext(sdf.format(white.getEndDate()));
+            for (GroupItem white : whites) {
+                appendLine(users,"",white.getRoomNumber(),white.getName(),"");
+                appendLine(cars,"",white.getCarNumber(),"",white.getRoomNumber(),1
+                        ,"1900-01-01 00:00:00",sdf.format(white.getStartDate())
+                        , sdf.format(white.getEndDate())
+                        ,1,"",0,0,0,white.getPlateType(),0,"","","");
             }
+            next.setNext(users.toString()).setNext(cars.toString());
         }
         logger.debug("white list publish:{}", ret);
-
         session.write(ret).awaitUninterruptibly();
         return true;
+    }
+
+    void appendLine(StringBuilder buffer, Object... args){
+        for (Object obj : args){
+            buffer.append(obj == null ? "" : obj).append("^*");
+        }
+        buffer.append("*#");
     }
 
     public boolean payParkingFee(PayOrder order) {
@@ -108,7 +120,7 @@ public class ParkHandler extends ReversedHandler {
         return ret != null && "OK".equals(ret.getValue());
     }
 
-    public boolean chargeNotify(Charge charge){
+    public boolean chargeNotify(Charge charge) {
         TLVMessage notifyCharge = createRequest(CHARGE_NOTIFY, charge.getOutTradeNo()
                 , charge.getCarNumber()
                 , charge.getRoomNumber(), charge.getCarPorts()
