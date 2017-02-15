@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class WhiteAction extends ParkBaseAction implements DlConst {
@@ -64,7 +65,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
 
         int ALL_GROUP = -10010;
 
-;        for (int i = 3; ; i++) {
+        for (int i = 3; ; i++) {
             row = sheet.getRow(i);
             if (row == null || row.getCell(1) == null ||
                     StringUtils.isBlank(row.getCell(1).getStringCellValue())) {
@@ -81,12 +82,13 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                 switch (j) {
                     case 1:
                         groupItem.setCarNumber(cell.getStringCellValue());
+                        logger.info("{},{}",i,groupItem.getCarNumber());
                         break;
                     case 2:
-                        groupItem.setStartDate(new Timestamp(cell.getDateCellValue().getTime()));
+                        groupItem.setStartDate(new Timestamp(getDate(cell).getTime()));
                         break;
                     case 3:
-                        groupItem.setEndDate(new Timestamp(cell.getDateCellValue().getTime()));
+                        groupItem.setEndDate(new Timestamp(getDate(cell).getTime()));
                         break;
                     case 4:
                         groupItem.setName(cell.getStringCellValue());
@@ -95,10 +97,10 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                         groupItem.setSex("男".equals(cell.getStringCellValue()) ? (byte) 1 : (byte) 0);
                         break;
                     case 6:
-                        groupItem.setRoomNumber(cell.getStringCellValue());
+                        groupItem.setRoomNumber(getTelAndGroup(cell));
                         break;
                     case 8:
-                        groupItem.setTel(cell.getStringCellValue());
+                        groupItem.setTel(getTelAndGroup(cell));
                         break;
                     case 13:
                         String value = cell.getStringCellValue();
@@ -178,6 +180,24 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         return FINISH;
     }
 
+    Date getDate(Cell cell){
+        try{
+            return cell.getDateCellValue();
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+    public String getTelAndGroup(Cell cell){
+        switch(cell.getCellType()){
+            case Cell.CELL_TYPE_NUMERIC:
+                Double d =  cell.getNumericCellValue();
+                return d.longValue() + "";
+            case Cell.CELL_TYPE_STRING:
+                return cell.getStringCellValue();
+        }
+        return null;
+    }
     public String saveParkGroup() {
         parkGroup.setParkId(currentUser().getAddition());
         parkService.saveOrUpdate(parkGroup);

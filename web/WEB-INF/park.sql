@@ -106,16 +106,15 @@ create table t_park_group(
   channel_number int,
   retrieve_time DATETIME
 )ENGINE = INNODB;
-
 drop table IF EXISTS t_group_item;
 create table t_group_item(
   id int PRIMARY KEY,
   group_id int,
-  car_number varchar(16),
-  name varchar(8),
+  car_number varchar(64),
+  name varchar(64),
   sex TINYINT,
   room_number varchar(64),
-  tel varchar(16),
+  tel varchar(64),
   start_date DATETIME,
   end_date DATETIME,
   color TINYINT,
