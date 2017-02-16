@@ -86,20 +86,21 @@ public class ParkHandler extends ReversedHandler {
         if (whites == null) {
             ret.setNext(0);
         } else {
-            next = ret.setNext(whites.size()).setNext(parkId).setNext(ip).setNext(channelNumber);
+            next = ret.setNext(parkId).setNext(ip).setNext(channelNumber);
             StringBuilder users = new StringBuilder();
             StringBuilder cars = new StringBuilder();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (GroupItem white : whites) {
-                appendLine(users,"",white.getRoomNumber(),white.getName(),"");
+                appendLine(users,"",white.getRoomNumber(),white.getName(),"",1);
                 appendLine(cars,"",white.getCarNumber(),"",white.getRoomNumber(),1
                         ,"1900-01-01 00:00:00",sdf.format(white.getStartDate())
                         , sdf.format(white.getEndDate())
-                        ,1,"",0,0,0,white.getPlateType(),0,"","","");
+                        ,1,"",0,0,0,white.getPlateType(),0,"","","",1);
             }
-            next.setNext(users.toString()).setNext(cars.toString());
+            next.setNext(whites.size()).setNext(users.toString()).setNext(whites.size()).setNext(cars.toString());
         }
         logger.debug("white list publish:{}", ret);
+
         session.write(ret).awaitUninterruptibly();
         return true;
     }

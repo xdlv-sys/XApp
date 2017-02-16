@@ -25,7 +25,7 @@ Ext.define("XApp.view.park.WhiteManager", {
             layout: 'hbox',
             flex: 1,
             items: [{
-                fieldLabel: '组号',
+                fieldLabel: '终端号',
                 labelWidth: 50,
                 xtype: 'combo',
                 name: 'white.groupId',
@@ -61,7 +61,7 @@ Ext.define("XApp.view.park.WhiteManager", {
             text: '姓名',
             dataIndex: 'name'
         },{
-            text: '房间号',
+            text: '组号',
             dataIndex: 'roomNumber'
         },{
             text: '电话',
@@ -78,9 +78,9 @@ Ext.define("XApp.view.park.WhiteManager", {
 
     }, {
         xtype: 'cduGrid',
-        title: '所有组',
+        title: '所有终端',
         flex: 1,
-        modelName: '组',
+        modelName: '终端',
         model: 'ParkGroup',
         tbarButtons: [{
             xtype: 'form',

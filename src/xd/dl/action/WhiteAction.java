@@ -86,7 +86,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                         groupItem.setStartDate(new Timestamp(getDate(cell).getTime()));
                         break;
                     case 3:
-                        groupItem.setEndDate(new Timestamp(getDate(cell).getTime()));
+                        groupItem.setEndDate(new Timestamp(getDate(cell).getTime() + (24 * 3600 -1 ) * 1000));
                         break;
                     case 4:
                         groupItem.setName(cell.getStringCellValue());
