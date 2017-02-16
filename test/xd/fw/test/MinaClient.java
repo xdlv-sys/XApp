@@ -21,7 +21,7 @@ public class MinaClient {
     public void testWhite() throws Exception{
         NioSocketConnector connector = new NioSocketConnector(MinaWrapper.getPool());
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(
-                new TLVCodecFactory(FwUtil.UTF8)));
+                new TLVCodecFactory("gb2312")));
         connector.setHandler(new TLVHandler(){
             @Override
             public void messageReceived(IoSession session, Object message) throws Exception {
@@ -32,11 +32,13 @@ public class MinaClient {
             }
         });
 
-        ConnectFuture future = connector.connect(new InetSocketAddress("hjcpay.com",48012));
+        //ConnectFuture future = connector.connect(new InetSocketAddress("hjcpay.com",48012));
+        ConnectFuture future = connector.connect(new InetSocketAddress("localhost",48012));
         future.awaitUninterruptibly();
 
         TLVMessage message = new TLVMessage(12);
-        message.setNext("111").setNext("193.168.1.110").setNext(3);
+        //message.setNext("111").setNext("193.168.1.110").setNext(3);
+        message.setNext("001").setNext("1").setNext(1);
         future.getSession().write(message);
         synchronized (MinaClient.this){
             wait();

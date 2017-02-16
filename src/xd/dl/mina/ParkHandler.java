@@ -100,7 +100,7 @@ public class ParkHandler extends ReversedHandler {
             next.setNext(whites.size()).setNext(users.toString()).setNext(whites.size()).setNext(cars.toString());
         }
         logger.debug("white list publish:{}", ret);
-
+        session.setAttribute("charset","gb2312");
         session.write(ret).awaitUninterruptibly();
         return true;
     }
