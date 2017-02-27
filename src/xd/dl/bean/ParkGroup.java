@@ -20,6 +20,7 @@ public class ParkGroup {
     private String name;
     private String ip;
     private Integer channelNumber;
+    private String channelName;
     private Timestamp retrieveTime;
 
     public Integer getId() {
@@ -69,6 +70,14 @@ public class ParkGroup {
 
     public void setRetrieveTime(Timestamp retrieveTime) {
         this.retrieveTime = retrieveTime;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 
     @Override

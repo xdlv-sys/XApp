@@ -17,6 +17,7 @@ public class GroupItem {
             pkColumnName = "table_name", valueColumnName = "current_id")
     private Integer id;
     private Integer groupId;
+    private String parkId;
     private String carNumber;
     private String name;
     private Byte sex;
@@ -113,6 +114,14 @@ public class GroupItem {
 
     public void setTel(String tel) {
         this.tel = tel;
+    }
+
+    public String getParkId() {
+        return parkId;
+    }
+
+    public void setParkId(String parkId) {
+        this.parkId = parkId;
     }
 
     @Override

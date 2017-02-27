@@ -29,13 +29,13 @@ Ext.define("XApp.view.park.WhiteManager", {
                 labelWidth: 50,
                 xtype: 'combo',
                 name: 'white.groupId',
-                store: {
-                    model: 'ParkGroup'
+                bind: {
+                    store: '{ParkGroupCombo}'
                 },
                 queryMode: 'remote',
                 displayField: 'name',
                 valueField: 'id',
-                value: 1,
+                value: -1,
                 editable: false,
                 flex: 1,
                 margin: '0 10 0 10'
@@ -66,6 +66,9 @@ Ext.define("XApp.view.park.WhiteManager", {
         },{
             text: '电话',
             dataIndex: 'tel'
+        },{
+            text: '通道',
+            dataIndex: 'groupId'
         },{
             text: '开始日期',
             dataIndex: 'startDate',
@@ -101,6 +104,10 @@ Ext.define("XApp.view.park.WhiteManager", {
             }]
         }],
         columns: [{
+            text: 'ID',
+            dataIndex: 'id',
+            flex: 1
+        },{
             text: '终端机名称',
             dataIndex: 'name',
             flex: 1
@@ -111,6 +118,10 @@ Ext.define("XApp.view.park.WhiteManager", {
         }, {
             text: '道口号',
             dataIndex: 'channelNumber',
+            flex: 1
+        },{
+            text: '名称',
+            dataIndex: 'channelName',
             flex: 1
         },{
             text: '上次获取时间',

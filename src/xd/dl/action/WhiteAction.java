@@ -8,6 +8,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import xd.dl.DlConst;
@@ -70,23 +73,24 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                 break;
             }
             GroupItem groupItem = new GroupItem();
+            groupItem.setParkId(currentUser().getAddition());
             groupItemList.add(groupItem);
 
             for (int j = 1; j < 14; j++) {
                 cell = row.getCell(j);
-                if (cell == null){
+                if (cell == null) {
                     continue;
                 }
                 switch (j) {
                     case 1:
                         groupItem.setCarNumber(cell.getStringCellValue());
-                        logger.info("{},{}",i,groupItem.getCarNumber());
+                        logger.info("{},{}", i, groupItem.getCarNumber());
                         break;
                     case 2:
                         groupItem.setStartDate(new Timestamp(getDate(cell).getTime()));
                         break;
                     case 3:
-                        groupItem.setEndDate(new Timestamp(getDate(cell).getTime() + (24 * 3600 -1 ) * 1000));
+                        groupItem.setEndDate(new Timestamp(getDate(cell).getTime() + (24 * 3600 - 1) * 1000));
                         break;
                     case 4:
                         groupItem.setName(cell.getStringCellValue());
@@ -128,11 +132,16 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                 }
             }
         }
-        int[] count = {0, 0};
+
+        int[] count = {0, 0, 0};
 
         //process all group
         List<GroupItem> otherGroupItems = new ArrayList<>();
         for (GroupItem item : groupItemList) {
+            if (item.getGroupId() == null || StringUtils.isBlank(item.getCarNumber())){
+                count[2]++;
+                continue;
+            }
             if (item.getGroupId() != ALL_GROUP) {
                 otherGroupItems.add(item);
                 continue;
@@ -148,18 +157,31 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         parkService.runSessionCommit(new SessionCommit() {
             @Override
             public void process(HibernateTemplate htpl) {
-                GroupItem example = new GroupItem();
-                List<GroupItem> records;
+                List<?> records;
                 GroupItem record;
                 for (GroupItem gi : otherGroupItems) {
-                    example.setCarNumber(gi.getCarNumber());
-                    example.setGroupId(gi.getGroupId());
-                    records = htpl.findByExample(example);
+                    if (StringUtils.isBlank(gi.getRoomNumber())) {
+                        String virtual = "virtual";
+                        List<?> maxVmRecords = htpl.findByCriteria(DetachedCriteria.forClass(GroupItem.class
+                        ).add(Expression.eq("groupId", gi.getGroupId())
+                        ).add(Expression.like("roomNumber", virtual, MatchMode.ANYWHERE)));
+                        int vm = 0;
+                        if (maxVmRecords != null){
+                            vm = maxVmRecords.size() + 1;
+                        }
+                        gi.setRoomNumber(virtual + vm);
+                    }
+
+                    records = htpl.findByCriteria(DetachedCriteria.forClass(GroupItem.class
+                    ).add(Expression.eq("groupId", gi.getGroupId())
+                    ).add(Expression.or(Expression.eq("carNumber", gi.getCarNumber())
+                            , Expression.eq("roomNumber", gi.getRoomNumber()))));
+
                     if (records == null || records.size() < 1) {
                         htpl.save(gi);
                         count[0]++;
                     } else {
-                        record = records.get(0);
+                        record = (GroupItem) records.get(0);
                         record.setStartDate(gi.getStartDate());
                         record.setEndDate(gi.getEndDate());
                         record.setTel(gi.getTel());
@@ -174,28 +196,29 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         });
 
         setRequestAttribute(
-                "msg", String.format("新建%d条记录，更新%d条记录.", count[0], count[1]));
+                "msg", String.format("新建%d条记录，更新%d条记录,出错%d条记录", count[0], count[1], count[2]));
         return FINISH;
     }
 
-    Date getDate(Cell cell){
-        try{
+    Date getDate(Cell cell) {
+        try {
             return cell.getDateCellValue();
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public String getTelAndGroup(Cell cell){
-        switch(cell.getCellType()){
+    public String getTelAndGroup(Cell cell) {
+        switch (cell.getCellType()) {
             case Cell.CELL_TYPE_NUMERIC:
-                Double d =  cell.getNumericCellValue();
+                Double d = cell.getNumericCellValue();
                 return d.longValue() + "";
             case Cell.CELL_TYPE_STRING:
                 return cell.getStringCellValue();
         }
         return null;
     }
+
     public String saveParkGroup() {
         parkGroup.setParkId(currentUser().getAddition());
         parkService.saveOrUpdate(parkGroup);
@@ -232,24 +255,21 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         }
         total = parkService.getAllCount(ParkGroup.class, parkGroup);
         groups = parkService.getList(ParkGroup.class, parkGroup, null, start, limit);
+
+        total += 1;
+        ParkGroup allGroup = new ParkGroup();
+        allGroup.setId(-1);
+        allGroup.setName("全部");
+        groups.add(0,allGroup);
         return SUCCESS;
     }
 
     public String obtainWhites() throws Exception {
-        User user = currentUser();
         if (white == null) {
             white = new GroupItem();
+            white.setParkId(currentUser().getAddition());
         }
 
-        if (white.getGroupId() == null && StringUtils.isNotBlank(user.getAddition())) {
-            //set first group to retrieve white lists
-            ParkGroup parkGroup = new ParkGroup();
-            parkGroup.setParkId(user.getAddition());
-            List<ParkGroup> parkGroupList = parkService.getList(ParkGroup.class, parkGroup, null, -1, -1);
-            if (parkGroupList != null && parkGroupList.size() > 0) {
-                white.setGroupId(parkGroupList.get(0).getId());
-            }
-        }
         total = parkService.getAllCount(GroupItem.class, white);
         whites = parkService.getList(GroupItem.class, white, null, start, limit);
         return SUCCESS;

@@ -10,10 +10,20 @@ Ext.define('XApp.view.park.WhiteManagerModel', {
             session : true,
             autoLoad: true
         },
-        ParkGroup: {
+        ParkGroupCombo: {
             model: 'ParkGroup',
             session : true,
             autoLoad: true
+        },
+        ParkGroup:{
+            model: 'ParkGroup',
+            session : true,
+            autoLoad: true,
+            filters: [{
+                property: 'id',
+                value: -1,
+                operator: '>'
+            }]
         }
     }
 

@@ -37,6 +37,11 @@ Ext.define('XApp.view.park.WhiteManagerController', {
                 xtype: 'textfield',
                 fieldLabel: '道口号',
                 bind: '{parkGroup.channelNumber}'
+            },{
+                name: 'parkGroup.channelName',
+                xtype: 'textfield',
+                fieldLabel: '道口名称',
+                bind: '{parkGroup.channelName}'
             }]
         }).show();
     },
@@ -58,8 +63,10 @@ Ext.define('XApp.view.park.WhiteManagerController', {
         this.showParkGroup(btn, Ext.apply({}, parkGroups[0]));
     },
     queryWhite : function(btn){
+        var param = btn.up('form').getValues();
+        param['white.groupId'] === -1 && delete param['white.groupId'];
         this.getStore('White').reload({
-            params: btn.up('form').getValues()
+            params: param
         });
     },
     delParkGroup: function (btn) {

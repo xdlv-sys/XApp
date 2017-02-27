@@ -120,3 +120,7 @@ create table t_group_item(
   color TINYINT,
   plate_type TINYINT
 )ENGINE = INNODB;
+
+alter table t_park_group add COLUMN `channel_name` varchar(64) after `channel_number`;
+
+alter table t_group_item add COLUMN `park_id` varchar(64) after `group_id`;
