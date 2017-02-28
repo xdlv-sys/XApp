@@ -2,7 +2,7 @@ Ext.define('XApp.model.White', {
     extend: 'XApp.model.Base',
 
     fields: [{name: 'id', type: 'int'}
-        , {name: 'groupId', type: 'int'}, 'groupId','carNumber'
+        , {name: 'groupId', type: 'int'}, 'channelNumber','groupId','carNumber'
         , 'startDate', 'endDate','name','roomNumber','tel'],
 
     proxy: {

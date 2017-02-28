@@ -33,7 +33,8 @@ Ext.define("XApp.view.park.WhiteManager", {
                     store: '{ParkGroupCombo}'
                 },
                 queryMode: 'remote',
-                displayField: 'name',
+                queryCaching: false,
+                displayField: 'channelName',
                 valueField: 'id',
                 value: -1,
                 editable: false,
@@ -53,7 +54,7 @@ Ext.define("XApp.view.park.WhiteManager", {
                 margin: '0 0 0 10'
             }]
         }],
-        hiddenButtons: ['mod', 'add'],
+        //hiddenButtons: ['mod', 'add'],
         columns: [{
             text: '车牌号',
             dataIndex: 'carNumber'
@@ -68,7 +69,7 @@ Ext.define("XApp.view.park.WhiteManager", {
             dataIndex: 'tel'
         },{
             text: '通道',
-            dataIndex: 'groupId'
+            dataIndex: 'channelNumber'
         },{
             text: '开始日期',
             dataIndex: 'startDate',
@@ -120,7 +121,7 @@ Ext.define("XApp.view.park.WhiteManager", {
             dataIndex: 'channelNumber',
             flex: 1
         },{
-            text: '名称',
+            text: '道口名称',
             dataIndex: 'channelName',
             flex: 1
         },{

@@ -37,7 +37,7 @@ Ext.define('XApp.view.park.WhiteManagerController', {
                 xtype: 'textfield',
                 fieldLabel: '道口号',
                 bind: '{parkGroup.channelNumber}'
-            },{
+            }, {
                 name: 'parkGroup.channelName',
                 xtype: 'textfield',
                 fieldLabel: '道口名称',
@@ -62,7 +62,7 @@ Ext.define('XApp.view.park.WhiteManagerController', {
         var parkGroups = btn.up('grid').getSelection();
         this.showParkGroup(btn, Ext.apply({}, parkGroups[0]));
     },
-    queryWhite : function(btn){
+    queryWhite: function (btn) {
         var param = btn.up('form').getValues();
         param['white.groupId'] === -1 && delete param['white.groupId'];
         this.getStore('White').reload({
@@ -83,7 +83,7 @@ Ext.define('XApp.view.park.WhiteManagerController', {
             }
         });
     },
-    delWhite : function(btn){
+    delWhite: function (btn) {
         var grid = btn.up('grid');
         var whites = grid.getSelection();
         var ids = {};
@@ -98,20 +98,125 @@ Ext.define('XApp.view.park.WhiteManagerController', {
             }
         });
     },
+    addWhite: function (btn) {
+        this.showWhiteDialog(btn, {});
+    },
+    modWhite: function (btn) {
+        var whites = btn.up('grid').getSelection();
+        this.showWhiteDialog(btn, Ext.apply({}, whites[0]));
+    },
+    saveParkWhite: function(btn){
+        var params = btn.up('form').getValues();
+        XApp.Util.ajax({
+            url: 'white!saveWhite.cmd',
+            params: params,
+            success: function () {
+                btn.up('window').getViewModel().get('grid').getStore().reload();
+                btn.up('window').close();
+            }
+        });
+    },
 
-    uploadFile : function(btn){
+    showWhiteDialog: function (btn, white) {
+        Ext.create('XApp.view.cdu.BaseInfo', {
+            title: '白名单',
+            viewModel: {
+                data: {
+                    operation: this.saveParkWhite,
+                    white: white,
+                    grid: btn.up('grid')
+                }
+            },
+            fieldItems: [{
+                xtype: 'textfield',
+                name: 'white.id',
+                hidden: true,
+                bind: '{white.id}'
+            }, {
+                xtype: 'textfield',
+                name: 'white.parkId',
+                hidden: true,
+                bind: '{white.parkId}'
+            }, {
+                name: 'white.carNumber',
+                xtype: 'textfield',
+                fieldLabel: '车牌号',
+                bind: '{white.carNumber}'
+            }, {
+                name: 'white.name',
+                xtype: 'textfield',
+                fieldLabel: '姓名',
+                bind: '{white.name}'
+            }, {
+                name: 'white.sex',
+                xtype: 'combo',
+                fieldLabel: '性别',
+                queryMode: 'local',
+                store: {
+                    fields: ['id', 'name'],
+                    data: [{id: 0, name: '女'}
+                        , {id: 1, name: '男'}]
+                },
+                displayField: 'name',
+                valueField: 'id',
+                bind: '{white.sex}'
+            }, {
+                name: 'white.roomNumber',
+                xtype: 'textfield',
+                fieldLabel: '组号',
+                bind: '{white.roomNumber}'
+            }, {
+                name: 'white.tel',
+                xtype: 'textfield',
+                fieldLabel: '电话',
+                bind: '{white.tel}'
+            }, {
+                name: 'white.startDate',
+                xtype: 'textfield',
+                fieldLabel: '开始日期',
+                bind: '{white.startDate}',
+                emptyText: '格式：2017-01-01'
+            }, {
+                name: 'white.endDate',
+                xtype: 'textfield',
+                fieldLabel: '结束日期',
+                bind: '{white.endDate}',
+                emptyText: '格式：2017-01-01'
+            }, {
+                fieldLabel: '终端号',
+                xtype: 'combo',
+                name: 'white.groupId',
+                bind: '{white.groupId}',
+                store: {
+                    model: 'ParkGroup',
+                    autoLoad: true,
+                    filters: [{
+                        property: 'id',
+                        value: -1,
+                        operator: '>'
+                    }]
+                },
+                queryMode: 'remote',
+                queryCaching: true,
+                displayField: 'channelName',
+                valueField: 'id',
+                flex: 1
+            }]
+        }).show();
+    },
+    uploadFile: function (btn) {
         btn.up('form').getForm().submit({
             clientValidation: true,
             url: 'white!importGroup.cmd',
-            waitTitle:"请稍候",
-            waitMsg:"正在导入文件，请稍候。。。。。。",
-            failure:function(form1,action){
+            waitTitle: "请稍候",
+            waitMsg: "正在导入文件，请稍候。。。。。。",
+            failure: function (form1, action) {
                 Ext.MessageBox.hide();
-                Ext.MessageBox.alert('失败',action.result.msg);
+                Ext.MessageBox.alert('失败', action.result.msg);
             },
-            success: function(form1,action){
+            success: function (form1, action) {
                 Ext.MessageBox.hide();
-                Ext.MessageBox.alert('成功',action.result.msg);
+                Ext.MessageBox.alert('成功', action.result.msg);
             }
         });
     }

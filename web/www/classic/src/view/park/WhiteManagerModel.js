@@ -7,17 +7,14 @@ Ext.define('XApp.view.park.WhiteManagerModel', {
     stores: {
         White:{
             model: 'White',
-            session : true,
             autoLoad: true
         },
         ParkGroupCombo: {
             model: 'ParkGroup',
-            session : true,
             autoLoad: true
         },
         ParkGroup:{
             model: 'ParkGroup',
-            session : true,
             autoLoad: true,
             filters: [{
                 property: 'id',

@@ -27,6 +27,9 @@ public class GroupItem {
     private Timestamp endDate;
     private Byte color;
     private Byte plateType;
+    private Integer channelNumber;
+    @Transient
+    private String groupName;
 
     public String getCarNumber() {
         return carNumber;
@@ -122,6 +125,22 @@ public class GroupItem {
 
     public void setParkId(String parkId) {
         this.parkId = parkId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public Integer getChannelNumber() {
+        return channelNumber;
+    }
+
+    public void setChannelNumber(Integer channelNumber) {
+        this.channelNumber = channelNumber;
     }
 
     @Override

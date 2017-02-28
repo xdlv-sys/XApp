@@ -55,17 +55,6 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         Row row;
         List<GroupItem> groupItemList = new ArrayList<>();
 
-        List<ParkGroup> allGroups = parkService.runInSession(new SessionProcessor<List<ParkGroup>>() {
-            @Override
-            public List<ParkGroup> process(HibernateTemplate htpl) {
-                ParkGroup pgForGroups = new ParkGroup();
-                pgForGroups.setParkId(currentUser().getAddition());
-                return htpl.findByExample(pgForGroups);
-            }
-        });
-
-        int ALL_GROUP = -10010;
-
         for (int i = 3; ; i++) {
             row = sheet.getRow(i);
             if (row == null || row.getCell(1) == null ||
@@ -105,29 +94,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                         groupItem.setTel(getTelAndGroup(cell));
                         break;
                     case 13:
-                        String value = cell.getStringCellValue();
-
-                        if (value.equals("全部")) {
-                            //duplicate groupItem
-                            groupItem.setGroupId(ALL_GROUP);
-                        } else {
-                            // find the group
-                            final String groupName = value;
-                            Integer groupId = parkService.runInSession(new SessionProcessor<Integer>() {
-                                @Override
-                                public Integer process(HibernateTemplate htpl) {
-                                    ParkGroup parkGroup = new ParkGroup();
-                                    parkGroup.setParkId(currentUser().getAddition());
-                                    parkGroup.setName(groupName);
-                                    List<ParkGroup> gs = htpl.findByExample(parkGroup);
-                                    if (gs == null || gs.size() < 1) {
-                                        return null;
-                                    }
-                                    return gs.get(0).getId();
-                                }
-                            });
-                            groupItem.setGroupId(groupId);
-                        }
+                        groupItem.setGroupName(cell.getStringCellValue());
                         break;
                 }
             }
@@ -137,19 +104,42 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
 
         //process all group
         List<GroupItem> otherGroupItems = new ArrayList<>();
+        List<ParkGroup> allGroups = parkService.runInSession(new SessionProcessor<List<ParkGroup>>() {
+            @Override
+            public List<ParkGroup> process(HibernateTemplate htpl) {
+                ParkGroup pgForGroups = new ParkGroup();
+                pgForGroups.setParkId(currentUser().getAddition());
+                return htpl.findByExample(pgForGroups);
+            }
+        });
+
         for (GroupItem item : groupItemList) {
-            if (item.getGroupId() == null || StringUtils.isBlank(item.getCarNumber())){
+            if (StringUtils.isBlank(item.getCarNumber())){
                 count[2]++;
                 continue;
             }
-            if (item.getGroupId() != ALL_GROUP) {
-                otherGroupItems.add(item);
+            List<ParkGroup> groups = allGroups;
+            if ("全部".equals(item.getGroupName())){
+                groups = parkService.runInSession(new SessionProcessor<List<ParkGroup>>() {
+                    @Override
+                    public List<ParkGroup> process(HibernateTemplate htpl) {
+                        ParkGroup parkGroup = new ParkGroup();
+                        parkGroup.setParkId(currentUser().getAddition());
+                        parkGroup.setName(item.getGroupName());
+                        return htpl.findByExample(parkGroup);
+                    }
+                });
+            }
+            if (groups == null){
+                count[2]++;
                 continue;
             }
-            for (ParkGroup pg : allGroups) {
+
+            for (ParkGroup pg : groups) {
                 GroupItem duplicate = new GroupItem();
                 BeanUtils.copyProperties(duplicate, item);
                 duplicate.setGroupId(pg.getId());
+                duplicate.setChannelNumber(pg.getChannelNumber());
                 otherGroupItems.add(duplicate);
             }
         }
@@ -161,7 +151,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                 GroupItem record;
                 for (GroupItem gi : otherGroupItems) {
                     if (StringUtils.isBlank(gi.getRoomNumber())) {
-                        String virtual = "virtual";
+                        String virtual = "虚拟";
                         List<?> maxVmRecords = htpl.findByCriteria(DetachedCriteria.forClass(GroupItem.class
                         ).add(Expression.eq("groupId", gi.getGroupId())
                         ).add(Expression.like("roomNumber", virtual, MatchMode.ANYWHERE)));
@@ -259,7 +249,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         total += 1;
         ParkGroup allGroup = new ParkGroup();
         allGroup.setId(-1);
-        allGroup.setName("全部");
+        allGroup.setChannelName("全部");
         groups.add(0,allGroup);
         return SUCCESS;
     }
@@ -273,6 +263,18 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         total = parkService.getAllCount(GroupItem.class, white);
         whites = parkService.getList(GroupItem.class, white, null, start, limit);
         return SUCCESS;
+    }
+
+    public String saveWhite() throws Exception{
+        if (StringUtils.isBlank(white.getParkId())){
+            white.setParkId(currentUser().getAddition());
+        }
+        if (white.getChannelNumber() == null){
+            white.setChannelNumber(
+                    parkService.get(ParkGroup.class, white.getGroupId()).getChannelNumber());
+        }
+        parkService.saveOrUpdate(white);
+        return FINISH;
     }
 
     public void setWhite(GroupItem white) {
