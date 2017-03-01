@@ -72,7 +72,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                 }
                 switch (j) {
                     case 1:
-                        groupItem.setCarNumber(cell.getStringCellValue());
+                        groupItem.setCarNumber(getTrimString(cell));
                         logger.info("{},{}", i, groupItem.getCarNumber());
                         break;
                     case 2:
@@ -82,10 +82,10 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                         groupItem.setEndDate(new Timestamp(getDate(cell).getTime() + (24 * 3600 - 1) * 1000));
                         break;
                     case 4:
-                        groupItem.setName(cell.getStringCellValue());
+                        groupItem.setName(getTrimString(cell));
                         break;
                     case 5:
-                        groupItem.setSex("男".equals(cell.getStringCellValue()) ? (byte) 1 : (byte) 0);
+                        groupItem.setSex("男".equals(getTrimString(cell)) ? (byte) 1 : (byte) 0);
                         break;
                     case 6:
                         groupItem.setRoomNumber(getTelAndGroup(cell));
@@ -94,7 +94,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                         groupItem.setTel(getTelAndGroup(cell));
                         break;
                     case 13:
-                        groupItem.setGroupName(cell.getStringCellValue());
+                        groupItem.setGroupName(getTrimString(cell));
                         break;
                 }
             }
@@ -114,12 +114,12 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         });
 
         for (GroupItem item : groupItemList) {
-            if (StringUtils.isBlank(item.getCarNumber())){
+            if (StringUtils.isBlank(item.getCarNumber())) {
                 count[2]++;
                 continue;
             }
             List<ParkGroup> groups = allGroups;
-            if ("全部".equals(item.getGroupName())){
+            if ("全部".equals(item.getGroupName())) {
                 groups = parkService.runInSession(new SessionProcessor<List<ParkGroup>>() {
                     @Override
                     public List<ParkGroup> process(HibernateTemplate htpl) {
@@ -130,7 +130,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                     }
                 });
             }
-            if (groups == null){
+            if (groups == null) {
                 count[2]++;
                 continue;
             }
@@ -156,31 +156,12 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                         ).add(Expression.eq("groupId", gi.getGroupId())
                         ).add(Expression.like("roomNumber", virtual, MatchMode.ANYWHERE)));
                         int vm = 0;
-                        if (maxVmRecords != null){
+                        if (maxVmRecords != null) {
                             vm = maxVmRecords.size() + 1;
                         }
                         gi.setRoomNumber(virtual + vm);
                     }
-
-                    records = htpl.findByCriteria(DetachedCriteria.forClass(GroupItem.class
-                    ).add(Expression.eq("groupId", gi.getGroupId())
-                    ).add(Expression.or(Expression.eq("carNumber", gi.getCarNumber())
-                            , Expression.eq("roomNumber", gi.getRoomNumber()))));
-
-                    if (records == null || records.size() < 1) {
-                        htpl.save(gi);
-                        count[0]++;
-                    } else {
-                        record = (GroupItem) records.get(0);
-                        record.setStartDate(gi.getStartDate());
-                        record.setEndDate(gi.getEndDate());
-                        record.setTel(gi.getTel());
-                        record.setRoomNumber(gi.getRoomNumber());
-                        record.setName(gi.getName());
-                        record.setSex(gi.getSex());
-                        htpl.update(record);
-                        count[1]++;
-                    }
+                    saveOrUpdateWhite(htpl, gi, count);
                 }
             }
         });
@@ -190,9 +171,39 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         return FINISH;
     }
 
+    private void saveOrUpdateWhite(HibernateTemplate htpl, GroupItem gi, int[] count) {
+        List<?> records = htpl.findByCriteria(DetachedCriteria.forClass(GroupItem.class
+        ).add(Expression.eq("groupId", gi.getGroupId())
+        ).add(Expression.or(Expression.eq("carNumber", gi.getCarNumber())
+                , Expression.eq("roomNumber", gi.getRoomNumber()))));
+
+        if (records == null || records.size() < 1) {
+            htpl.save(gi);
+            count[0]++;
+        } else {
+            GroupItem record = (GroupItem) records.get(0);
+            record.setStartDate(gi.getStartDate());
+            record.setEndDate(gi.getEndDate());
+            record.setTel(gi.getTel());
+            record.setRoomNumber(gi.getRoomNumber());
+            record.setName(gi.getName());
+            record.setSex(gi.getSex());
+            htpl.update(record);
+            count[1]++;
+        }
+    }
+
     Date getDate(Cell cell) {
         try {
             return cell.getDateCellValue();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    String getTrimString(Cell cell) {
+        try {
+            return cell.getStringCellValue() == null ? null : cell.getStringCellValue().trim();
         } catch (Exception e) {
             return null;
         }
@@ -250,7 +261,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         ParkGroup allGroup = new ParkGroup();
         allGroup.setId(-1);
         allGroup.setChannelName("全部");
-        groups.add(0,allGroup);
+        groups.add(0, allGroup);
         return SUCCESS;
     }
 
@@ -265,15 +276,24 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         return SUCCESS;
     }
 
-    public String saveWhite() throws Exception{
-        if (StringUtils.isBlank(white.getParkId())){
+    public String saveWhite() throws Exception {
+        if (StringUtils.isBlank(white.getParkId())) {
             white.setParkId(currentUser().getAddition());
         }
-        if (white.getChannelNumber() == null){
-            white.setChannelNumber(
-                    parkService.get(ParkGroup.class, white.getGroupId()).getChannelNumber());
+        List<Integer> groupIds = white.getGroupIds();
+        for (int i = 0; groupIds != null && i < groupIds.size(); i++) {
+            GroupItem duplicate = new GroupItem();
+            BeanUtils.copyProperties(duplicate, white);
+            duplicate.setGroupId(groupIds.get(i));
+            parkService.runSessionCommit(new SessionCommit(){
+                @Override
+                public void process(HibernateTemplate htpl) {
+                    duplicate.setChannelNumber(
+                            parkService.get(ParkGroup.class, duplicate.getGroupId()).getChannelNumber());
+                    saveOrUpdateWhite(htpl, duplicate, new int[3]);
+                }
+            });
         }
-        parkService.saveOrUpdate(white);
         return FINISH;
     }
 

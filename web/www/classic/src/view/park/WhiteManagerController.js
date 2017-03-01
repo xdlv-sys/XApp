@@ -102,11 +102,17 @@ Ext.define('XApp.view.park.WhiteManagerController', {
         this.showWhiteDialog(btn, {});
     },
     modWhite: function (btn) {
-        var whites = btn.up('grid').getSelection();
-        this.showWhiteDialog(btn, Ext.apply({}, whites[0]));
+        var white = btn.up('grid').getSelection()[0];
+        white.set('groupIds',[white.get('groupId')]);
+        this.showWhiteDialog(btn, Ext.apply({}, white));
     },
-    saveParkWhite: function(btn){
+    saveParkWhite: function (btn) {
         var params = btn.up('form').getValues();
+        Ext.each(params['white.groupIds'], function(v,i){
+            params['white.groupIds[' + i + ']'] = v;
+        });
+        delete params['white.groupIds'];
+
         XApp.Util.ajax({
             url: 'white!saveWhite.cmd',
             params: params,
@@ -146,6 +152,9 @@ Ext.define('XApp.view.park.WhiteManagerController', {
                 name: 'white.name',
                 xtype: 'textfield',
                 fieldLabel: '姓名',
+                maxLength: 19,
+                regex: /[a-zA-Z0-9\u4e00-\u9fa5]+$/,
+                invalidText: '只支持中文及数字，字母',
                 bind: '{white.name}'
             }, {
                 name: 'white.sex',
@@ -164,6 +173,9 @@ Ext.define('XApp.view.park.WhiteManagerController', {
                 name: 'white.roomNumber',
                 xtype: 'textfield',
                 fieldLabel: '组号',
+                maxLength: 19,
+                regex: /[a-zA-Z0-9\u4e00-\u9fa5]+$/,
+                invalidText: '只支持中文及数字，字母',
                 bind: '{white.roomNumber}'
             }, {
                 name: 'white.tel',
@@ -172,21 +184,26 @@ Ext.define('XApp.view.park.WhiteManagerController', {
                 bind: '{white.tel}'
             }, {
                 name: 'white.startDate',
-                xtype: 'textfield',
+                xtype: 'datefield',
+                anchor: '100%',
                 fieldLabel: '开始日期',
                 bind: '{white.startDate}',
+                format: 'Y-m-d 00:00:00',
                 emptyText: '格式：2017-01-01'
             }, {
                 name: 'white.endDate',
-                xtype: 'textfield',
+                xtype: 'datefield',
+                anchor: '100%',
                 fieldLabel: '结束日期',
                 bind: '{white.endDate}',
+                format: 'Y-m-d 23:59:59',
                 emptyText: '格式：2017-01-01'
             }, {
-                fieldLabel: '终端号',
+                fieldLabel: '道口号',
                 xtype: 'combo',
-                name: 'white.groupId',
-                bind: '{white.groupId}',
+                name: 'white.groupIds',
+                bind: '{white.groupIds}',
+                multiSelect: true,
                 store: {
                     model: 'ParkGroup',
                     autoLoad: true,

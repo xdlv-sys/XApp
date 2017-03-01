@@ -4,6 +4,7 @@ import org.apache.struts2.json.annotations.JSON;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Created by xd on 1/18/2017.
@@ -30,6 +31,16 @@ public class GroupItem {
     private Integer channelNumber;
     @Transient
     private String groupName;
+    @Transient
+    private List<Integer> groupIds;
+
+    public List<Integer> getGroupIds() {
+        return groupIds;
+    }
+
+    public void setGroupIds(List<Integer> groupIds) {
+        this.groupIds = groupIds;
+    }
 
     public String getCarNumber() {
         return carNumber;
