@@ -289,8 +289,8 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
     public String obtainWhites() throws Exception {
         if (white == null) {
             white = new GroupItem();
-            white.setParkId(currentUser().getAddition());
         }
+        white.setParkId(currentUser().getAddition());
 
         total = parkService.getAllCount(GroupItem.class, white);
         whites = parkService.getList(GroupItem.class, white, null, start, limit);
