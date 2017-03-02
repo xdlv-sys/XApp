@@ -26,7 +26,7 @@ Ext.define("XApp.view.park.WhiteManager", {
             flex: 1,
             items: [{
                 fieldLabel: '道口名称',
-                labelWidth: 50,
+                labelWidth: 60,
                 xtype: 'combo',
                 name: 'white.groupId',
                 bind: {
