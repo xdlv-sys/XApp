@@ -65,37 +65,51 @@ Ext.define('XApp.view.park.WhiteManagerController', {
     queryWhite: function (btn) {
         var param = btn.up('form').getValues();
         param['white.groupId'] === -1 && delete param['white.groupId'];
-        this.getStore('White').reload({
-            params: param
-        });
+        var store = this.getStore('White');
+        var extraParams = store.getProxy().extraParams = {};
+        Ext.apply(extraParams, param);
+        store.loadPage(1);
+
     },
     delParkGroup: function (btn) {
-        var parkGroups = btn.up('grid').getSelection();
-        var ids = {};
-        Ext.each(parkGroups, function (v, i) {
-            ids['groups[' + i + '].id'] = v.get('id');
-        });
-        this.ajax({
-            url: 'white!deleteParkGroup.cmd',
-            params: ids,
-            success: function () {
-                btn.up('grid').getStore().reload();
+        var me = this;
+        Ext.MessageBox.confirm('提示','确实要删除吗？', function(b){
+            if (b !== 'yes') {
+                return;
             }
+            var parkGroups = btn.up('grid').getSelection();
+            var ids = {};
+            Ext.each(parkGroups, function (v, i) {
+                ids['groups[' + i + '].id'] = v.get('id');
+            });
+            me.ajax({
+                url: 'white!deleteParkGroup.cmd',
+                params: ids,
+                success: function () {
+                    btn.up('grid').getStore().reload();
+                }
+            });
         });
     },
     delWhite: function (btn) {
-        var grid = btn.up('grid');
-        var whites = grid.getSelection();
-        var ids = {};
-        Ext.each(whites, function (v, i) {
-            ids['whites[' + i + '].id'] = v.get('id');
-        });
-        this.ajax({
-            url: 'white!deleteWhite.cmd',
-            params: ids,
-            success: function () {
-                grid.getStore().reload();
+        var me = this;
+        Ext.MessageBox.confirm('提示','确实要删除吗？', function(b){
+            if (b !== 'yes') {
+                return;
             }
+            var grid = btn.up('grid');
+            var whites = grid.getSelection();
+            var ids = {};
+            Ext.each(whites, function (v, i) {
+                ids['whites[' + i + '].id'] = v.get('id');
+            });
+            me.ajax({
+                url: 'white!deleteWhite.cmd',
+                params: ids,
+                success: function () {
+                    grid.getStore().reload();
+                }
+            });
         });
     },
     addWhite: function (btn) {
@@ -106,8 +120,36 @@ Ext.define('XApp.view.park.WhiteManagerController', {
         white.set('groupIds',[white.get('groupId')]);
         this.showWhiteDialog(btn, Ext.apply({}, white));
     },
+
     saveParkWhite: function (btn) {
         var params = btn.up('form').getValues();
+        var groupIds = params['white.groupIds'];
+        if (!groupIds || groupIds.length < 1){
+            Ext.MessageBox.alert('提示','道口号不能为空');
+            return;
+        }
+        function validateName(v, tip){
+            if (!/^[\u4e00-\u9fa5a-zA-Z0-9]+$/.test(v)){
+                Ext.MessageBox.alert('提示',tip);
+                return false;
+            }
+            return true;
+        }
+
+        if (!validateName(params['white.roomNumber'],'组号不能为空且不能包含特殊字符')){
+            return;
+        }
+        if (!validateName(params['white.carNumber'],'车牌不能为空且不能包含特殊字符')){
+            return;
+        }
+        if (!validateName(params['white.name'],'姓名不能为空且不能包含特殊字符')){
+            return;
+        }
+
+        if (!params['white.startDate'] || !params['white.endDate']){
+            Ext.MessageBox.alert('提示','开始与结束日期必须选择');
+            return;
+        }
         Ext.each(params['white.groupIds'], function(v,i){
             params['white.groupIds[' + i + ']'] = v;
         });
@@ -153,7 +195,7 @@ Ext.define('XApp.view.park.WhiteManagerController', {
                 xtype: 'textfield',
                 fieldLabel: '姓名',
                 maxLength: 19,
-                regex: /[a-zA-Z0-9\u4e00-\u9fa5]+$/,
+                regex: /^[\u4e00-\u9fa5a-zA-Z0-9]+$/,
                 invalidText: '只支持中文及数字，字母',
                 bind: '{white.name}'
             }, {
@@ -174,7 +216,7 @@ Ext.define('XApp.view.park.WhiteManagerController', {
                 xtype: 'textfield',
                 fieldLabel: '组号',
                 maxLength: 19,
-                regex: /[a-zA-Z0-9\u4e00-\u9fa5]+$/,
+                regex: /^[\u4e00-\u9fa5a-zA-Z0-9]+$/,
                 invalidText: '只支持中文及数字，字母',
                 bind: '{white.roomNumber}'
             }, {

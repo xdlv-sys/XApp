@@ -82,13 +82,14 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                         groupItem.setEndDate(new Timestamp(getDate(cell).getTime() + (24 * 3600 - 1) * 1000));
                         break;
                     case 4:
-                        groupItem.setName(getTrimString(cell));
+                        groupItem.setName(getTrimString(cell).replaceAll("-","杆"));
                         break;
                     case 5:
                         groupItem.setSex("男".equals(getTrimString(cell)) ? (byte) 1 : (byte) 0);
                         break;
                     case 6:
-                        groupItem.setRoomNumber(getTelAndGroup(cell));
+                        String group = getTelAndGroup(cell);
+                        groupItem.setRoomNumber(group == null ? null : group.replaceAll("-","杆"));
                         break;
                     case 8:
                         groupItem.setTel(getTelAndGroup(cell));
@@ -119,7 +120,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                 continue;
             }
             List<ParkGroup> groups = allGroups;
-            if ("全部".equals(item.getGroupName())) {
+            if (!"全部".equals(item.getGroupName())) {
                 groups = parkService.runInSession(new SessionProcessor<List<ParkGroup>>() {
                     @Override
                     public List<ParkGroup> process(HibernateTemplate htpl) {
@@ -140,6 +141,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                 BeanUtils.copyProperties(duplicate, item);
                 duplicate.setGroupId(pg.getId());
                 duplicate.setChannelNumber(pg.getChannelNumber());
+                duplicate.setId(null);
                 otherGroupItems.add(duplicate);
             }
         }
@@ -147,8 +149,6 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         parkService.runSessionCommit(new SessionCommit() {
             @Override
             public void process(HibernateTemplate htpl) {
-                List<?> records;
-                GroupItem record;
                 for (GroupItem gi : otherGroupItems) {
                     if (StringUtils.isBlank(gi.getRoomNumber())) {
                         String virtual = "虚拟";
@@ -174,8 +174,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
     private void saveOrUpdateWhite(HibernateTemplate htpl, GroupItem gi, int[] count) {
         List<?> records = htpl.findByCriteria(DetachedCriteria.forClass(GroupItem.class
         ).add(Expression.eq("groupId", gi.getGroupId())
-        ).add(Expression.or(Expression.eq("carNumber", gi.getCarNumber())
-                , Expression.eq("roomNumber", gi.getRoomNumber()))));
+        ).add(Expression.eq("carNumber", gi.getCarNumber())));
 
         if (records == null || records.size() < 1) {
             htpl.save(gi);
@@ -222,7 +221,21 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
 
     public String saveParkGroup() {
         parkGroup.setParkId(currentUser().getAddition());
-        parkService.saveOrUpdate(parkGroup);
+        parkService.runSessionCommit(new SessionCommit() {
+            @Override
+            public void process(HibernateTemplate htpl) {
+                htpl.saveOrUpdate(parkGroup);
+                GroupItem white = new GroupItem();
+                white.setGroupId(parkGroup.getId());
+                List<GroupItem> whites = htpl.findByExample(white);
+                if (whites != null){
+                    for (GroupItem item: whites){
+                        item.setChannelNumber(parkGroup.getChannelNumber());
+                        htpl.update(item);
+                    }
+                }
+            }
+        });
         return FINISH;
     }
 
@@ -230,7 +243,15 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
         FwUtil.safeEach(groups, new FwUtil.SafeEachProcess<ParkGroup>() {
             @Override
             public void process(ParkGroup parkGroup) {
-                parkService.delete(ParkGroup.class, parkGroup.getId());
+                parkService.runSessionCommit(new SessionCommit() {
+                    @Override
+                    public void process(HibernateTemplate htpl) {
+                        htpl.delete(parkGroup);
+                        GroupItem white = new GroupItem();
+                        white.setGroupId(parkGroup.getId());
+                        htpl.deleteAll(htpl.findByExample(white));
+                    }
+                });
             }
         });
         return FINISH;
@@ -285,12 +306,13 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
             GroupItem duplicate = new GroupItem();
             BeanUtils.copyProperties(duplicate, white);
             duplicate.setGroupId(groupIds.get(i));
+            duplicate.setId(white.getId());
             parkService.runSessionCommit(new SessionCommit(){
                 @Override
                 public void process(HibernateTemplate htpl) {
                     duplicate.setChannelNumber(
                             parkService.get(ParkGroup.class, duplicate.getGroupId()).getChannelNumber());
-                    saveOrUpdateWhite(htpl, duplicate, new int[3]);
+                    htpl.saveOrUpdate(duplicate);
                 }
             });
         }
