@@ -117,8 +117,22 @@ Ext.define('XApp.view.park.WhiteManagerController', {
     },
     modWhite: function (btn) {
         var white = btn.up('grid').getSelection()[0];
-        white.set('groupIds',[white.get('groupId')]);
-        this.showWhiteDialog(btn, Ext.apply({}, white));
+        var me = this;
+        XApp.Util.ajax({
+            url: 'white!obtainWhites.cmd',
+            params: {
+                'white.carNumber': white.get('carNumber')
+            },
+            success: function (data) {
+                var groupIds = [];
+                Ext.each(data.whites, function(w){
+                    groupIds.push(w.groupId);
+                });
+                white.set('groupIds',groupIds);
+                me.showWhiteDialog(btn, white);
+                return true;
+            }
+        });
     },
 
     saveParkWhite: function (btn) {
@@ -189,7 +203,8 @@ Ext.define('XApp.view.park.WhiteManagerController', {
                 name: 'white.carNumber',
                 xtype: 'textfield',
                 fieldLabel: '车牌号',
-                bind: '{white.carNumber}'
+                bind: '{white.carNumber}',
+                readOnly: true
             }, {
                 name: 'white.name',
                 xtype: 'textfield',

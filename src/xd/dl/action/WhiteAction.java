@@ -187,6 +187,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
             record.setRoomNumber(gi.getRoomNumber());
             record.setName(gi.getName());
             record.setSex(gi.getSex());
+            record.setChannelNumber(gi.getChannelNumber());
             htpl.update(record);
             count[1]++;
         }
@@ -312,7 +313,7 @@ public class WhiteAction extends ParkBaseAction implements DlConst {
                 public void process(HibernateTemplate htpl) {
                     duplicate.setChannelNumber(
                             parkService.get(ParkGroup.class, duplicate.getGroupId()).getChannelNumber());
-                    htpl.saveOrUpdate(duplicate);
+                    saveOrUpdateWhite(htpl, duplicate,new int[3]);
                 }
             });
         }
