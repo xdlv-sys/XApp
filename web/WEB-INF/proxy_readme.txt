@@ -1,4 +1,4 @@
-[消息定义]
+﻿[消息定义]
  1. 注册消息 code(byte 1) -> parkId (String)->parkName(String)->freeCount(int) 每60秒发一次，也用于心跳
  2. 查询停车信息 code(byte 2)->carNumber(String)
  3. 停车信息响应 code(byte 3)->startTime(String)->consumedTime(String)->price(float)->carNumber(String)
@@ -90,3 +90,7 @@ fzcrjyxgs58
 
 64265871@qq.com
 s1234567689
+
+
+http://www.njhjc.cn/admin/index.php?lang=cn&index.php?renewable=1#metnav_75
+whyboy / fzcrj
