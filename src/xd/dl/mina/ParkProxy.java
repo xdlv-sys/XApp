@@ -24,7 +24,6 @@ import java.net.InetSocketAddress;
 public class ParkProxy extends ReversedProxy {
 
     static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9, CHARGE_NOTIFY = 15;
-    ;
 
     @Autowired
     ParkHandler parkHandler;
@@ -72,7 +71,7 @@ public class ParkProxy extends ReversedProxy {
         return new InetSocketAddress(host, port);
     }
 
-    byte[] picBuffer = new byte[2 * 1024 * 1024];
+    private byte[] picBuffer = new byte[2 * 1024 * 1024];
     private ArrayOutputStream aos = new ArrayOutputStream(picBuffer);
 
     @Override
@@ -88,11 +87,6 @@ public class ParkProxy extends ReversedProxy {
                 String watchId = (String) msg.getNextValue(2);
                 ParkedCarInfo parkedCarInfo;
                 if (StringUtils.isNotBlank(watchId)) {
-                    /*parkedCarInfo = new ParkedCarInfo();
-                    parkedCarInfo.sCarLicense = "苏A12300";
-                    parkedCarInfo.fMoney = 0.01f;
-                    parkedCarInfo.iParkedTime = 162;
-                    parkedCarInfo.sInTime = "2017-10-10 00:00：01";*/
                     parkedCarInfo = parkHandler.queryCarInfo(QUERY_CAR, watchId, carNumber);
                 } else {
                     byte carType = (byte) msg.getNextValue(3);
