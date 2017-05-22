@@ -29,6 +29,8 @@ public class ParkHandler extends ReversedHandler {
     Thumb thumb;
     @Autowired
     AutoPay autoPay;
+    @Autowired
+    EnterProcess2 enterProcess2;
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
@@ -60,6 +62,9 @@ public class ParkHandler extends ReversedHandler {
                 break;
             case 8:
                 sendRequest = autoPay;
+                break;
+            case 10:
+                sendRequest = enterProcess2;
                 break;
             default:
                 return false;
