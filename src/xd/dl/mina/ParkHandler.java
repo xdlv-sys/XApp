@@ -96,7 +96,8 @@ public class ParkHandler extends ReversedHandler {
 
         TLVMessage ret = new TLVMessage(code);
         sendRequest.constructMessage(ret.setNext(generateId()).setNext(
-                Integer.valueOf(jsonObject.getString("code"))).setNext(jsonObject.getString("msg")),msg);
+                Integer.valueOf(jsonObject.getString("code"))).setNext(
+                        jsonObject.has("msg")? jsonObject.getString("msg") : ""),msg);
         logger.info("return: {}", ret);
         session.write(ret);
 
