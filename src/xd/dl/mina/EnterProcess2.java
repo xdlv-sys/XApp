@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /**
@@ -14,7 +15,7 @@ public class EnterProcess2 extends EnterProcess {
     @Value("${enter_address}")
     String enterAddress;
     @Value("${park_id}")
-    String parkId;
+    protected String parkId;
 
     @Override
     public String[][] constructParams(TLVMessage request) throws Exception {
@@ -24,14 +25,17 @@ public class EnterProcess2 extends EnterProcess {
                 {"parkId", parkId},
                 {"carNumber", carNumber},
                 //2017-05-22 164708
-                {"enterTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
-                        new SimpleDateFormat("yyyyMMddHHmmss").parse(enterTime)
-                )}
+                {"enterTime", transferDate(enterTime)}
         };
     }
 
     @Override
     public String svrAddress() {
         return enterAddress;
+    }
+
+    protected String transferDate(String date) throws ParseException {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                new SimpleDateFormat("yyyyMMddHHmmss").parse(date));
     }
 }

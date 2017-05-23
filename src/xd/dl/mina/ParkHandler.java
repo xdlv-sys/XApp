@@ -31,6 +31,8 @@ public class ParkHandler extends ReversedHandler {
     AutoPay autoPay;
     @Autowired
     EnterProcess2 enterProcess2;
+    @Autowired
+    OutProcess2 outProcess2;
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
@@ -66,6 +68,9 @@ public class ParkHandler extends ReversedHandler {
             case 10:
                 sendRequest = enterProcess2;
                 break;
+            case 11:
+                sendRequest = outProcess2;
+                break;
             default:
                 return false;
         }
@@ -96,7 +101,7 @@ public class ParkHandler extends ReversedHandler {
 
         TLVMessage ret = new TLVMessage(code);
         sendRequest.constructMessage(ret.setNext(generateId()).setNext(
-                Integer.valueOf(jsonObject.getString("code"))).setNext(
+                Integer.valueOf(jsonObject.has("code") ? jsonObject.getString("code"): "-1")).setNext(
                         jsonObject.has("msg")? jsonObject.getString("msg") : ""),msg);
         logger.info("return: {}", ret);
         session.write(ret);
