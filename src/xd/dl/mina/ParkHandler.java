@@ -33,6 +33,8 @@ public class ParkHandler extends ReversedHandler {
     EnterProcess2 enterProcess2;
     @Autowired
     OutProcess2 outProcess2;
+    @Autowired
+    WatchProcess watchProcess;
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
@@ -70,6 +72,9 @@ public class ParkHandler extends ReversedHandler {
                 break;
             case 11:
                 sendRequest = outProcess2;
+                break;
+            case 12:
+                sendRequest = watchProcess;
                 break;
             default:
                 return false;
