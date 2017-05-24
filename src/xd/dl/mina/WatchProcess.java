@@ -10,12 +10,13 @@ public class WatchProcess extends EnterProcess2 {
     String watchAddress;
 
     public String[][] constructParams(TLVMessage request) throws Exception {
-        String watchId = (String) request.getValue();
-        String carNumber = (String) request.getNextValue(0);
         return new String[][]{
-                {"watchId", watchId},
+                {"watchId", (String) request.getValue()},
                 {"parkId", parkId},
-                {"carNumber", carNumber}
+                {"carNumber", (String) request.getNextValue(0)},
+                {"startTime", transferDate((String) request.getNextValue(1))},
+                {"outTime", transferDate((String) request.getNextValue(2))},
+                {"price", String.valueOf(request.getNextValue(3))}
         };
     }
 

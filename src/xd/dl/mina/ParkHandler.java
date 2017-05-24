@@ -125,6 +125,7 @@ public class ParkHandler extends ReversedHandler {
             parkedInfo.fMoney = (float) ret.getNextValue(1);
             parkedInfo.sInTime = (String) ret.getNextValue(2);
             parkedInfo.iParkedTime = (int) ret.getNextValue(3);
+            parkedInfo.sID = (String) ret.getNextValue(4);
             return parkedInfo;
         }
         return null;
