@@ -1,11 +1,15 @@
 package xd.fw.mina.tlv;
 
 import org.apache.mina.core.buffer.IoBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xd.fw.FwUtil;
 
 import java.io.UnsupportedEncodingException;
 
 public class TLVMessage {
+    static Logger logger = LoggerFactory.getLogger(TLVMessage.class);
+
     public static final byte BYTE_TYPE = 1, INT_TYPE = 2, LONG_TYPE = 3, FLOAT_TYPE = 4, DOUBLE_TYPE = 5
             , STRING_TYPE = 6, BOOLEAN_TYPE = 7, IMG_TYPE = 8;
     public int timeout = 0;
@@ -163,14 +167,29 @@ public class TLVMessage {
         throw new IllegalArgumentException("invalidate object:" + value);
     }
 
+    void waitForSend(){
+        synchronized (this){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                logger.error("",e);
+            }
+        }
+    }
+    void notifySend(){
+        synchronized (this){
+            notifyAll();
+        }
+    }
+
     @Override
     public String toString() {
-        StringBuffer stringBuffer = new StringBuffer(value.toString());
+        StringBuilder builder = new StringBuilder(value.toString());
         TLVMessage tmp = this;
         while ((tmp = tmp.getNext()) != null){
-            stringBuffer.append("->").append(tmp.getValue());
+            builder.append("->").append(tmp.getValue());
         }
-        return stringBuffer.toString();
+        return builder.toString();
 
     }
 

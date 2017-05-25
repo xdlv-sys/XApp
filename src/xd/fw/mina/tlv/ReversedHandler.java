@@ -229,6 +229,8 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         // timestamp is just behind code
         String messageId = (String)message.getNextValue(0);
         session.write(message);
+        // wait for message been send out
+        message.waitForSend();
 
         TLVMessage ret;
         int count = 0;
@@ -258,6 +260,11 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             return null;
         }
         return ret;
+    }
+
+    @Override
+    public void messageSent(IoSession session, Object message) throws Exception {
+        ((TLVMessage)message).notifySend();
     }
 
     @Override
