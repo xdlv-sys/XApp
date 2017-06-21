@@ -3,7 +3,6 @@ package xd.fw.action;
 import org.springframework.beans.factory.annotation.Autowired;
 import xd.fw.Conf;
 import xd.fw.bean.DynamicConf;
-import xd.fw.bean.Mod;
 import xd.fw.service.FwService;
 
 import java.util.List;

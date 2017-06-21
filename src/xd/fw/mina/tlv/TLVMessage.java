@@ -170,7 +170,7 @@ public class TLVMessage {
     void waitForSend(){
         synchronized (this){
             try {
-                wait();
+                wait(1000);
             } catch (InterruptedException e) {
                 logger.error("",e);
             }

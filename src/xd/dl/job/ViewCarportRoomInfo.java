@@ -16,4 +16,6 @@ public class ViewCarportRoomInfo
     public String sRentName;		//包月类型
     public float fRentMoney;		//包月金额
     public String sParkName;		//停车场名
+    public String sBillNo;			//东汇用收费系统内部单号
+    public int iLicenseColor;		//东汇用车牌颜色
 }

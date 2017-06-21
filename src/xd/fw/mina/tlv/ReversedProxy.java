@@ -128,7 +128,7 @@ public abstract class ReversedProxy implements IMinaConst {
         TLVMessage registryMessage = new TLVMessage(REGISTRY);
         constructRegistryMessage(registryMessage);
 
-        session.write(registryMessage).awaitUninterruptibly();
+        session.write(registryMessage);
     }
 
     protected abstract void constructRegistryMessage(TLVMessage registryMessage);
@@ -138,8 +138,9 @@ public abstract class ReversedProxy implements IMinaConst {
     protected abstract void handlerQuery(TLVMessage msg) throws Exception;
 
     protected void response(TLVMessage response) {
-        logger.info("return: {}", response);
         session.write(response);
+        response.waitForSend();
+        logger.info("return: {}", response);
     }
 
     private void checkSession() throws Exception {

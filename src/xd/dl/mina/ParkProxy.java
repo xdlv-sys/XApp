@@ -6,7 +6,6 @@ import org.apache.derby.iapi.services.io.ArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import xd.dl.job.LeftParkInfo;
 import xd.dl.job.ParkNative;
 import xd.dl.job.ParkedCarInfo;
 import xd.dl.job.ViewCarportRoomInfo;
@@ -16,8 +15,6 @@ import xd.fw.mina.tlv.TLVMessage;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 
 @Service
@@ -94,9 +91,9 @@ public class ParkProxy extends ReversedProxy {
                     String dbId = (String) msg.getNextValue(5);
                     String enterTime = (String) msg.getNextValue(6);
                     if (StringUtils.isBlank(dbId)) {
-                        parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 1, carOrder, "", "");
+                        parkedCarInfo = ParkNative.getParkedCarInfo(null,carType, carNumber, 15, 1, carOrder, "", "");
                     } else {
-                        parkedCarInfo = ParkNative.getParkedCarInfo(carType, carNumber, 15, 2, carOrder, dbId, enterTime);
+                        parkedCarInfo = ParkNative.getParkedCarInfo(null, carType, carNumber, 15, 2, carOrder, dbId, enterTime);
                     }
                 }
                 if (parkedCarInfo != null && parkedCarInfo.iReturn != 6
@@ -136,15 +133,15 @@ public class ParkProxy extends ReversedProxy {
                     String sId = (String) msg.getNextValue(6);
                     String searchTime = (String) msg.getNextValue(7);
 
-                    success = ParkNative.payParkCarFee(carType, carNumber
-                            , timeStamp, totalFee, sId, searchTime, 1) == 0;
+                    success = ParkNative.payParkCarFee(null,carType, carNumber
+                            ,timeStamp, totalFee, sId, searchTime, 1, null,null,null,null,0,0,0) == 0;
                 }
                 next.setNext(success ? "OK" : "FAIL");
                 response(msg);
                 break;
             case QUERY_CAR2:
                 carNumber = (String) msg.getNextValue(1);
-                ViewCarportRoomInfo[] carportInfos = ParkNative.getCarportInfo(carNumber);
+                ViewCarportRoomInfo[] carportInfos = ParkNative.getCarportInfo(carNumber, null,0,0);
                 if (carportInfos == null || carportInfos.length == 0) {
                     logger.info("there is no carportInfo for query:{}", carNumber);
                     next.setNext(NULL_MSG);
@@ -181,7 +178,8 @@ public class ParkProxy extends ReversedProxy {
 
                 String[] carPortArray = carPorts.split(",");
                 success = ParkNative.payCarportRent(carNumber, roomNumber, carPortArray[0]
-                        , carPortArray, payTime, outTradeNo, months, totalFee, carPortArray.length > 1) == 0;
+                        , carPortArray, payTime, outTradeNo, months, totalFee
+                        , carPortArray.length > 1,0,0,0,0,0) == 0;
 
                 next.setNext(success ? "OK" : "FAIL");
                 response(msg);

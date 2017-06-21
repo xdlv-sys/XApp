@@ -1,9 +1,6 @@
 package xd.fw;
 
-import xd.fw.action.BaseAction;
-
 import javax.servlet.*;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class EncodingFilter implements Filter {

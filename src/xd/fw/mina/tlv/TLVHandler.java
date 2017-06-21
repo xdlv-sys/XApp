@@ -31,4 +31,9 @@ public class TLVHandler extends IoHandlerAdapter implements IConst{
         logger.info("receive:" + message);
         session.write(new TLVMessage("OK"));
     }
+
+    @Override
+    public void messageSent(IoSession session, Object message) throws Exception {
+        ((TLVMessage)message).notifySend();
+    }
 }

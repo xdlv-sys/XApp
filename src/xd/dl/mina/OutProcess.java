@@ -15,40 +15,21 @@ public class OutProcess extends SendRequest{
         int color = (int)request.getNextValue(4);
         String deviceNo = (String)request.getNextValue(5);
         int isOffLine = (int)request.getNextValue(6);
-        String colorValue;
-        switch(color){
-            case 1:
-                colorValue = "blue";
-                break;
-            case 2:
-                colorValue = "yellow";
-                break;
-            case 3:
-                colorValue = "white";
-                break;
-            default:
-                colorValue = "black";
-        }
+        String orderNo = (String)request.getNextValue(7);
 
         String timeStamp = getTimeStamp();
         return new String[][]{
-                {"Parkingno", parkingNo},
-                {"Carnumber", carNumber},
-                {"CarPlateColor",colorValue },
-                {"Uniquekey",uniqueKey},
-                {"DeviceNo",deviceNo},
-                {"Price", String.valueOf(price)},
-                {"TotalPrice", totalPrice},
-                {"Time1", time1},
-                {"Time2", time2},
-                {"Timestamp", timeStamp},
-                {"Token", md5(carNumber, timeStamp, parkingNo, uniqueKey)},
-                {"IsOffPay", String.valueOf(isOffLine)}
+                {"parkingNo", parkingNo},
+                {"orderNo", orderNo},
+                {"carNumber", carNumber},
+                {"enterTime", time1},
+                {"outTime", time2},
+                {"device_no",deviceNo},
         };
     }
 
     @Override
     public String svrAddress() {
-        return "http://"+dhHost+"/mobile/index.php?v=2.0&act=thirdparking&op=leaveParking";
+        return "http://"+dhHost+"/order/completeUpload";
     }
 }
