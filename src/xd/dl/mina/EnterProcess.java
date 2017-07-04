@@ -10,7 +10,7 @@ public class EnterProcess extends SendRequest{
     @Override
     public String[][] constructParams(TLVMessage request) throws Exception {
         String carNumber = (String)request.getValue();
-        String timeStamp = (String)request.getNextValue(0);
+        String timeStamp = convertDate(request.getNextValue(0));
         int color = (int)request.getNextValue(1);
         String deviceNo = (String)request.getNextValue(2);
         String orderNo = (String)request.getNextValue(3);
@@ -27,10 +27,14 @@ public class EnterProcess extends SendRequest{
 
     @Override
     TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
+        float memberBalance = -10000.11f;
+        if (retJson.has("memberBalance")){
+            memberBalance = (int)getJson(retJson,"memberBalance",0) / 100f;
+        }
         return ret.setNext(getJson(retJson,"stauts", -1))
                 .setNext(getJson(retJson,"msg",""))
                 .setNext(request.getValue())
-                .setNext(((float)getJson(retJson,"memberBalance",-1000000.11))/100f)
+                .setNext(memberBalance)
                 .setNext(request.getNextValue(3))
                 .setNext(getJson(retJson,"Member_code",""))
                 .setNext(getJson(retJson,"Is_auto_leave", 0));

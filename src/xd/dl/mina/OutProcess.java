@@ -16,11 +16,11 @@ public class OutProcess extends SendRequest{
         for (int i =0;i<payListTime;i++){
             JSONObject pay = new JSONObject();
             pay.put("paySeq", request.getNextValue(++start));
-            pay.put("payStartTime", request.getNextValue(++start));
-            pay.put("payEndTime", request.getNextValue(++start));
+            pay.put("payStartTime", convertDate(request.getNextValue(++start)));
+            pay.put("payEndTime", convertDate(request.getNextValue(++start)));
             pay.put("payWay", request.getNextValue(++start));
-            pay.put("settlementFee", 100 * (int)request.getNextValue(++start));
-            pay.put("payAmount", 100 * (int)request.getNextValue(++start));
+            pay.put("settlementFee", 100 * (float)request.getNextValue(++start));
+            pay.put("payAmount", 100 * (float)request.getNextValue(++start));
             payList.add(pay);
         }
         return new String[][]{
