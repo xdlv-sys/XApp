@@ -16,6 +16,8 @@ import java.util.List;
 @Service
 public class ParkHandler extends ReversedHandler {
     @Autowired
+    UploadFreeJob uploadFreeJob;
+    @Autowired
     OutProcess outProcess;
 
     @Autowired
@@ -34,6 +36,8 @@ public class ParkHandler extends ReversedHandler {
     OutProcess2 outProcess2;
     @Autowired
     WatchProcess watchProcess;
+    @Autowired
+    ChargeStandard chargeStandard;
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
@@ -48,6 +52,9 @@ public class ParkHandler extends ReversedHandler {
         int code = (int) msg.getValue();
         SendRequest sendRequest;
         switch (code) {
+            case 0:
+                sendRequest = uploadFreeJob;
+                break;
             case 1:
                 sendRequest = enterProcess;
                 break;
@@ -74,6 +81,9 @@ public class ParkHandler extends ReversedHandler {
                 break;
             case 12:
                 sendRequest = watchProcess;
+                break;
+            case 13:
+                sendRequest = chargeStandard;
                 break;
             default:
                 return false;
@@ -104,9 +114,7 @@ public class ParkHandler extends ReversedHandler {
         logger.info("return from http {}: {}",id, jsonObject);
 
         TLVMessage ret = new TLVMessage(code);
-        sendRequest.constructMessage(ret.setNext(generateId()).setNext(
-                Integer.valueOf(jsonObject.has("stauts") ? jsonObject.getString("stauts"): "-1")).setNext(
-                        jsonObject.has("msg")? jsonObject.getString("msg") : ""),msg);
+        sendRequest.constructMessage(ret.setNext(generateId()), msg.getNext(), jsonObject);
         logger.info("return: {}", ret);
         session.write(ret);
 
@@ -136,8 +144,8 @@ public class ParkHandler extends ReversedHandler {
         return ret != null && 200 == (int) ret.getValue();
     }
 
-    public void notifyWatchIdPayFee(String carNumber, float parkingPrice) {
-        TLVMessage message = createRequest(ParkProxy.PAY_FEE_NOTIFY,200,"OK",carNumber, parkingPrice);
+    public void notifyWatchIdPayFee(String carNumber, float parkingPrice, String orderNo,String memberCode, int leavel) {
+        TLVMessage message = createRequest(ParkProxy.PAY_FEE_NOTIFY,200,"OK",carNumber, parkingPrice, orderNo, memberCode, leavel);
         List<TLVMessage> messages = notifyAllId(message);
         for (TLVMessage m : messages){
             if (m != null && 200 == (int)m.getValue()){

@@ -1,6 +1,5 @@
 package xd.dl.action;
 
-import net.sf.json.JSONObject;
 import org.apache.struts2.convention.annotation.Action;
 import xd.dl.job.IDongHui;
 import xd.dl.job.ParkNative;

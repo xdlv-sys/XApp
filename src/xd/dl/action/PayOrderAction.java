@@ -1,8 +1,10 @@
 package xd.dl.action;
 
 import org.apache.struts2.convention.annotation.Action;
+import org.springframework.beans.factory.annotation.Autowired;
 import xd.dl.job.IDongHui;
 import xd.dl.job.ParkNative;
+import xd.dl.mina.ParkHandler;
 
 import java.text.SimpleDateFormat;
 
@@ -15,8 +17,9 @@ public class PayOrderAction extends ParkOrderBaseAction implements IDongHui {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    @Autowired
+    ParkHandler parkHandler;
 
-    String state, msg;
     @Action("/payOrder/payNotice")
     public String getParkOrder() throws Exception{
         int ret = ParkNative.payParkCarFee(orderNo,0,carNumber,payStartTime, payFee/100.0f,null, null,1,paySeq
@@ -27,9 +30,23 @@ public class PayOrderAction extends ParkOrderBaseAction implements IDongHui {
             state = "1013";
             msg = fail;
         }
+        parkHandler.notifyWatchIdPayFee(carNumber,payFee/100.0f,orderNo,"",0);
         return SUCCESS;
     }
 
+    @Action("/payOrder/accountCheck")
+    public String accountCheck() throws Exception{
+        return SUCCESS;
+    }
+
+    String memberCode;
+    int isAutoLeave;
+    int memberBalance;
+    @Action("/payOrder/updateAutoPayStatus")
+    public String updateAutoPayStatus() throws Exception{
+        ParkNative.updateAutoPayInfo(memberCode,isAutoLeave, memberBalance/100f);
+        return SUCCESS;
+    }
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }

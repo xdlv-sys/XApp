@@ -12,6 +12,9 @@ public class ParkNative
     public native static ViewCarportRoomInfo[] getCarportInfo(String pLicense, String pCarportID, int iLicenseColor, int iMethod);
     public native static int payCarportRent(String pCarLicense, String pRoomNum, String pCarportNum, String[] aCarportNum, String pPayTime, String pSerialNumber,
                                             int iMonthCnt, float fMoney, boolean bPayAllCarport, int iLicenseColor, int iPayWay, float fPayFee, float fDiscount, int iMethod);
+    public native static int updateAutoPayInfo(String pMemberCode, int iAutoLeave, float fBalance);
+    public native static AccountCheck getAccountCheck(String pStartTime, String pEndTime);
+
     static {
         System.loadLibrary("ParkingMeter");
     }

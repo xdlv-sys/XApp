@@ -51,11 +51,6 @@ public class Thumb extends SendRequest {
     }
 
     @Override
-    void constructMessage(TLVMessage ret, TLVMessage request) {
-        ret.setNext(request.getNextValue(0)).setNext(0);
-    }
-
-    @Override
     String svrAddress() {
         return "http://" + dhHost + "/mobile/index.php?v=2.0&act=thirdparking&op=thumb";
     }

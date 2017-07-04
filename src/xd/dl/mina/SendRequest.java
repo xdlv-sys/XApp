@@ -1,5 +1,6 @@
 package xd.dl.mina;
 
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import xd.dl.job.IDongHui;
 import xd.fw.mina.tlv.TLVMessage;
@@ -18,7 +19,10 @@ abstract class SendRequest implements IDongHui{
 
     abstract String svrAddress();
 
-    void constructMessage(TLVMessage ret,TLVMessage request){
-        ret.setNext(request.getNextValue(0)).setNext(request.getNextValue(1));
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson){
+        return ret;
+    }
+    Object getJson(JSONObject jsonObject, String key, Object dValue){
+        return jsonObject.has(key) ? jsonObject.get(key) : dValue;
     }
 }

@@ -1,5 +1,6 @@
 package xd.dl.mina;
 
+import net.sf.json.JSONObject;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
 
@@ -7,30 +8,28 @@ import xd.fw.mina.tlv.TLVMessage;
 public class AutoPay extends SendRequest{
 
     public String[][] constructParams(TLVMessage request) throws Exception {
-        String carNumber = (String) request.getValue();
-        String price = String.valueOf(request.getNext(0).getValue());
-        String totalPrice = String.valueOf(request.getNextValue(1));
-        String time1 = (String) request.getNext(2).getValue();
-        String time2 = (String) request.getNext(3).getValue();
-        String deviceNo = (String)request.getNextValue(4);
-
-        String timeStamp = getTimeStamp();
         return new String[][]{
-                {"Parkingno", parkingNo},
-                {"Carnumber", carNumber},
-                {"Uniquekey",uniqueKey},
-                {"DeviceNo",deviceNo},
-                {"Price", price},
-                {"TotalPrice", totalPrice},
-                {"Timestamp", timeStamp},
-                {"Time1", time1},
-                {"Time2", time2},
-                {"Token", md5(carNumber, timeStamp, parkingNo, uniqueKey)}
+                {"orderNo", (String)request.getNextValue(3)},
+                {"parkingNo", parkingNo},
+                {"carNumber",(String) request.getValue()},
+                {"enterTime",(String)request.getNextValue(1)},
+                {"outTime", (String)request.getNextValue(2)},
+                {"payFee", String.valueOf(100 * (float)request.getNextValue(2))}
         };
+    }
+    @Override
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
+        return ret.setNext(getJson(retJson,"state", -1))
+                .setNext(getJson(retJson,"msg",""))
+                .setNext(request.getValue())
+                .setNext(request.getNextValue(2))
+                .setNext(request.getNextValue(3))
+                .setNext(getJson(retJson,"Member_code",""))
+                .setNext(getJson(retJson,"Is_auto_leave", 0));
     }
 
     @Override
     public String svrAddress() {
-        return "http://"+dhHost+"/mobile/index.php?v=2.0&act=thirdparking&op=autoPay";
+        return "http://"+dhHost+"/pay/autoPay";
     }
 }

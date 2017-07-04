@@ -1,6 +1,5 @@
 package xd.dl.action;
 
-import net.sf.json.JSONObject;
 import org.apache.struts2.convention.annotation.Action;
 import xd.dl.job.ParkNative;
 import xd.dl.job.ViewCarportRoomInfo;
@@ -22,7 +21,10 @@ public class ReNewAction extends ParkOrderBaseAction {
             state = "1300";
             msg = fail;
         } else {
-            int money = Arrays.stream(carportInfo).mapToInt(c->(int)(c.fRentMoney * 100)).sum();
+            int money = 0;
+            for (ViewCarportRoomInfo info : carportInfo){
+                money += info.fRentMoney * 100;
+            }
             put("billNo",carportInfo[0].sBillNo);
             put("carNumber", carNumber);
             put("carPlateColorType", carPlateColorType);
