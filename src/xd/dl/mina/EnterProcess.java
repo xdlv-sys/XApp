@@ -30,7 +30,7 @@ public class EnterProcess extends SendRequest{
         return ret.setNext(getJson(retJson,"stauts", -1))
                 .setNext(getJson(retJson,"msg",""))
                 .setNext(request.getValue())
-                .setNext(((int)getJson(retJson,"memberBalance",-1000000.11))/100f)
+                .setNext(((float)getJson(retJson,"memberBalance",-1000000.11))/100f)
                 .setNext(request.getNextValue(3))
                 .setNext(getJson(retJson,"Member_code",""))
                 .setNext(getJson(retJson,"Is_auto_leave", 0));
