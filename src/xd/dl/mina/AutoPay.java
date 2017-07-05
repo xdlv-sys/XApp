@@ -8,21 +8,22 @@ import xd.fw.mina.tlv.TLVMessage;
 public class AutoPay extends SendRequest{
 
     public String[][] constructParams(TLVMessage request) throws Exception {
+        //8->苏A12388->0.1->20170705142329->20170705144442->N1502000000103170705144439085615
         return new String[][]{
                 {"orderNo", (String)request.getNextValue(3)},
                 {"parkingNo", parkingNo},
                 {"carNumber",(String) request.getValue()},
-                {"enterTime",(String)request.getNextValue(1)},
-                {"outTime", (String)request.getNextValue(2)},
-                {"payFee", String.valueOf(100 * (float)request.getNextValue(2))}
+                {"enterTime",convertDate(request.getNextValue(1))},
+                {"outTime", convertDate(request.getNextValue(2))},
+                {"payFee", String.valueOf(100 * (float)request.getNextValue(0))}
         };
     }
     @Override
     TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
-        return ret.setNext(getJson(retJson,"state", -1))
+        return super.constructMessage(ret,request,retJson)
                 .setNext(getJson(retJson,"msg",""))
                 .setNext(request.getValue())
-                .setNext(request.getNextValue(2))
+                .setNext(request.getNextValue(0))
                 .setNext(request.getNextValue(3))
                 .setNext(getJson(retJson,"Member_code",""))
                 .setNext(getJson(retJson,"Is_auto_leave", 0));

@@ -15,12 +15,12 @@ public class ChargeStandard extends SendRequest{
     }
     @Override
     TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
-        return ret.setNext(getJson(retJson,"state", -1))
+        return super.constructMessage(ret,request,retJson)
                 .setNext(getJson(retJson,"msg",""));
     }
 
     @Override
     public String svrAddress() {
-        return "http://"+dhHost+"/pay/autoPay";
+        return "http://"+dhHost+"/askPark/uploadChargeStandard";
     }
 }

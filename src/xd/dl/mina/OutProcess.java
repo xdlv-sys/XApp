@@ -27,8 +27,8 @@ public class OutProcess extends SendRequest{
                 {"parkNo", parkingNo},
                 {"orderNo", (String)request.getNextValue(3)},
                 {"carNumber", (String)request.getValue()},
-                {"enterTime", (String)request.getNextValue(0)},
-                {"outTime", (String)request.getNextValue(1)},
+                {"enterTime", convertDate(request.getNextValue(0))},
+                {"outTime", convertDate(request.getNextValue(1))},
                 {"device_no",(String)request.getNextValue(2)},
                 {"payList", payList.toString()}
         };
@@ -36,7 +36,7 @@ public class OutProcess extends SendRequest{
 
     @Override
     TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
-        return ret.setNext(getJson(retJson,"stauts", -1))
+        return super.constructMessage(ret,request,retJson)
                 .setNext(getJson(retJson,"msg",""))
                 .setNext(request.getValue())
                 .setNext(request.getNextValue(0))

@@ -9,19 +9,14 @@ public class EnterProcess extends SendRequest{
 
     @Override
     public String[][] constructParams(TLVMessage request) throws Exception {
-        String carNumber = (String)request.getValue();
-        String timeStamp = convertDate(request.getNextValue(0));
-        int color = (int)request.getNextValue(1);
-        String deviceNo = (String)request.getNextValue(2);
-        String orderNo = (String)request.getNextValue(3);
-
         return new String[][]{
                 {"parkingNo", parkingNo},
-                {"orderNo", orderNo},
-                {"carNumber", carNumber},
-                {"carPlateColorType",String.valueOf(color)},
-                {"enterTime", timeStamp},
-                {"deviceCode",deviceNo}
+                {"orderNo", (String)request.getNextValue(3)},
+                {"carNumber", (String)request.getValue()},
+                {"carPlateColorType",String.valueOf(request.getNextValue(1))},
+                {"imgAddress",""},
+                {"enterTime", convertDate(request.getNextValue(0))},
+                {"deviceCode",(String)request.getNextValue(2)},
         };
     }
 
@@ -31,7 +26,7 @@ public class EnterProcess extends SendRequest{
         if (retJson.has("memberBalance")){
             memberBalance = (int)getJson(retJson,"memberBalance",0) / 100f;
         }
-        return ret.setNext(getJson(retJson,"stauts", -1))
+        return ret.setNext(Integer.parseInt(String.valueOf(getJson(retJson,"stauts", -1))))
                 .setNext(getJson(retJson,"msg",""))
                 .setNext(request.getValue())
                 .setNext(memberBalance)

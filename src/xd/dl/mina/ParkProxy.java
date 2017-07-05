@@ -3,6 +3,8 @@ package xd.dl.mina;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.lang.StringUtils;
 import org.apache.derby.iapi.services.io.ArrayOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.net.InetSocketAddress;
 
 @Service
 public class ParkProxy extends ReversedProxy {
+    Logger logger = LoggerFactory.getLogger(ReversedProxy.class);
 
     static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9, CHARGE_NOTIFY = 15;
 
@@ -55,6 +58,7 @@ public class ParkProxy extends ReversedProxy {
     @PreDestroy
     public void destroy() {
         super.destroy();
+        logger.info("un initialize park native");
         ParkNative.unitialized();
     }
 

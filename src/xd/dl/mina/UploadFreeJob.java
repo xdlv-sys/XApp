@@ -16,7 +16,7 @@ public class UploadFreeJob extends SendRequest{
     String[][] constructParams(TLVMessage request) throws Exception {
         return new String[][]{
                 {"parkingNo", parkingNo},
-                {"freeSlotNum",(String)request.getNextValue(0)}
+                {"freeSlotNum",String.valueOf(request.getNextValue(0))}
         };
     }
 

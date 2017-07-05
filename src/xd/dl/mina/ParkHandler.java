@@ -41,10 +41,7 @@ public class ParkHandler extends ReversedHandler {
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
-        //岗亭注册，直接返回 0->200->watchId
-        TLVMessage ret = new TLVMessage(msg.getValue());
-        ret.setNext(200).setNext(msg.getNextValue(0));
-        session.write(ret);
+       handlerMessage(msg, session);
     }
 
     @Override
