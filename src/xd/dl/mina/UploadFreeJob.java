@@ -22,7 +22,7 @@ public class UploadFreeJob extends SendRequest{
 
     @Override
     TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
-        int retInt = (int)getJson(retJson,"state", -1);
+        int retInt = Integer.parseInt(String.valueOf(getJson(retJson,"state", -1)));
         return ret.setNext(retInt).setNext(
                 retInt == 200 ? request.getValue() : getJson(retJson,"msg","error"));
     }
