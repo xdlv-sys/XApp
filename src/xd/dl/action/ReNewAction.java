@@ -4,15 +4,12 @@ import org.apache.struts2.convention.annotation.Action;
 import xd.dl.job.ParkNative;
 import xd.dl.job.ViewCarportRoomInfo;
 
-import java.util.Arrays;
-
 /**
  * Created by xd on 6/21/2017.
  *
  */
 @Action("/dtkServer/renew")
-public class ReNewAction extends ParkOrderBaseAction {
-    String carNumber;
+public class ReNewAction extends DLBaseAction {
     int carPlateColorType;
 
     @Action("getRenew")
@@ -51,10 +48,6 @@ public class ReNewAction extends ParkOrderBaseAction {
             state = "2000";
         }
         return SUCCESS;
-    }
-
-    public void setCarNumber(String carNumber) {
-        this.carNumber = carNumber;
     }
 
     public void setCarPlateColorType(int carPlateColorType) {

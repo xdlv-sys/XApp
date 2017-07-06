@@ -1,17 +1,18 @@
 package xd.dl.action;
 
 import org.apache.struts2.convention.annotation.Action;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xd.dl.job.IDongHui;
 import xd.dl.job.ParkNative;
 import xd.dl.job.ParkedCarInfo;
 @Action("/dtkServer/parkOrder")
-public class ParkOrderAction extends ParkOrderBaseAction implements IDongHui {
-    //Logger logger = LoggerFactory.getLogger(ParkOrderAction.class);
-    String orderNo, carNo;
+public class ParkOrderAction extends DLBaseAction implements IDongHui {
+    String orderNo;
     @Action("getParkOrder")
     public String getParkOrder(){
+        logger.info("start to ParkNative.getParkedCarInfo");
         ParkedCarInfo carInfo = ParkNative.getParkedCarInfo(orderNo, 0, carNo, 0, 0, 0, "", "");
-
         if (carInfo == null){
             state = "1012";
             msg = fail;
@@ -26,9 +27,5 @@ public class ParkOrderAction extends ParkOrderBaseAction implements IDongHui {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
-    }
-
-    public void setCarNo(String carNo) {
-        this.carNo = carNo;
     }
 }

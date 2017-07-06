@@ -8,9 +8,9 @@ import xd.dl.mina.ParkHandler;
 
 import java.text.SimpleDateFormat;
 @Action("/dtkServer/payOrder")
-public class PayOrderAction extends ParkOrderBaseAction implements IDongHui {
+public class PayOrderAction extends DLBaseAction implements IDongHui {
 
-    String orderNo, paySeq, parkingNo, carNumber;
+    String orderNo, paySeq, parkingNo;
     int carPlateColorType;
     String enterTime, payStartTime, payEndTime;
     int payWay, payFee, payAmount, sysDiscount;
@@ -57,10 +57,6 @@ public class PayOrderAction extends ParkOrderBaseAction implements IDongHui {
 
     public void setParkingNo(String parkingNo) {
         this.parkingNo = parkingNo;
-    }
-
-    public void setCarNumber(String carNumber) {
-        this.carNumber = carNumber;
     }
 
     public void setCarPlateColorType(int carPlateColorType) {

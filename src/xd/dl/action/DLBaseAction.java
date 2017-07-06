@@ -1,0 +1,83 @@
+package xd.dl.action;
+
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import xd.fw.action.BaseAction;
+
+import javax.annotation.PostConstruct;
+import java.io.UnsupportedEncodingException;
+
+/**
+ * Created by xd on 6/21/2017.
+ * base class for pay order action
+ */
+public class DLBaseAction extends BaseAction{
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+    @Value("${success}")
+    String success;
+    @Value("${fail}")
+    String fail;
+    @Value("${park_no}")
+    String parkNo;
+
+    String state, msg, carNumber, carNo, parkingNo;
+
+    JSONObject result;
+    @PostConstruct
+    public void init(){
+        state = "200";
+        msg = success;
+    }
+
+    @Override
+    public void validate() {
+        carNo = convertUtf8(carNo);
+        carNumber = convertUtf8(carNumber);
+    }
+
+    private String convertUtf8(String str){
+        if (StringUtils.isBlank(str)){
+            return str;
+        }
+        try {
+            return new String(str.getBytes("iso-8859-1"), "utf8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("",e);
+        }
+        return str;
+    }
+
+    public void setCarNumber(String carNumber) {
+        this.carNumber = carNumber;
+    }
+
+    public void setCarNo(String carNo) {
+        this.carNo = carNo;
+    }
+
+    public void setParkNo(String parkNo) {
+        this.parkNo = parkNo;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public JSONObject getResult() {
+        return result;
+    }
+
+    void put(Object k, Object v){
+        if (result == null){
+            result = new JSONObject();
+        }
+        result.put(k, v);
+    }
+}

@@ -3,16 +3,16 @@ public class ParkNative
 {
     public native static int initialized( String pDbIP,String pDbName,String pDbUserID,String pDbPwd );
     public native static int unitialized();
-    public native static ParkedCarInfo getParkedCarInfo(String pOrderNo, int iCarType, String pLicense, int iFreeTime, int iMatchMethod, int iCarOrder,
+    public synchronized native static ParkedCarInfo getParkedCarInfo(String pOrderNo, int iCarType, String pLicense, int iFreeTime, int iMatchMethod, int iCarOrder,
                                                         String pSearchID, String pSearchInTime);
-    public native static int payParkCarFee(String pOrderNo, int iCarType, String pCarLicese, String pPayTime, float fMoney, String pSearchID,
+    public synchronized native static int payParkCarFee(String pOrderNo, int iCarType, String pCarLicese, String pPayTime, float fMoney, String pSearchID,
                                            String pSearchInTime, int iPayMethod, String pPaySeq, String pInTime, String pStartTime, String pEndTime,
                                            int iPayWay, float fPayFee, float fDiscount);
     public native static LeftParkInfo[] getLeftParkInfo();
     public native static ViewCarportRoomInfo[] getCarportInfo(String pLicense, String pCarportID, int iLicenseColor, int iMethod);
-    public native static int payCarportRent(String pCarLicense, String pRoomNum, String pCarportNum, String[] aCarportNum, String pPayTime, String pSerialNumber,
+    public synchronized native static int payCarportRent(String pCarLicense, String pRoomNum, String pCarportNum, String[] aCarportNum, String pPayTime, String pSerialNumber,
                                             int iMonthCnt, float fMoney, boolean bPayAllCarport, int iLicenseColor, int iPayWay, float fPayFee, float fDiscount, int iMethod);
-    public native static int updateAutoPayInfo(String pMemberCode, int iAutoLeave, float fBalance);
+    public synchronized native static int updateAutoPayInfo(String pMemberCode, int iAutoLeave, float fBalance);
     public native static AccountCheck getAccountCheck(String pStartTime, String pEndTime);
 
     static {
