@@ -7,7 +7,7 @@ import xd.dl.job.ParkNative;
 import xd.dl.mina.ParkHandler;
 
 import java.text.SimpleDateFormat;
-
+@Action("/dtkServer/payOrder")
 public class PayOrderAction extends ParkOrderBaseAction implements IDongHui {
 
     String orderNo, paySeq, parkingNo, carNumber;
@@ -20,7 +20,7 @@ public class PayOrderAction extends ParkOrderBaseAction implements IDongHui {
     @Autowired
     ParkHandler parkHandler;
 
-    @Action("/payOrder/payNotice")
+    @Action("payNotice")
     public String getParkOrder() throws Exception{
         int ret = ParkNative.payParkCarFee(orderNo,0,carNumber,payStartTime, payFee/100.0f,null, null,1,paySeq
                 ,sdf.format(sdf2.parse(enterTime))
@@ -34,7 +34,7 @@ public class PayOrderAction extends ParkOrderBaseAction implements IDongHui {
         return SUCCESS;
     }
 
-    @Action("/payOrder/accountCheck")
+    @Action("accountCheck")
     public String accountCheck() throws Exception{
         return SUCCESS;
     }
@@ -42,7 +42,7 @@ public class PayOrderAction extends ParkOrderBaseAction implements IDongHui {
     String memberCode;
     int isAutoLeave;
     int memberBalance;
-    @Action("/payOrder/updateAutoPayStatus")
+    @Action("updateAutoPayStatus")
     public String updateAutoPayStatus() throws Exception{
         ParkNative.updateAutoPayInfo(memberCode,isAutoLeave, memberBalance/100f);
         return SUCCESS;

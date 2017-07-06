@@ -10,11 +10,12 @@ import java.util.Arrays;
  * Created by xd on 6/21/2017.
  *
  */
+@Action("/dtkServer/renew")
 public class ReNewAction extends ParkOrderBaseAction {
     String carNumber;
     int carPlateColorType;
 
-    @Action("/renew/getRenew")
+    @Action("getRenew")
     public String getRenew(){
         ViewCarportRoomInfo[] carportInfo = ParkNative.getCarportInfo(carNumber, parkNo, carPlateColorType, 1);
         if (carportInfo == null || carportInfo.length < 1){
@@ -39,7 +40,7 @@ public class ReNewAction extends ParkOrderBaseAction {
     int renewPeroid, payWay, renewFee, onLinePayAmount, sysDiscount;
 
 
-    @Action("/renew/renewPayNotice")
+    @Action("renewPayNotice")
     public String renewPayNotice(){
         int ret = ParkNative.payCarportRent(carNumber,null
                 ,null,null,renewTime

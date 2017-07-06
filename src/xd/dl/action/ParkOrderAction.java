@@ -4,11 +4,11 @@ import org.apache.struts2.convention.annotation.Action;
 import xd.dl.job.IDongHui;
 import xd.dl.job.ParkNative;
 import xd.dl.job.ParkedCarInfo;
-
+@Action("/dtkServer/parkOrder")
 public class ParkOrderAction extends ParkOrderBaseAction implements IDongHui {
     //Logger logger = LoggerFactory.getLogger(ParkOrderAction.class);
     String orderNo, carNo;
-    @Action("/parkOrder/getParkOrder")
+    @Action("getParkOrder")
     public String getParkOrder(){
         ParkedCarInfo carInfo = ParkNative.getParkedCarInfo(orderNo, 0, carNo, 0, 0, 0, "", "");
 
