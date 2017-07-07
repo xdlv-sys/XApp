@@ -6,6 +6,7 @@ import xd.dl.job.IDongHui;
 import xd.dl.job.ParkNative;
 import xd.dl.mina.ParkHandler;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 @Action("/dtkServer/payOrder")
 public class PayOrderAction extends DLBaseAction implements IDongHui {
@@ -22,16 +23,22 @@ public class PayOrderAction extends DLBaseAction implements IDongHui {
 
     @Action("payNotice")
     public String getParkOrder() throws Exception{
-        int ret = ParkNative.payParkCarFee(orderNo,0,carNumber,payStartTime, payFee/100.0f,null, null,1,paySeq
-                ,sdf.format(sdf2.parse(enterTime))
-                ,sdf.format(sdf2.parse(payStartTime))
-                ,sdf.format(sdf2.parse(payEndTime)),payWay,payFee/100.0f,sysDiscount/100.0f);
+        int ret = ParkNative.payParkCarFee(orderNo,0,carNumber
+                ,converTime(payEndTime), payFee/100.0f,"", ""
+                ,0,paySeq
+                ,converTime(enterTime)
+                ,converTime(payStartTime)
+                ,converTime(payEndTime),payWay,payFee/100.0f,sysDiscount/100.0f);
         if (ret != 0){
             state = "1013";
             msg = fail;
+        } else {
+            parkHandler.notifyWatchIdPayFee(carNumber,payFee/100.0f,orderNo,"",0);
         }
-        parkHandler.notifyWatchIdPayFee(carNumber,payFee/100.0f,orderNo,"",0);
         return SUCCESS;
+    }
+    private String converTime(String s) throws ParseException {
+        return sdf.format(sdf2.parse(s));
     }
 
     @Action("accountCheck")

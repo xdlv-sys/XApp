@@ -1,8 +1,10 @@
 package xd.dl.action;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import xd.dl.job.ParkNative;
 import xd.dl.job.ViewCarportRoomInfo;
+import xd.fw.FwException;
 
 /**
  * Created by xd on 6/21/2017.
@@ -11,9 +13,15 @@ import xd.dl.job.ViewCarportRoomInfo;
 @Action("/dtkServer/renew")
 public class ReNewAction extends DLBaseAction {
     int carPlateColorType;
+    String duoToTime;
+
+    RenewFee[] renewFeeList;
 
     @Action("getRenew")
     public String getRenew(){
+        if (StringUtils.isBlank(carNumber) || StringUtils.isBlank(parkingNo)){
+            throw new FwException("parameter is not invalidate");
+        }
         ViewCarportRoomInfo[] carportInfo = ParkNative.getCarportInfo(carNumber, parkNo, carPlateColorType, 1);
         if (carportInfo == null || carportInfo.length < 1){
             state = "1300";
@@ -23,19 +31,17 @@ public class ReNewAction extends DLBaseAction {
             for (ViewCarportRoomInfo info : carportInfo){
                 money += info.fRentMoney * 100;
             }
-            put("billNo",carportInfo[0].sBillNo);
-            put("carNumber", carNumber);
-            put("carPlateColorType", carPlateColorType);
-            put("parkingNo", parkNo);
-            put("duoToTime", carportInfo[0].sEndDate);
-            put("renewFeeList", String.format("[{\"renewPeriod\":1,\"renewFee\":%d}]",money));
+            billNo = carportInfo[0].sBillNo;
+            duoToTime =  carportInfo[0].sEndDate;
+            renewFeeList = new RenewFee[]{
+                    new RenewFee(1, money)
+            };
         }
         return SUCCESS;
     }
 
     String billNo, renewTime;
     int renewPeroid, payWay, renewFee, onLinePayAmount, sysDiscount;
-
 
     @Action("renewPayNotice")
     public String renewPayNotice(){
@@ -49,6 +55,29 @@ public class ReNewAction extends DLBaseAction {
         }
         return SUCCESS;
     }
+
+    public String getBillNo() {
+        return billNo;
+    }
+    public String getCarNumber() {
+        return carNumber;
+    }
+    public String getParkingNo(){
+        return parkingNo;
+    }
+
+    public String getDuoToTime() {
+        return duoToTime;
+    }
+
+    public  RenewFee[] getRenewFeeList() {
+        return renewFeeList;
+    }
+
+    public int getCarPlateColorType() {
+        return carPlateColorType;
+    }
+
 
     public void setCarPlateColorType(int carPlateColorType) {
         this.carPlateColorType = carPlateColorType;

@@ -62,6 +62,10 @@ public class DLBaseAction extends BaseAction{
         this.parkNo = parkNo;
     }
 
+    public void setParkingNo(String parkingNo) {
+        this.parkingNo = parkingNo;
+    }
+
     public String getState() {
         return state;
     }
