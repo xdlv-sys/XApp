@@ -43,6 +43,11 @@ public class TLVMessage {
         return tmp;
     }
 
+    public Object getNextValue(int index, Object v){
+        Object ret = getNextValue(index);
+        return ret == null ? v : ret;
+    }
+
     public Object getNextValue(int index){
         TLVMessage message = getNext(index);
         return message == null ? null : message.getValue();

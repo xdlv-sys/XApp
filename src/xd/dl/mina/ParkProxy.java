@@ -93,11 +93,10 @@ public class ParkProxy extends ReversedProxy {
                     byte carType = (byte) msg.getNextValue(3);
                     byte carOrder = (byte) msg.getNextValue(4);
                     String dbId = (String) msg.getNextValue(5);
-                    String enterTime = (String) msg.getNextValue(6);
+                    String enterTime = (String) msg.getNextValue(6, "");
                     if (StringUtils.isBlank(dbId)) {
                         parkedCarInfo = ParkNative.getParkedCarInfo("",carType, carNumber, 15, 1, carOrder, "", "");
                     } else {
-                        enterTime = enterTime == null ? "" : enterTime;
                         parkedCarInfo = ParkNative.getParkedCarInfo("", carType, carNumber, 15, 2, carOrder, dbId, enterTime);
                     }
                 }
@@ -128,18 +127,18 @@ public class ParkProxy extends ReversedProxy {
             case PAY_FEE:
                 carNumber = (String) msg.getNextValue(1);
                 float totalFee = (float) msg.getNextValue(2);
-                String timeStamp = (String) msg.getNextValue(3);
+                String timeStamp = (String) msg.getNextValue(3, "");
                 watchId = (String) msg.getNextValue(4);
                 boolean success;
                 if (StringUtils.isNotBlank(watchId)) {
                     success = parkHandler.payFee(PAY_FEE, watchId, carNumber, totalFee);
                 } else {
                     byte carType = (byte) msg.getNextValue(5);
-                    String sId = (String) msg.getNextValue(6);
-                    String searchTime = (String) msg.getNextValue(7);
+                    String sId = (String) msg.getNextValue(6, "");
+                    String searchTime = (String) msg.getNextValue(7, "");
 
                     success = ParkNative.payParkCarFee(null,carType, carNumber
-                            ,timeStamp, totalFee, sId, searchTime, 1, null,null,null,null,0,0,0) == 0;
+                            ,timeStamp, totalFee, sId, searchTime, 1, "","","","",0,0,0) == 0;
                 }
                 next.setNext(success ? "OK" : "FAIL");
                 response(msg);
