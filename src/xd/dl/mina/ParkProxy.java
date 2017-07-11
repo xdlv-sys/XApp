@@ -95,9 +95,10 @@ public class ParkProxy extends ReversedProxy {
                     String dbId = (String) msg.getNextValue(5);
                     String enterTime = (String) msg.getNextValue(6);
                     if (StringUtils.isBlank(dbId)) {
-                        parkedCarInfo = ParkNative.getParkedCarInfo(null,carType, carNumber, 15, 1, carOrder, "", "");
+                        parkedCarInfo = ParkNative.getParkedCarInfo("",carType, carNumber, 15, 1, carOrder, "", "");
                     } else {
-                        parkedCarInfo = ParkNative.getParkedCarInfo(null, carType, carNumber, 15, 2, carOrder, dbId, enterTime);
+                        enterTime = enterTime == null ? "" : enterTime;
+                        parkedCarInfo = ParkNative.getParkedCarInfo("", carType, carNumber, 15, 2, carOrder, dbId, enterTime);
                     }
                 }
                 if (parkedCarInfo != null && parkedCarInfo.iReturn != 6
