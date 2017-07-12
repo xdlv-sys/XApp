@@ -1,5 +1,6 @@
 package xd.dl.mina;
 
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
@@ -18,6 +19,13 @@ public class WatchProcess extends EnterProcess2 {
                 {"outTime", transferDate((String) request.getNextValue(2))},
                 {"price", String.valueOf(request.getNextValue(3))}
         };
+    }
+
+    @Override
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
+        return ret.setNext(getJson(retJson,"code", -1)
+        ).setNext(getJson(retJson,"errorMsg","")).setNext(request.getNextValue(0)
+        ).setNext(request.getNextValue(3));
     }
 
     @Override

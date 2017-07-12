@@ -137,7 +137,7 @@ public class ParkProxy extends ReversedProxy {
                     String sId = (String) msg.getNextValue(6, "");
                     String searchTime = (String) msg.getNextValue(7, "");
 
-                    success = ParkNative.payParkCarFee(null,carType, carNumber
+                    success = ParkNative.payParkCarFee("",carType, carNumber
                             ,timeStamp, totalFee, sId, searchTime, 1, "","","","",0,0,0) == 0;
                 }
                 next.setNext(success ? "OK" : "FAIL");

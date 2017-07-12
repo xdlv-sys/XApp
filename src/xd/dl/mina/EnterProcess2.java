@@ -1,5 +1,6 @@
 package xd.dl.mina;
 
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
@@ -11,7 +12,7 @@ import java.text.SimpleDateFormat;
  * 上报云平台，用于推送消息
  */
 @Service
-public class EnterProcess2 extends EnterProcess {
+public class EnterProcess2 extends SendRequest {
     @Value("${enter_address}")
     String enterAddress;
     @Value("${park_id}")
@@ -27,6 +28,13 @@ public class EnterProcess2 extends EnterProcess {
                 //2017-05-22 164708
                 {"enterTime", transferDate(enterTime)}
         };
+    }
+
+    @Override
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
+        return ret.setNext(getJson(retJson,"code", -1)
+        ).setNext(getJson(retJson,"errorMsg","")).setNext(request.getValue()
+        ).setNext(request.getNextValue(3) == null ? 0f : request.getNextValue(3));
     }
 
     @Override
