@@ -137,7 +137,7 @@ public abstract class ReversedProxy implements IMinaConst {
 
     protected abstract void handlerQuery(TLVMessage msg) throws Exception;
 
-    protected void response(TLVMessage response) {
+    public void response(TLVMessage response) {
         session.write(response);
         response.waitForSend();
         logger.info("return: {}", response);
