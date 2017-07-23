@@ -46,14 +46,6 @@ public class PayOrderAction extends DLBaseAction implements IDongHui {
         return SUCCESS;
     }
 
-    String memberCode;
-    int isAutoLeave;
-    int memberBalance;
-    @Action("updateAutoPayStatus")
-    public String updateAutoPayStatus() throws Exception{
-        ParkNative.updateAutoPayInfo(memberCode,isAutoLeave, memberBalance/100f);
-        return SUCCESS;
-    }
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }
