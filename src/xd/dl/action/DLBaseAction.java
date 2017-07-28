@@ -9,12 +9,17 @@ import xd.fw.action.BaseAction;
 
 import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by xd on 6/21/2017.
  * base class for pay order action
  */
 public class DLBaseAction extends BaseAction{
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     protected Logger logger = LoggerFactory.getLogger(getClass());
     @Value("${success}")
     String success;
@@ -23,7 +28,7 @@ public class DLBaseAction extends BaseAction{
     @Value("${park_no}")
     String parkNo;
 
-    String state, msg, carNumber, carNo, parkingNo;
+    String state, msg, carNumber = "", carNo = "", parkingNo = "";
 
     JSONObject result;
     @PostConstruct
@@ -83,5 +88,12 @@ public class DLBaseAction extends BaseAction{
             result = new JSONObject();
         }
         result.put(k, v);
+    }
+
+    String convertTime(String s) throws ParseException {
+        return sdf.format(sdf2.parse(s));
+    }
+    String convertTime2(String s) throws ParseException {
+        return sdf2.format(sdf.parse(s));
     }
 }

@@ -6,6 +6,8 @@ import xd.dl.job.ParkNative;
 import xd.dl.job.ViewCarportRoomInfo;
 import xd.fw.FwException;
 
+import java.text.ParseException;
+
 /**
  * Created by xd on 6/21/2017.
  *
@@ -13,12 +15,12 @@ import xd.fw.FwException;
 @Action("/dtkServer/renew")
 public class ReNewAction extends DLBaseAction {
     int carPlateColorType;
-    String duoToTime;
+    String duoToTime = "";
 
     RenewFee[] renewFeeList;
 
     @Action("getRenew")
-    public String getRenew(){
+    public String obtainRenew() throws ParseException {
         if (StringUtils.isBlank(carNumber) || StringUtils.isBlank(parkingNo)){
             throw new FwException("parameter is not invalidate");
         }
@@ -40,7 +42,7 @@ public class ReNewAction extends DLBaseAction {
         return SUCCESS;
     }
 
-    String billNo, renewTime;
+    String billNo = "", renewTime = "";
     int renewPeroid, payWay, renewFee, onLinePayAmount, sysDiscount;
 
     @Action("renewPayNotice")

@@ -8,9 +8,9 @@ import xd.dl.job.ParkNative;
 import xd.dl.job.ParkedCarInfo;
 @Action("/dtkServer/parkOrder")
 public class ParkOrderAction extends DLBaseAction implements IDongHui {
-    String orderNo;
+    String orderNo = "";
     @Action("getParkOrder")
-    public String getParkOrder(){
+    public String obtainParkOrder(){
         logger.info("start to ParkNative.getParkedCarInfo");
         ParkedCarInfo carInfo = ParkNative.getParkedCarInfo(orderNo, 0, carNo, 0, 0, 0, "", "");
         if (carInfo == null){
@@ -25,7 +25,7 @@ public class ParkOrderAction extends DLBaseAction implements IDongHui {
         return SUCCESS;
     }
 
-    String memberCode;
+    String memberCode = "";
     int isAutoLeave;
     int memberBalance;
     @Action("updateAutoPayStatus")

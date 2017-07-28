@@ -11,24 +11,22 @@ import java.text.SimpleDateFormat;
 @Action("/dtkServer/payOrder")
 public class PayOrderAction extends DLBaseAction implements IDongHui {
 
-    String orderNo, paySeq, parkingNo;
+    String orderNo = "", paySeq = "", parkingNo = "";
     int carPlateColorType;
-    String enterTime, payStartTime, payEndTime;
+    String enterTime = "", payStartTime ="", payEndTime = "";
     int payWay, payFee, payAmount, sysDiscount;
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Autowired
     ParkHandler parkHandler;
 
     @Action("payNotice")
-    public String getParkOrder() throws Exception{
+    public String payNotice() throws Exception{
         int ret = ParkNative.payParkCarFee(orderNo,0,carNumber
-                ,converTime(payEndTime), payFee/100.0f,"", ""
+                , convertTime(payEndTime), payFee/100.0f,"", ""
                 ,0,paySeq
-                ,converTime(enterTime)
-                ,converTime(payStartTime)
-                ,converTime(payEndTime),payWay,payFee/100.0f,sysDiscount/100.0f);
+                , convertTime(enterTime)
+                , convertTime(payStartTime)
+                , convertTime(payEndTime),payWay,payFee/100.0f,sysDiscount/100.0f);
         if (ret != 0){
             state = "1013";
             msg = fail;
@@ -36,9 +34,6 @@ public class PayOrderAction extends DLBaseAction implements IDongHui {
             parkHandler.notifyWatchIdPayFee(carNumber,payFee/100.0f,orderNo,"",0);
         }
         return SUCCESS;
-    }
-    private String converTime(String s) throws ParseException {
-        return sdf.format(sdf2.parse(s));
     }
 
     @Action("accountCheck")
