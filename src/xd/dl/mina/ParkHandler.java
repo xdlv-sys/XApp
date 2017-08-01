@@ -105,7 +105,7 @@ public class ParkHandler extends ReversedHandler {
             logger.error("error json:" + json, e);
             jsonObject = new JSONObject();
             jsonObject.put("msg", "network failure");
-            jsonObject.put("code", "-1");
+            jsonObject.put("code", -1);
         }
 
         logger.info("return from http {}: {}",id, jsonObject);
