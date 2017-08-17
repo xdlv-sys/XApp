@@ -41,8 +41,8 @@ abstract class SendRequest implements IDongHui{
             return null;
         }
     }
-    public static void main(String[] a){
-        System.out.print(convertDate("20170704175231"));
-    }
 
+    protected String json(){
+        return null;
+    }
 }

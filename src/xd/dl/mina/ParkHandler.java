@@ -99,7 +99,13 @@ public class ParkHandler extends ReversedHandler {
         JSONObject jsonObject;
         String json = null;
         try {
-            json = HttpClientTpl.post(sendRequest.svrAddress(), params);
+            String requestJson = sendRequest.json();
+            if (requestJson != null){
+                json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson);
+            } else {
+                json = HttpClientTpl.post(sendRequest.svrAddress(), params);
+            }
+
             jsonObject = JSONObject.fromObject(json);
         } catch (Exception e) {
             logger.error("error json:" + json, e);

@@ -12,14 +12,15 @@ import java.text.SimpleDateFormat;
  * 上报云平台，用于推送消息
  */
 @Service
-public class EnterProcess2 extends SendRequest {
-    @Value("${enter_address}")
-    String enterAddress;
-    @Value("${park_id}")
-    protected String parkId;
+public class EnterProcess2 extends BaseEnterOutProcess {
 
     @Override
     public String[][] constructParams(TLVMessage request) throws Exception {
+        String[][] superParams = super.constructParams(request);
+        if (superParams != null){
+            return superParams;
+        }
+
         String carNumber = (String) request.getValue();
         String enterTime = (String) request.getNextValue(0);
         return new String[][]{
@@ -29,21 +30,8 @@ public class EnterProcess2 extends SendRequest {
                 {"enterTime", transferDate(enterTime)}
         };
     }
-
     @Override
-    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
-        return ret.setNext(getJson(retJson,"code", -1)
-        ).setNext(getJson(retJson,"errorMsg","")).setNext(request.getValue()
-        ).setNext(request.getNextValue(3) == null ? 0f : request.getNextValue(3));
-    }
-
-    @Override
-    public String svrAddress() {
-        return enterAddress;
-    }
-
-    protected String transferDate(String date) throws ParseException {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
-                new SimpleDateFormat("yyyyMMddHHmmss").parse(date));
+    int accessType() {
+        return 0;
     }
 }
