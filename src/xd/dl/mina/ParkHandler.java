@@ -94,15 +94,16 @@ public class ParkHandler extends ReversedHandler {
             return true;
         }
         long id = System.currentTimeMillis();
-        logger.info("before http {}:{}",id,ArrayUtils.toString(params));
 
         JSONObject jsonObject;
         String json = null;
         try {
             String requestJson = sendRequest.json();
             if (requestJson != null){
+                logger.info("before http {} json:{}",id,requestJson);
                 json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson);
             } else {
+                logger.info("before http {}:{}",id,ArrayUtils.toString(params));
                 json = HttpClientTpl.post(sendRequest.svrAddress(), params);
             }
 
