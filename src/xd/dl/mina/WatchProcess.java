@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
 
 @Service
-public class WatchProcess extends EnterProcess2 {
+public class WatchProcess extends SendRequest {
     @Value("${watch_address}")
     String watchAddress;
 
@@ -15,8 +15,8 @@ public class WatchProcess extends EnterProcess2 {
                 {"watchId", (String) request.getValue()},
                 {"parkId", parkId},
                 {"carNumber", (String) request.getNextValue(0)},
-                {"startTime", transferDate((String) request.getNextValue(1))},
-                {"outTime", transferDate((String) request.getNextValue(2))},
+                {"startTime", convertDate(request.getNextValue(1))},
+                {"outTime", convertDate(request.getNextValue(2))},
                 {"price", String.valueOf(request.getNextValue(3))}
         };
     }

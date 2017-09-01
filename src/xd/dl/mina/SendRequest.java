@@ -12,6 +12,8 @@ abstract class SendRequest implements IDongHui{
 
     @Value("${park_no}")
     String parkingNo;
+    @Value("${park_id}")
+    protected String parkId;
 
     @Value("${unique_key}")
     String uniqueKey;
@@ -41,8 +43,10 @@ abstract class SendRequest implements IDongHui{
             return null;
         }
     }
-
     protected String json(){
+        return null;
+    }
+    protected String token(){
         return null;
     }
 }

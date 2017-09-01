@@ -18,8 +18,8 @@ public class OutProcess2 extends BaseEnterOutProcess {
         return new String[][]{
                 {"parkId", parkId},
                 {"carNumber", carNumber},
-                {"enterTime", transferDate(time1)},
-                {"outTime", transferDate(time2)}
+                {"enterTime", convertDate(time1)},
+                {"outTime", convertDate(time2)}
         };
     }
 

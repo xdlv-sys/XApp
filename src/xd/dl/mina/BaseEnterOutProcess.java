@@ -4,16 +4,10 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import xd.fw.mina.tlv.TLVMessage;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 public class BaseEnterOutProcess extends SendRequest {
 
     @Value("${enter_address}")
     String enterAddress;
-    @Value("${park_id}")
-    protected String parkId;
-
 
     @Value("${sq_scan:false}")
     protected boolean sq;
@@ -26,19 +20,18 @@ public class BaseEnterOutProcess extends SendRequest {
     protected String sqGateNo;
 
     private String json;
+    protected static String token;
 
     @Override
     String[][] constructParams(TLVMessage request) throws Exception {
         if (sq){
-            JSONObject root = new JSONObject();
             JSONObject body = new JSONObject();
             body.put("divisionNo",sqDivisionNo);
-            body.put("sqGateNo",sqGateNo);
+            body.put("gateNo",sqGateNo);
             body.put("vehicleNo",request.getValue());
             body.put("accessType", accessType());
-            body.put("scanTime",transferDate((String) request.getNextValue(0)));
-            root.put("body", body);
-            json = root.toString();
+            body.put("scanTime",convertDate(request.getNextValue(accessType() == 0 ? 0 : 3)));
+            json = body.toString();
             return new String[0][];
         }
         return null;
@@ -55,6 +48,10 @@ public class BaseEnterOutProcess extends SendRequest {
     protected String json() {
         return json;
     }
+    @Override
+    public String token() {
+        return token;
+    }
 
     @Override
     String svrAddress() {
@@ -66,11 +63,6 @@ public class BaseEnterOutProcess extends SendRequest {
 
     int accessType(){
         return 0;
-    }
-
-    protected String transferDate(String date) throws ParseException {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
-                new SimpleDateFormat("yyyyMMddHHmmss").parse(date));
     }
 
     public static void main(String[] args){

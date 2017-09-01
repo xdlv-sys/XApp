@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HttpClientTpl {
@@ -51,30 +52,30 @@ public class HttpClientTpl {
 
     final static Processor stringProcessor = (entity) -> EntityUtils.toString(entity, Consts.UTF_8);
 
-    public static String postJson(String url, String json) throws Exception {
-        return (String) execute(url, true, null, json, stringProcessor, UTF8);
+    public static String postJson(String url, String json, String[][] headers) throws Exception {
+        return (String) execute(url, true, null, json, stringProcessor, UTF8, headers);
     }
     public static String postXml(String url, String xml) throws Exception {
-        return (String) execute(url, true, null, xml, stringProcessor, UTF8);
+        return (String) execute(url, true, null, xml, stringProcessor, UTF8, null);
     }
 
     public static String post(String url, String[][] params) throws Exception {
-        return (String) execute(url, true, params, null, stringProcessor, UTF8);
+        return (String) execute(url, true, params, null, stringProcessor, UTF8, null);
     }
 
     public static String get(String url) throws Exception {
-        return (String) execute(url, false, null, null, stringProcessor, UTF8);
+        return (String) execute(url, false, null, null, stringProcessor, UTF8, null);
     }
 
     public static Object post(String url, String[][] params, Processor processor) throws Exception {
-        return execute(url, true, params, null, processor, UTF8);
+        return execute(url, true, params, null, processor, UTF8, null);
     }
 
     public static Object get(String url, Processor processor) throws Exception {
-        return execute(url, false, null, null, processor, UTF8);
+        return execute(url, false, null, null, processor, UTF8, null);
     }
 
-    public static Object execute(String url, boolean post, String[][] params, String jsonOrXml, Processor processor, String charset) throws Exception {
+    public static Object execute(String url, boolean post, String[][] params, String jsonOrXml, Processor processor, String charset, String[][] headers) throws Exception {
 
         CloseableHttpResponse response = null;
         HttpEntity entity = null;
@@ -83,6 +84,9 @@ public class HttpClientTpl {
             logger.debug(url);
             if (post) {
                 request = new HttpPost(url);
+                if (headers != null){
+                    Arrays.stream(headers).forEach(head->request.setHeader(head[0], head[1]));
+                }
                 //request.addHeader("Content-Type","text/html;charset=" + UTF8);
                 if (params != null) {
                     List<NameValuePair> nvps = new ArrayList<NameValuePair>();
@@ -103,6 +107,9 @@ public class HttpClientTpl {
                 }
             } else {
                 request = new HttpGet(url);
+                if (headers != null){
+                    Arrays.stream(headers).forEach(head->request.setHeader(head[0], head[1]));
+                }
             }
             response = httpclient.execute(request);
             StatusLine statusLine = response.getStatusLine();

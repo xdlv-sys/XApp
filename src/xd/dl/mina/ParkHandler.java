@@ -5,6 +5,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import xd.dl.job.ParkedCarInfo;
 import xd.fw.HttpClientTpl;
@@ -101,7 +102,10 @@ public class ParkHandler extends ReversedHandler {
             String requestJson = sendRequest.json();
             if (requestJson != null){
                 logger.info("before http {} json:{}",id,requestJson);
-                json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson);
+                json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson
+                        , new String[][]{
+                                {"_TK", sendRequest.token()}
+                        });
             } else {
                 logger.info("before http {}:{}",id,ArrayUtils.toString(params));
                 json = HttpClientTpl.post(sendRequest.svrAddress(), params);
