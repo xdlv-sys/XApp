@@ -28,6 +28,8 @@ import java.util.zip.ZipFile;
 
 public class FwUtil {
 
+    static Logger logger = LoggerFactory.getLogger(FwUtil.class);
+
     public static String UTF8 = "UTF-8";
     //static int[] months = new int[]{0,31,29,31,30,31,30,31,31,30,31,30,31};
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -181,12 +183,12 @@ public class FwUtil {
                 File itemFile = new File(destDir, zipEntry.getName());
                 try {
                     if (zipEntry.isDirectory()) {
-                        if (!itemFile.exists() && !itemFile.mkdirs()){
+                        if (!itemFile.exists() && !itemFile.mkdirs()) {
                             throw new IOException("can not make dir :" + zipEntry.getName());
                         }
                         continue;
                     }
-                    if (itemFile.exists() && !itemFile.delete()){
+                    if (itemFile.exists() && !itemFile.delete()) {
                         throw new IOException("can no delete file:" + itemFile);
                     }
                     os = new FileOutputStream(itemFile);
@@ -205,6 +207,7 @@ public class FwUtil {
     static class ReaderThread implements Callable<String> {
         static Logger logger = LoggerFactory.getLogger(ReaderThread.class);
         BufferedReader br;
+
         ReaderThread(BufferedReader br) {
             this.br = br;
         }
@@ -231,7 +234,7 @@ public class FwUtil {
 
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-        hints.put(EncodeHintType.MARGIN,0);
+        hints.put(EncodeHintType.MARGIN, 0);
         BitMatrix matrix = new MultiFormatWriter().encode(content,
                 BarcodeFormat.QR_CODE, width, height, hints);
 
@@ -241,20 +244,44 @@ public class FwUtil {
                 image.setRGB(x, y, matrix.get(x, y) ? BLACK : WHITE);
             }
         }
-        try(ByteArrayOutputStream os = new ByteArrayOutputStream()){
-            ImageIO.write(image,"png", os);
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", os);
             return os.toByteArray();
         }
     }
 
     final static SimpleDateFormat orderSdf = new SimpleDateFormat("HHmmssyyyyMMddSSS");
-    public static synchronized String createOutTradeNo(){
+
+    public static synchronized String createOutTradeNo() {
         return String.valueOf(orderSdf.format(new Date()));
     }
 
+    public static <T> T reTry(ReTry<T> task, int max) {
+        while (max-- > -1) {
+            try {
+                return task.process();
+            } catch (Exception e) {
+                logger.error("retry error:" + max, e);
+            }
+        }
+        throw new FwException("failed to retry");
+    }
+
+    public interface ReTry<T> {
+        T process() throws Exception;
+    }
 
 
     public static void main(String[] args) throws Exception {
-        unzip(new File("C:\\Work\\Java\\output\\war.zip"), new File("C:\\Work\\Java\\output\\war"));
+        //unzip(new File("C:\\Work\\Java\\output\\war.zip"), new File("C:\\Work\\Java\\output\\war"));
+        boolean[] success = {false};
+        String done = reTry(() -> {
+            if (success[0]){
+               return "DONE";
+            }
+            success[0] = true;
+            throw new Exception("e");
+        }, 1);
+        System.out.println(done);
     }
 }

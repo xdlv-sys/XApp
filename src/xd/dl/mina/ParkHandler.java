@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import xd.dl.job.ParkedCarInfo;
+import xd.fw.FwUtil;
 import xd.fw.HttpClientTpl;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
@@ -42,7 +43,7 @@ public class ParkHandler extends ReversedHandler {
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
-       handlerMessage(msg, session);
+        handlerMessage(msg, session);
     }
 
     @Override
@@ -100,14 +101,26 @@ public class ParkHandler extends ReversedHandler {
         String json = null;
         try {
             String requestJson = sendRequest.json();
-            if (requestJson != null){
-                logger.info("before http {} json:{}",id,requestJson);
+            if (requestJson != null) {
+                logger.info("before http {} json:{}", id, requestJson);
+                json = FwUtil.reTry(() -> {
+                    String ret = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson
+                            , new String[][]{
+                                    {"Token", sendRequest.token()}
+                            });
+                    if (JSONObject.fromObject(ret).getInt("code") != 200){
+                        logger.error("failed:{}, try again", ret);
+                        enterProcess2.loginTo();
+                        throw new Exception("");
+                    }
+                    return ret;
+                }, 1);
                 json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson
                         , new String[][]{
-                                {"_TK", sendRequest.token()}
+                                {"Token", sendRequest.token()}
                         });
             } else {
-                logger.info("before http {}:{}",id,ArrayUtils.toString(params));
+                logger.info("before http {}:{}", id, ArrayUtils.toString(params));
                 json = HttpClientTpl.post(sendRequest.svrAddress(), params);
             }
 
@@ -119,7 +132,7 @@ public class ParkHandler extends ReversedHandler {
             jsonObject.put("code", -1);
         }
 
-        logger.info("return from http {}: {}",id, jsonObject);
+        logger.info("return from http {}: {}", id, jsonObject);
 
         TLVMessage ret = new TLVMessage(code);
         sendRequest.constructMessage(ret.setNext(generateId()), msg.getNext(), jsonObject);
@@ -152,11 +165,11 @@ public class ParkHandler extends ReversedHandler {
         return ret != null && 200 == (int) ret.getValue();
     }
 
-    public void notifyWatchIdPayFee(String carNumber, float parkingPrice, String orderNo,String memberCode, int leavel) {
-        TLVMessage message = createRequest(ParkProxy.PAY_FEE_NOTIFY,200,"OK",carNumber, parkingPrice, orderNo, memberCode, leavel);
+    public void notifyWatchIdPayFee(String carNumber, float parkingPrice, String orderNo, String memberCode, int leavel) {
+        TLVMessage message = createRequest(ParkProxy.PAY_FEE_NOTIFY, 200, "OK", carNumber, parkingPrice, orderNo, memberCode, leavel);
         List<TLVMessage> messages = notifyAllId(message);
-        for (TLVMessage m : messages){
-            if (m != null && 200 == (int)m.getValue()){
+        for (TLVMessage m : messages) {
+            if (m != null && 200 == (int) m.getValue()) {
                 logger.info("notify wh successfully:", m);
             } else {
                 logger.warn("fail to notify wh:", m);
