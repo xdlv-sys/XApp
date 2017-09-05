@@ -31,4 +31,9 @@ public class UploadFreeJob extends SendRequest{
     public String svrAddress() {
         return "http://"+dhHost+"/askPark/uploadFreeSlotNum";
     }
+
+    @Override
+    protected boolean run() {
+        return dongHuiFlag;
+    }
 }

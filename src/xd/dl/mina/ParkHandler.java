@@ -87,6 +87,10 @@ public class ParkHandler extends ReversedHandler {
             default:
                 return false;
         }
+        if (!sendRequest.run()) {
+            ret(code, msg, sendRequest, null, session);
+            return true;
+        }
 
         String[][] params;
         try {
@@ -108,7 +112,7 @@ public class ParkHandler extends ReversedHandler {
                             , new String[][]{
                                     {"Token", sendRequest.token()}
                             });
-                    if (JSONObject.fromObject(ret).getInt("code") != 200){
+                    if (JSONObject.fromObject(ret).getInt("code") != 200) {
                         logger.error("failed:{}, try again", ret);
                         enterProcess2.loginTo();
                         throw new Exception("");
@@ -134,12 +138,21 @@ public class ParkHandler extends ReversedHandler {
 
         logger.info("return from http {}: {}", id, jsonObject);
 
+        ret(code, msg, sendRequest, jsonObject, session);
+        return true;
+    }
+
+    private void ret(int code, TLVMessage msg, SendRequest sendRequest
+            , JSONObject jsonObject, IoSession session) {
         TLVMessage ret = new TLVMessage(code);
+        if (jsonObject == null){
+            jsonObject = new JSONObject();
+            jsonObject.put("msg", "not run");
+            jsonObject.put("code", -2);
+        }
         sendRequest.constructMessage(ret.setNext(generateId()), msg.getNext(), jsonObject);
         logger.info("return: {}", ret);
         session.write(ret);
-
-        return true;
     }
 
     public ParkedCarInfo queryCarInfo(int code, String watchId, String carNumber) {

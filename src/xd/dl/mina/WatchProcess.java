@@ -32,4 +32,9 @@ public class WatchProcess extends SendRequest {
     public String svrAddress() {
         return watchAddress;
     }
+
+    @Override
+    protected boolean run() {
+        return centerFlag;
+    }
 }

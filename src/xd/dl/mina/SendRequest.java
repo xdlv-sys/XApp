@@ -19,6 +19,10 @@ abstract class SendRequest implements IDongHui{
     String uniqueKey;
     @Value("${dh_host}")
     String dhHost;
+    @Value("${dh_flag}")
+    boolean dongHuiFlag;
+    @Value("${center_flg}")
+    boolean centerFlag;
 
     abstract String[][] constructParams(TLVMessage request) throws Exception;
 
@@ -48,5 +52,9 @@ abstract class SendRequest implements IDongHui{
     }
     protected String token(){
         return null;
+    }
+
+    protected boolean run() {
+        return true;
     }
 }
