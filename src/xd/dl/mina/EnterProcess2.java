@@ -23,7 +23,9 @@ public class EnterProcess2 extends BaseEnterOutProcess {
 
     @PostConstruct
     public void init() throws Exception{
-        loginTo();
+        if (sq){
+            loginTo();
+        }
     }
 
     @Override
