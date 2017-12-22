@@ -1,9 +1,5 @@
 package xd.fw;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.slf4j.Logger;
@@ -12,8 +8,6 @@ import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
@@ -230,7 +224,7 @@ public class FwUtil {
     private static final int BLACK = 0xFF000000;
     private static final int WHITE = 0xFFFFFFFF;
 
-    public static byte[] qrCode(String content, int width, int height) throws Exception {
+    /*public static byte[] qrCode(String content, int width, int height) throws Exception {
 
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
@@ -248,7 +242,7 @@ public class FwUtil {
             ImageIO.write(image, "png", os);
             return os.toByteArray();
         }
-    }
+    }*/
 
     final static SimpleDateFormat orderSdf = new SimpleDateFormat("HHmmssyyyyMMddSSS");
 

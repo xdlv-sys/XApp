@@ -51,6 +51,9 @@ public class EnterProcess2 extends BaseEnterOutProcess {
 
     @Scheduled(cron="0 * * * * ?")
     public void loginTo() throws Exception {
+        if (!sq){
+            return;
+        }
         logger().info("start to login {} with {}/{}", loginAddress, user, password);
         String json = HttpClientTpl.post(loginAddress,new String[][]{
                 {"userAccount", user},
