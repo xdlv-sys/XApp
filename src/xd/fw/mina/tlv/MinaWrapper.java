@@ -72,7 +72,4 @@ public class MinaWrapper {
     public void setFilterChainBuilder(IoFilterChainBuilder filterChainBuilder) {
         this.filterChainBuilder = filterChainBuilder;
     }
-    public static SimpleIoProcessorPool<NioSession> getPool(){
-        return pool;
-    }
 }

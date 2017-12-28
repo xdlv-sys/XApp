@@ -3,9 +3,12 @@ package xd.fw.mina.tlv;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.mina.core.future.ConnectFuture;
+import org.apache.mina.core.service.SimpleIoProcessorPool;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
+import org.apache.mina.transport.socket.nio.NioProcessor;
+import org.apache.mina.transport.socket.nio.NioSession;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +41,11 @@ public abstract class ReversedProxy implements IMinaConst {
     UpgradeTask upgradeTask;
     @Value("${center_flg:false}")
     boolean heartBeat;
+    SimpleIoProcessorPool<NioSession> processor;
 
     public ReversedProxy() {
-        connector = new NioSocketConnector(MinaWrapper.getPool());
+        processor = new SimpleIoProcessorPool<>(NioProcessor.class);
+        connector = new NioSocketConnector(processor);
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(
                 new TLVCodecFactory(charset())));
         connector.setHandler(new TLVHandler() {
@@ -119,6 +124,7 @@ public abstract class ReversedProxy implements IMinaConst {
 
     public void destroy() {
         connector.dispose();
+        processor.dispose();
         stop = true;
     }
 
