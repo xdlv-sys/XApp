@@ -1,5 +1,6 @@
 package xd.fw.mina.tlv;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.*;
@@ -34,6 +35,14 @@ public class TLVCodecFactory implements ProtocolCodecFactory {
     static byte[] magic = new byte[]{5, 16};// my daughter's birthday
     static int HEAD_LENGTH = magic.length + Integer.SIZE / 8;
 
+    private String charset(IoSession session){
+        String userCharset = (String)session.getAttribute("charset");
+        if (StringUtils.isNotBlank(userCharset)){
+            return userCharset;
+        }
+        return this.charset;
+    }
+
     class TLVEncoder extends ProtocolEncoderAdapter {
         @Override
         public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
@@ -44,7 +53,7 @@ public class TLVCodecFactory implements ProtocolCodecFactory {
             buffer.putInt(0); // placeHolder for message length
             TLVMessage tmp = msg;
             do {
-                tmp.fill(buffer, charset);
+                tmp.fill(buffer, charset(session));
                 tmp = tmp.getNext();
             } while (tmp != null);
             buffer.flip();
@@ -93,7 +102,7 @@ public class TLVCodecFactory implements ProtocolCodecFactory {
                         TLVMessage message = null, tmp,currentMsg = null;
                         int position = in.position();
                         while (in.position() - position < parse.length) {
-                            tmp = TLVMessage.parse(in, charset);
+                            tmp = TLVMessage.parse(in, charset(session));
                             if (message == null) {
                                 currentMsg = message = tmp;
                             } else {

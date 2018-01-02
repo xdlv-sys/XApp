@@ -151,7 +151,6 @@ public abstract class ReversedProxy implements IMinaConst {
 
     public void response(TLVMessage response) {
         session.write(response);
-        response.waitForSend();
         logger.info("return: {}", response);
     }
 

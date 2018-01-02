@@ -24,13 +24,10 @@ public class MinaWrapper {
     IoHandler handler;
     IoFilterChainBuilder filterChainBuilder;
     NioSocketAcceptor acceptor;
-    static SimpleIoProcessorPool<NioSession> pool;
-    static{
-        pool = new SimpleIoProcessorPool<>(NioProcessor.class);
-    }
+    SimpleIoProcessorPool<NioSession> pool;
 
     public void init() throws IOException {
-
+        pool = new SimpleIoProcessorPool<>(NioProcessor.class);
         acceptor = new NioSocketAcceptor(pool);
         acceptor.setDefaultLocalAddress(defaultLocalAddress);
         acceptor.setReuseAddress(reuseAddress);

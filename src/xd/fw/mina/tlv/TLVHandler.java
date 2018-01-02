@@ -17,7 +17,7 @@ public class TLVHandler extends IoHandlerAdapter implements IConst{
 
     @Override
     public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-        logger.debug("session idle:" + status);
+        logger.trace("session idle:" + status);
     }
 
     @Override
@@ -28,12 +28,7 @@ public class TLVHandler extends IoHandlerAdapter implements IConst{
 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
-        logger.info("receive:" + message);
+        logger.info("receive:{}",message);
         session.write(new TLVMessage("OK"));
-    }
-
-    @Override
-    public void messageSent(IoSession session, Object message) throws Exception {
-        ((TLVMessage)message).notifySend();
     }
 }

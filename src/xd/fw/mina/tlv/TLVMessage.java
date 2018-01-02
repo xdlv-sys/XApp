@@ -14,6 +14,7 @@ public class TLVMessage {
             , STRING_TYPE = 6, BOOLEAN_TYPE = 7, IMG_TYPE = 8;
     public int timeout = 0;
     //byte type;
+    Object ret;
     Object value;
     TLVMessage next;
 
@@ -172,16 +173,16 @@ public class TLVMessage {
         throw new IllegalArgumentException("invalidate object:" + value);
     }
 
-    void waitForSend(){
+    void waitFor(long tiemout){
         synchronized (this){
             try {
-                wait(1000);
+                wait(tiemout);
             } catch (InterruptedException e) {
                 logger.error("",e);
             }
         }
     }
-    void notifySend(){
+    void notifyFor(){
         synchronized (this){
             notifyAll();
         }

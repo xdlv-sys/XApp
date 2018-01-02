@@ -5,7 +5,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import xd.dl.job.ParkedCarInfo;
 import xd.fw.FwUtil;
@@ -180,7 +179,7 @@ public class ParkHandler extends ReversedHandler {
 
     public void notifyWatchIdPayFee(String carNumber, float parkingPrice, String orderNo, String memberCode, int leavel) {
         TLVMessage message = createRequest(ParkProxy.PAY_FEE_NOTIFY, 200, "OK", carNumber, parkingPrice, orderNo, memberCode, leavel);
-        List<TLVMessage> messages = notifyAllId(message);
+        List<TLVMessage> messages = notifyAllId(message, 0);
         for (TLVMessage m : messages) {
             if (m != null && 200 == (int) m.getValue()) {
                 logger.info("notify wh successfully:", m);

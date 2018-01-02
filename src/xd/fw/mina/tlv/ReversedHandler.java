@@ -13,6 +13,7 @@ import java.util.*;
 public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyListener {
     @Value("${mina_timeout}")
     int minaTimeout;
+    protected final String PROXY_VERSION = "proxy_version";
 
     final static List<String> discardRequests = new LinkedList<>();
 
@@ -67,9 +68,12 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             discard = discardRequests.remove(messageId);
         }
         if (discard) {
-            logger.debug("discard message for timeout:{} ",messageId);
+            logger.warn("discard message for timeout:{} ",messageId);
+            session.removeAttribute(messageId);
         } else {
-            session.setAttribute(messageId, msg);
+            TLVMessage request = (TLVMessage) session.getAttribute(messageId);
+            request.ret = msg;
+            request.notifyFor();
         }
     }
 
@@ -194,7 +198,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         }
     }
 
-    protected List<TLVMessage> notifyAllId(TLVMessage message){
+    protected List<TLVMessage> notifyAllId(TLVMessage message, int supportVersion){
         List<TLVMessage> messages = new ArrayList<>();
         Collection<IoSession> sessions = new HashSet<>();
         synchronized (sessionMap) {
@@ -202,9 +206,13 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         }
         TLVMessage ret;
         for (IoSession session : sessions){
+            if (((int)session.getAttribute(PROXY_VERSION)) < supportVersion){
+                //ignore the low proxy in case crash
+                continue;
+            }
             ret = doSend(session, message);
             if (ret == null){
-                logger.warn("fail to notify {}" , session.getAttribute(ID_KEY));
+                logger.info("fail to notify {}" , session.getAttribute(ID_KEY));
             } else {
                 messages.add(ret);
             }
@@ -225,26 +233,19 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
     }
 
     private TLVMessage doSend(IoSession session, TLVMessage message){
-
+        logger.info("send:{}" , message);
         // timestamp is just behind code
         String messageId = (String)message.getNextValue(0);
+        session.setAttribute(messageId, message);
         session.write(message);
-        // wait for message been send out
-        message.waitForSend();
 
-        TLVMessage ret;
-        int count = 0;
+        // wait for return message
         int timeout = message.timeout > 0 ? message.timeout : minaTimeout;
-        while ((ret = (TLVMessage) session.removeAttribute(messageId)) == null) {
-            if (count++ > timeout) {
-                break;
-            }
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                logger.error("", e);
-            }
-        }
+        message.waitFor(timeout * 5);
+
+        session.removeAttribute(messageId);
+        TLVMessage ret = (TLVMessage) message.ret;
+
         if (ret == null) {
             synchronized (discardRequests) {
                 discardRequests.add(messageId);
@@ -253,18 +254,12 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
             logger.info("add discard message:{}" , messageId);
             return null;
         }
-        /*remove code adn timestamp*/
         ret = ret.getNext(1);
         if (ret.getValue() instanceof Integer
                 && (int) ret.getValue() == NULL_MSG){
             return null;
         }
         return ret;
-    }
-
-    @Override
-    public void messageSent(IoSession session, Object message) throws Exception {
-        ((TLVMessage)message).notifySend();
     }
 
     @Override
