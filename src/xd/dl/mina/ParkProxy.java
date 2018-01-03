@@ -64,7 +64,7 @@ public class ParkProxy extends ReversedProxy {
 
     @Override
     protected void constructRegistryMessage(TLVMessage registryMessage) {
-        registryMessage.setNext(parkId).setNext(parkName).setNext(100).setNext(version);
+        registryMessage.setNext(parkId).setNext(parkName).setNext(ParkNative.getLeftCount()).setNext(version);
     }
 
     @Override
