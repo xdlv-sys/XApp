@@ -179,7 +179,7 @@ public class ParkHandler extends ReversedHandler {
 
     public void notifyWatchIdPayFee(String carNumber, float parkingPrice, String orderNo, String memberCode, int leavel) {
         TLVMessage message = createRequest(ParkProxy.PAY_FEE_NOTIFY, 200, "OK", carNumber, parkingPrice, orderNo, memberCode, leavel);
-        List<TLVMessage> messages = notifyAllId(message, 0);
+        List<TLVMessage> messages = notifyAllId(message);
         for (TLVMessage m : messages) {
             if (m != null && 200 == (int) m.getValue()) {
                 logger.info("notify wh successfully:", m);

@@ -198,7 +198,7 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         }
     }
 
-    protected List<TLVMessage> notifyAllId(TLVMessage message, int supportVersion){
+    protected List<TLVMessage> notifyAllId(TLVMessage message){
         List<TLVMessage> messages = new ArrayList<>();
         Collection<IoSession> sessions = new HashSet<>();
         synchronized (sessionMap) {
@@ -206,10 +206,6 @@ public class ReversedHandler extends TLVHandler implements IMinaConst, ProxyList
         }
         TLVMessage ret;
         for (IoSession session : sessions){
-            if (((int)session.getAttribute(PROXY_VERSION)) < supportVersion){
-                //ignore the low proxy in case crash
-                continue;
-            }
             ret = doSend(session, message);
             if (ret == null){
                 logger.info("fail to notify {}" , session.getAttribute(ID_KEY));
