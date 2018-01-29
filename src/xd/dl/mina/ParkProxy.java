@@ -23,7 +23,7 @@ import java.net.InetSocketAddress;
 public class ParkProxy extends ReversedProxy {
     Logger logger = LoggerFactory.getLogger(ReversedProxy.class);
 
-    static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9, CHARGE_NOTIFY = 15;
+    static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9, CHARGE_NOTIFY = 15, NO_CARD_ENTRY = 16;
 
     @Autowired
     ParkHandler parkHandler;
@@ -188,6 +188,12 @@ public class ParkProxy extends ReversedProxy {
                 next.setNext(success ? "OK" : "FAIL");
                 response(msg);
                 break;
+            case NO_CARD_ENTRY:
+                watchId = (String) msg.getNextValue(1);
+                String userId = (String)msg.getNextValue(2);
+                logger.info("no card: {}-{}", watchId, userId);
+                next.setNext(true);
+                break;
             default:
                 throw new Exception("can not recognize the code:" + msg.getValue());
         }
@@ -197,3 +203,4 @@ public class ParkProxy extends ReversedProxy {
         return str == null ? "" : str;
     }
 }
+
