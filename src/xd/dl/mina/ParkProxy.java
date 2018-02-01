@@ -191,8 +191,11 @@ public class ParkProxy extends ReversedProxy {
             case NO_CARD_ENTRY:
                 watchId = (String) msg.getNextValue(1);
                 String userId = (String)msg.getNextValue(2);
+
                 logger.info("no card: {}-{}", watchId, userId);
-                next.setNext(true);
+                success = parkHandler.noCardEntry(NO_CARD_ENTRY, watchId, userId);
+                next.setNext(success ? "OK" : "OK");
+                response(msg);
                 break;
             default:
                 throw new Exception("can not recognize the code:" + msg.getValue());

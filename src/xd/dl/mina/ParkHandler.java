@@ -171,6 +171,12 @@ public class ParkHandler extends ReversedHandler {
         return null;
     }
 
+    public boolean noCardEntry(int code, String watchId, String userId) {
+        TLVMessage message = createRequest(code, userId);
+        TLVMessage ret = request(watchId, message);
+        return ret != null && 200 == (int) ret.getValue();
+    }
+
     public boolean payFee(int code, String watchId, String carNumber, float money) {
         TLVMessage message = createRequest(code, carNumber, money);
         TLVMessage ret = request(watchId, message);
