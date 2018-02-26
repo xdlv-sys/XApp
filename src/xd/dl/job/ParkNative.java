@@ -15,14 +15,18 @@ public class ParkNative
     public synchronized native static int updateAutoPayInfo(String pMemberCode, int iAutoLeave, float fBalance);
     public native static AccountCheck getAccountCheck(String pStartTime, String pEndTime);
 
+    public native static ParkedCarInfo getCarInPark(String sOrderNo, String sCarLicense, int iMatchMethod, int iCarOrder, String sSearchID);
+    public native static int dispatchCoupon(String sOrderNo, String sCarLicense, String sCouID, String sCouName, int iCouType,
+                                            int iCouTime, float fCouMny,String sStartDate, String sEndDate,String sCarportID, String sInID);
+
     static {
         System.loadLibrary("ParkingMeter");
     }
 
     public static int getLeftCount() {
-        LeftParkInfo[] leftInfos = getLeftParkInfo();
+        LeftParkInfo[] lefts = getLeftParkInfo();
         int leftCount = 0;
-        for (LeftParkInfo l : leftInfos) {
+        for (LeftParkInfo l : lefts) {
             leftCount += l.iLeftNum;
         }
         return leftCount;

@@ -23,7 +23,8 @@ import java.net.InetSocketAddress;
 public class ParkProxy extends ReversedProxy {
     Logger logger = LoggerFactory.getLogger(ReversedProxy.class);
 
-    static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9, CHARGE_NOTIFY = 15, NO_CARD_ENTRY = 16;
+    static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13
+            , PAY_FEE_NOTIFY = 9, CHARGE_NOTIFY = 15, NO_CARD_ENTRY = 16, DISPATCH_COUPON = 17;
 
     @Autowired
     ParkHandler parkHandler;
@@ -194,7 +195,34 @@ public class ParkProxy extends ReversedProxy {
 
                 logger.info("no card: {}-{}", watchId, userId);
                 success = parkHandler.noCardEntry(NO_CARD_ENTRY, watchId, userId);
-                next.setNext(success ? "OK" : "OK");
+                next.setNext(success ? "OK" : "FAIL");
+                response(msg);
+                break;
+            case DISPATCH_COUPON:
+                carNumber = (String) msg.getNextValue(1);
+                int couponId = (int)msg.getNextValue(2);
+                String couponName = (String)msg.getNextValue(3);
+                int couponType = (int)msg.getNextValue(4);
+                int duration = (int)msg.getNextValue(5);
+                int amount = (int)msg.getNextValue(6);
+                String startTime = (String)msg.getNextValue(7);
+                String endTime = (String)msg.getNextValue(8);
+                String parkId = (String)msg.getNextValue(9);
+
+                // for test
+                if (carNumber != null) {
+                    next.setNext(0);
+                    response(msg);
+                    break;
+                }
+
+                ParkedCarInfo carInPark = ParkNative.getCarInPark("", carNumber, 3, 1, "");
+                next.setNext(carInPark.iReturn);
+                if (carInPark.iReturn == 0) {
+                    int ret = ParkNative.dispatchCoupon("" , carNumber, String.valueOf(couponId)
+                            , couponName, couponType, duration, amount,startTime, endTime, parkId, carInPark.sID);
+                    next.setNext(ret);
+                }
                 response(msg);
                 break;
             default:
