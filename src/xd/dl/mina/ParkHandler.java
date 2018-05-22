@@ -5,6 +5,8 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import xd.dl.job.ParkedCarInfo;
 import xd.fw.FwUtil;
@@ -12,6 +14,7 @@ import xd.fw.HttpClientTpl;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
@@ -39,6 +42,13 @@ public class ParkHandler extends ReversedHandler {
     WatchProcess watchProcess;
     @Autowired
     ChargeStandard chargeStandard;
+    @Value("${http-timeout:5000}")
+    int httpTimeout;
+
+    @PostConstruct
+    void init() {
+        HttpClientTpl.setTimeOut(httpTimeout);
+    }
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
@@ -183,8 +193,9 @@ public class ParkHandler extends ReversedHandler {
         return ret != null && 200 == (int) ret.getValue();
     }
 
-    public void notifyWatchIdPayFee(String carNumber, float parkingPrice, String orderNo, String memberCode, int leavel) {
-        TLVMessage message = createRequest(ParkProxy.PAY_FEE_NOTIFY, 200, "OK", carNumber, parkingPrice, orderNo, memberCode, leavel);
+    @Async
+    public void notifyWatchIdPayFee(int code, String carNumber, float parkingPrice, String orderNo, String memberCode, int leavel) {
+        TLVMessage message = createRequest(code, 200, "OK", carNumber, parkingPrice, orderNo, memberCode, leavel);
         List<TLVMessage> messages = notifyAllId(message);
         for (TLVMessage m : messages) {
             if (m != null && 200 == (int) m.getValue()) {

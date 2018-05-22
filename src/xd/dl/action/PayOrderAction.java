@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import xd.dl.job.IDongHui;
 import xd.dl.job.ParkNative;
 import xd.dl.mina.ParkHandler;
+import xd.dl.mina.ParkProxy;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,7 +32,7 @@ public class PayOrderAction extends DLBaseAction implements IDongHui {
             state = "1013";
             msg = fail;
         } else {
-            parkHandler.notifyWatchIdPayFee(carNumber,payFee/100.0f,orderNo,"",0);
+            parkHandler.notifyWatchIdPayFee(ParkProxy.PAY_FEE_NOTIFY, carNumber,payFee/100.0f,orderNo,"",0);
         }
         return SUCCESS;
     }

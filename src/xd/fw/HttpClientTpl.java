@@ -1,11 +1,12 @@
 package xd.fw;
 
 import org.apache.http.*;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -31,6 +32,7 @@ public class HttpClientTpl {
     public static final String UTF8 = "UTF-8";
     static CloseableHttpClient httpclient = createHttpClient();
     static ContentType utf8ContentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), Consts.UTF_8);
+    static RequestConfig requestConfig;
 
     private static CloseableHttpClient createHttpClient() {
         HttpClientConnectionManager manager = (HttpClientConnectionManager) FwUtil.getBean("httpClientConnectionManager");
@@ -45,6 +47,9 @@ public class HttpClientTpl {
         ).build();
     }
 
+    public static void setTimeOut(int timeout) {
+        requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout).build();
+    }
 
     public interface Processor {
         Object process(HttpEntity entity) throws Exception;
@@ -80,7 +85,7 @@ public class HttpClientTpl {
         CloseableHttpResponse response = null;
         HttpEntity entity = null;
         try {
-            HttpUriRequest request;
+            HttpRequestBase request;
             logger.debug(url);
             if (post) {
                 request = new HttpPost(url);
@@ -111,6 +116,7 @@ public class HttpClientTpl {
                     Arrays.stream(headers).forEach(head->request.setHeader(head[0], head[1]));
                 }
             }
+            request.setConfig(requestConfig);
             response = httpclient.execute(request);
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode()

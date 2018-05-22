@@ -158,7 +158,7 @@ public abstract class ReversedProxy implements IMinaConst {
         int count = 0;
         boolean reconnect = false;
         while (session == null || !session.isConnected() || !session.isActive()) {
-            logger.info("try to connect center");
+            logger.info("try to connect center: {}", inetSocketAddress());
             reconnect = true;
             ConnectFuture future = connector.connect(inetSocketAddress());
             future.awaitUninterruptibly();

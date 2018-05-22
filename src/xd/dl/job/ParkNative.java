@@ -16,9 +16,10 @@ public class ParkNative
     public native static AccountCheck getAccountCheck(String pStartTime, String pEndTime);
 
     public native static ParkedCarInfo getCarInPark(String sOrderNo, String sCarLicense, int iMatchMethod, int iCarOrder, String sSearchID);
-    public native static int dispatchCoupon(String sOrderNo, String sCarLicense, String sCouID, String sCouName, int iCouType,
+    public native static ParkedCarInfo dispatchCoupon(String sOrderNo, String sCarLicense, String sCouID, String sCouName, int iCouType,
                                             int iCouTime, float fCouMny,String sStartDate, String sEndDate,String sCarportID, String sInID);
 
+    public native static String getCarInParkByName(String pLicence);
     static {
         System.loadLibrary("ParkingMeter");
     }
