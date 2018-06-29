@@ -216,11 +216,11 @@ public class ParkProxy extends ReversedProxy {
                 String endTime = (String) msg.getNextValue(8);
                 String parkId = (String) msg.getNextValue(9);
 
-                if (parkId != null) {
+                /*if (parkId != null) {
                     next.setNext(0).setNext(1.2f).setNext(10);
                     response(msg);
                     return;
-                }
+                }*/
 
                 ParkedCarInfo carInPark = ParkNative.getCarInPark("", carNumber, 3, 1, "");
                 next.setNext(carInPark.iReturn);
