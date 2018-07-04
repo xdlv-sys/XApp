@@ -3,6 +3,7 @@ package xd.dl.job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import xd.dl.mina.ParkHandler;
 import xd.dl.service.ParkService;
 import xd.fw.HttpClientTpl;
 import xd.fw.job.BaseJob;
@@ -24,7 +25,7 @@ public class FreeJob extends BaseJob implements IDongHui{
 
         String timeStamp = getTimeStamp();
 
-        int leftCount = ParkNative.getLeftCount();
+        int leftCount = ParkHandler.freeCount;
         String ret = HttpClientTpl.post(svrAddress(), new String[][]{
                 {"Parkingno", parkingNo},
                 {"Freenum", String.valueOf(leftCount)},

@@ -28,6 +28,9 @@ public class DLBaseAction extends BaseAction{
     @Value("${park_no}")
     String parkNo;
 
+    @Value("${dh_flag}")
+    boolean dhFlag = false;
+
     String state, msg, carNumber = "", carNo = "", parkingNo = "";
 
     JSONObject result;
@@ -41,6 +44,9 @@ public class DLBaseAction extends BaseAction{
     public void validate() {
         carNo = convertUtf8(carNo);
         carNumber = convertUtf8(carNumber);
+        if (!dhFlag) {
+            throw new RuntimeException("dh flag is false");
+        }
     }
 
     private String convertUtf8(String str){

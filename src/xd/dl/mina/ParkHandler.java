@@ -45,6 +45,8 @@ public class ParkHandler extends ReversedHandler {
     @Value("${http-timeout:5000}")
     int httpTimeout;
 
+    public static int freeCount = 0;
+
     @PostConstruct
     void init() {
         HttpClientTpl.setTimeOut(httpTimeout);
@@ -52,6 +54,7 @@ public class ParkHandler extends ReversedHandler {
 
     @Override
     protected void handlerRegistry(TLVMessage msg, IoSession session) {
+        freeCount = (int)msg.getNextValue(1);
         handlerMessage(msg, session);
     }
 
@@ -61,7 +64,6 @@ public class ParkHandler extends ReversedHandler {
         SendRequest sendRequest;
         switch (code) {
             case 0:
-
                 sendRequest = uploadFreeJob;
                 break;
             case 1:

@@ -50,10 +50,14 @@ public class ParkProxy extends ReversedProxy {
     String pwd;
     @Value("${park_name}")
     String parkName;
+    @Value("${db_load:false}")
+    boolean dbLoad = false;
 
     @PostConstruct
     public void init() {
-        ParkNative.initialized(dbHost, dbName, user, pwd);
+        if (dbLoad) {
+            ParkNative.initialized(dbHost, dbName, user, pwd);
+        }
     }
 
     @PreDestroy
@@ -65,7 +69,7 @@ public class ParkProxy extends ReversedProxy {
 
     @Override
     protected void constructRegistryMessage(TLVMessage registryMessage) {
-        registryMessage.setNext(parkId).setNext(parkName).setNext(ParkNative.getLeftCount()).setNext(version);
+        registryMessage.setNext(parkId).setNext(parkName).setNext(ParkHandler.freeCount).setNext(version);
     }
 
     @Override
