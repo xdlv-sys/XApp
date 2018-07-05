@@ -151,14 +151,19 @@ public class FwUtil {
             Future<String> error = taskExecutor.submit(new ReaderThread(br2));
             buffer.append(info.get(10, TimeUnit.SECONDS)).append(error.get(10, TimeUnit.SECONDS));
         } finally {
+            boolean exit = false;
             if (process != null) {
-                process.waitFor();
+                exit = process.waitFor(8, TimeUnit.SECONDS);
             }
             if (br != null) {
                 br.close();
             }
             if (br2 != null) {
                 br.close();
+            }
+            if (!exit && process != null) {
+                logger.info("destroy process:");
+                process.destroy();
             }
         }
         return buffer.toString();
