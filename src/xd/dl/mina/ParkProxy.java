@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.dl.job.ParkNative;
+import xd.dl.job.ParkNativeBean;
 import xd.dl.job.ParkedCarInfo;
 import xd.dl.job.ViewCarportRoomInfo;
 import xd.fw.mina.tlv.ReversedProxy;
@@ -18,13 +19,15 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.File;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 
 @Service
 public class ParkProxy extends ReversedProxy {
     Logger logger = LoggerFactory.getLogger(ReversedProxy.class);
 
     public static final int QUERY_CAR = 3, PAY_FEE = 4, QUERY_CAR2 = 13, PAY_FEE_NOTIFY = 9, CHARGE_NOTIFY = 15, NO_CARD_ENTRY = 16, DISPATCH_COUPON = 17, SIMILAR_CAR_NUMBER = 18, PAY_FEE_NOTIFY_HJC = 19;
+
+    @Autowired
+    ParkNativeBean parkNativeBean;
 
     @Autowired
     ParkHandler parkHandler;
@@ -91,18 +94,18 @@ public class ParkProxy extends ReversedProxy {
             case QUERY_CAR:
                 String carNumber = (String) msg.getNextValue(1);
                 String watchId = (String) msg.getNextValue(2);
-                ParkedCarInfo parkedCarInfo;
+                ParkedCarInfo parkedCarInfo = null;
                 if (StringUtils.isNotBlank(watchId)) {
                     parkedCarInfo = parkHandler.queryCarInfo(QUERY_CAR, watchId, carNumber);
-                } else {
+                } else if (dbLoad){
                     byte carType = (byte) msg.getNextValue(3);
                     byte carOrder = (byte) msg.getNextValue(4);
                     String dbId = (String) msg.getNextValue(5);
                     String enterTime = (String) msg.getNextValue(6, "");
                     if (StringUtils.isBlank(dbId)) {
-                        parkedCarInfo = ParkNative.getParkedCarInfo("", carType, carNumber, 15, 1, carOrder, "", "");
+                        parkedCarInfo = parkNativeBean.getParkedCarInfo("", carType, carNumber, 15, 1, carOrder, "", "");
                     } else {
-                        parkedCarInfo = ParkNative.getParkedCarInfo("", carType, carNumber, 15, 2, carOrder, dbId, enterTime);
+                        parkedCarInfo = parkNativeBean.getParkedCarInfo("", carType, carNumber, 15, 2, carOrder, dbId, enterTime);
                     }
                 }
                 if (parkedCarInfo != null && parkedCarInfo.iReturn != 6
@@ -142,7 +145,7 @@ public class ParkProxy extends ReversedProxy {
                     String sId = (String) msg.getNextValue(6, "");
                     String searchTime = (String) msg.getNextValue(7, "");
 
-                    int ret = ParkNative.payParkCarFee("", carType, carNumber
+                    int ret = parkNativeBean.payParkCarFee("", carType, carNumber
                             , timeStamp, totalFee, sId, searchTime, 1, "", "", "", "", 0, 0, 0);
                     logger.info("return from park car fee: {}", ret);
                     success = ret == 0;

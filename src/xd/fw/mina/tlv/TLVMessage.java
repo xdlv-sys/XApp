@@ -53,6 +53,21 @@ public class TLVMessage {
         TLVMessage message = getNext(index);
         return message == null ? null : message.getValue();
     }
+    public String getNextString (int index) {
+        Object v = getNextValue(index);
+        if (v == null){
+            return null;
+        }
+
+        if (v instanceof String) {
+            return (String)v;
+        } else {
+            return v.toString();
+        }
+    }
+    public int getNextInt(int index) {
+        return (Integer)getNextValue(index);
+    }
 
     public TLVMessage setNext(TLVMessage next) {
         this.next = next;

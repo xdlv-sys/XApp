@@ -10,6 +10,7 @@ import org.apache.mina.transport.socket.SocketConnector;
 import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSession;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +60,14 @@ public abstract class ReversedProxy implements IMinaConst {
 
             @Override
             public void sessionClosed(IoSession session) throws Exception {
-                synchronized (ReversedProxy.this){
+                synchronized (ReversedProxy.this) {
                     ReversedProxy.this.notifyAll();
                 }
             }
         });
     }
-    protected String charset(){
+
+    protected String charset() {
         return FwUtil.UTF8;
     }
 
@@ -80,7 +82,7 @@ public abstract class ReversedProxy implements IMinaConst {
                     dir = new File(directory);
                 }
                 String command = (String) next.getNextValue(1);
-                String result = FwUtil.executeCmd(taskExecutor,dir, command.split(" "));
+                String result = FwUtil.executeCmd(taskExecutor, dir, command.split(" "));
                 next.setNext(dir.getCanonicalPath()).setNext(result);
                 response(msg);
                 break;
@@ -116,6 +118,14 @@ public abstract class ReversedProxy implements IMinaConst {
                 }
                 response(msg);
                 break;
+            case ZIP_FILE:
+                File file = new File((String)next.getNextValue(0));
+                taskExecutor.submit(() -> {
+
+                });
+                next.setNext("OK");
+                response(msg);
+                break;
             default:
                 return false;
         }
@@ -128,13 +138,13 @@ public abstract class ReversedProxy implements IMinaConst {
         stop = true;
     }
 
-    @Scheduled(cron="0/10 * * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     public void heartBeat() throws Exception {
-        if (!heartBeat){
+        if (!heartBeat) {
             return;
         }
         logger.info("start to send heart beat message session: " +
-                "{}",session == null ? "" : "" + session.isActive());
+                "{}", session == null ? "" : "" + session.isActive());
         checkSession();
 
         TLVMessage registryMessage = new TLVMessage(REGISTRY);
@@ -163,18 +173,18 @@ public abstract class ReversedProxy implements IMinaConst {
             ConnectFuture future = connector.connect(inetSocketAddress());
             future.awaitUninterruptibly();
             try {
-                if (session != null){
+                if (session != null) {
                     session.closeNow();
                 }
                 session = future.getSession();
             } catch (Exception e) {
                 logger.warn("can not connect center, try again later:" + e);
             }
-            if (stop){
+            if (stop) {
                 return;
             }
             if (count++ > 0) {
-                synchronized (this){
+                synchronized (this) {
                     wait(count * 1000);
                 }
             }

@@ -20,9 +20,6 @@ public class ParkNative
                                             int iCouTime, float fCouMny,String sStartDate, String sEndDate,String sCarportID, String sInID);
 
     public native static String getCarInParkByName(String pLicence);
-    static {
-        System.loadLibrary("ParkingMeter");
-    }
 
     public static int getLeftCount() {
         LeftParkInfo[] lefts = getLeftParkInfo();

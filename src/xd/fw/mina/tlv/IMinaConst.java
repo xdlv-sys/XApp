@@ -9,4 +9,5 @@ public interface IMinaConst {
     int EXECUTE = -9;
     int PUSH_FILE = -8;
     int PULL_FILE = -7;
+    int ZIP_FILE = -6, UNZIP_FILE = -5;
 }

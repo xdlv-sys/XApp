@@ -30,6 +30,8 @@ public class DLBaseAction extends BaseAction{
 
     @Value("${dh_flag}")
     boolean dhFlag = false;
+    @Value("${db_load}")
+    boolean dbLoad = false;
 
     String state, msg, carNumber = "", carNo = "", parkingNo = "";
 
@@ -46,6 +48,9 @@ public class DLBaseAction extends BaseAction{
         carNumber = convertUtf8(carNumber);
         if (!dhFlag) {
             throw new RuntimeException("dh flag is false");
+        }
+        if (!dbLoad) {
+            throw new RuntimeException("db not load");
         }
     }
 

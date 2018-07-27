@@ -42,6 +42,8 @@ public class ParkHandler extends ReversedHandler {
     WatchProcess watchProcess;
     @Autowired
     ChargeStandard chargeStandard;
+    @Autowired
+    CarOutProcess carOutProcess;
     @Value("${http-timeout:5000}")
     int httpTimeout;
 
@@ -95,6 +97,9 @@ public class ParkHandler extends ReversedHandler {
                 break;
             case 13:
                 sendRequest = chargeStandard;
+                break;
+            case 20:
+                sendRequest = carOutProcess;
                 break;
             default:
                 return false;

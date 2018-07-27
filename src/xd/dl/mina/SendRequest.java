@@ -55,6 +55,6 @@ abstract class SendRequest implements IDongHui{
     }
 
     protected boolean run() {
-        return true;
+        return dongHuiFlag;
     }
 }
