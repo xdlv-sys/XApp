@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import xd.dl.job.ParkedCarInfo;
-import xd.fw.FwUtil;
 import xd.fw.HttpClientTpl;
 import xd.fw.mina.tlv.ReversedHandler;
 import xd.fw.mina.tlv.TLVMessage;
@@ -121,9 +120,9 @@ public class ParkHandler extends ReversedHandler {
         JSONObject jsonObject;
         String json = null;
         try {
-            String requestJson = sendRequest.json();
+            String requestJson = sendRequest.json(msg.getNext());
             if (requestJson != null) {
-                logger.info("before http {} json:{}", id, requestJson);
+                /*logger.info("before http {} json:{}", id, requestJson);
                 json = FwUtil.reTry(() -> {
                     String ret = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson
                             , new String[][]{
@@ -135,11 +134,8 @@ public class ParkHandler extends ReversedHandler {
                         throw new Exception("");
                     }
                     return ret;
-                }, 1);
-                json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson
-                        , new String[][]{
-                                {"Token", sendRequest.token()}
-                        });
+                }, 1);*/
+                json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson, null);
             } else {
                 logger.info("before http {}:{}", id, ArrayUtils.toString(params));
                 json = HttpClientTpl.post(sendRequest.svrAddress(), params);

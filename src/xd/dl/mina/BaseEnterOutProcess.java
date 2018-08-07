@@ -45,7 +45,7 @@ public class BaseEnterOutProcess extends SendRequest {
     }
 
     @Override
-    protected String json() {
+    protected String json(TLVMessage request) {
         return json;
     }
     @Override

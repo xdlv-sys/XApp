@@ -47,7 +47,7 @@ abstract class SendRequest implements IDongHui{
             return null;
         }
     }
-    protected String json(){
+    protected String json(TLVMessage request){
         return null;
     }
     protected String token(){

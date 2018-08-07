@@ -1,12 +1,10 @@
 package xd.dl.mina;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CarOutProcess extends SendRequest {
@@ -14,27 +12,40 @@ public class CarOutProcess extends SendRequest {
     String outAddress;
 
     public String[][] constructParams(TLVMessage request) {
+        return null;
+    }
+
+    @Override
+    protected String json(TLVMessage request) {
         int itemCount = request.getNextInt(5);
-        List<String[]> items = new ArrayList<>();
+        JSONObject ret = new JSONObject();
+        JSONArray itemArray = new JSONArray();
+        ret.put("items", itemArray);
+
         int itemStart = 6;
         for (int i = 0; i< itemCount; i++ ) {
-            items.add(new String[] {"items[" + i + "].orderId", request.getNextString(itemStart ++)});
-            items.add(new String[] {"items[" + i + "].startTime", convertDate(request.getNextString(itemStart ++))});
-            items.add(new String[] {"items[" + i + "].endTime", convertDate(request.getNextString(itemStart ++))});
-            items.add(new String[] {"items[" + i + "].payType", request.getNextString(itemStart ++)});
-            items.add(new String[] {"items[" + i + "].settleFee", request.getNextString(itemStart ++)});
-            items.add(new String[] {"items[" + i + "].fee", request.getNextString(itemStart ++)});
-            items.add(new String[] {"items[" + i + "].cashOff", request.getNextString(itemStart ++)});
-            items.add(new String[] {"items[" + i + "].sysOff", request.getNextString(itemStart ++)});
+            JSONObject item = new JSONObject();
+            _putJson(item,new String[] {"items[" + i + "].orderId", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"items[" + i + "].startTime", convertDate(request.getNextString(itemStart ++))});
+            _putJson(item,new String[] {"items[" + i + "].endTime", convertDate(request.getNextString(itemStart ++))});
+            _putJson(item,new String[] {"items[" + i + "].payType", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"items[" + i + "].settleFee", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"items[" + i + "].fee", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"items[" + i + "].cashOff", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"items[" + i + "].sysOff", request.getNextString(itemStart ++)});
         }
-        items.add(new String[] {"parkId", parkId});
-        items.add(new String[] {"carNumber", (String)request.getValue()});
-        items.add(new String[] {"enterTime", convertDate(request.getNextString(0))});
-        items.add(new String[] {"outTime", convertDate(request.getNextString(1))});
-        items.add(new String[] {"deviceId", request.getNextString(2)});
-        items.add(new String[] {"orderId", request.getNextString(3)});
-        items.add(new String[]  {"operator", request.getNextString(4)});
-        return items.toArray(new String[0][]);
+        _putJson(ret,new String[] {"parkId", parkId});
+        _putJson(ret,new String[] {"carNumber", (String)request.getValue()});
+        _putJson(ret,new String[] {"enterTime", convertDate(request.getNextString(0))});
+        _putJson(ret,new String[] {"outTime", convertDate(request.getNextString(1))});
+        _putJson(ret,new String[] {"deviceId", request.getNextString(2)});
+        _putJson(ret,new String[] {"orderId", request.getNextString(3)});
+        _putJson(ret,new String[]  {"operator", request.getNextString(4)});
+        return ret.toString();
+    }
+
+    void _putJson(JSONObject json, String[] v) {
+        json.put(v[0], v[1]);
     }
 
     @Override

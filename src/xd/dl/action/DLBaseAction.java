@@ -54,14 +54,17 @@ public class DLBaseAction extends BaseAction{
         }
     }
 
-    private String convertUtf8(String str){
+    static String convertUtf8(String str){
+        return _convertCharset(str, "iso-8859-1", "utf8");
+    }
+    static String _convertCharset(String str, String from, String to){
         if (StringUtils.isBlank(str)){
             return str;
         }
         try {
-            return new String(str.getBytes("iso-8859-1"), "utf8");
+            return new String(str.getBytes(from), to);
         } catch (UnsupportedEncodingException e) {
-            logger.error("",e);
+            e.printStackTrace();
         }
         return str;
     }
