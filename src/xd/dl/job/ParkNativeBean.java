@@ -1,5 +1,7 @@
 package xd.dl.job;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.FwUtil;
@@ -10,11 +12,16 @@ import java.util.Date;
 @Service
 public class ParkNativeBean {
     @Value("${proxy-test:false}")
-    boolean proxyTest = false;
+    boolean proxyTest;
+    @Value("${proxy-test-money:0.01f}")
+    float testMoney;
+
+    Logger logger = LoggerFactory.getLogger(ParkNativeBean.class);
 
     DevParkNative devParkNative = new DevParkNative();
     @PostConstruct
     void init() {
+        logger.info("proxy test: {}", proxyTest);
         if (!proxyTest) {
             System.loadLibrary("ParkingMeter");
         }
@@ -44,7 +51,7 @@ public class ParkNativeBean {
         public ParkedCarInfo getParkedCarInfo(String pOrderNo, int iCarType, String pLicense
                 , int iFreeTime, int iMatchMethod, int iCarOrder, String pSearchID, String pSearchInTime) {
             ParkedCarInfo parkedCarInfo = new ParkedCarInfo();
-            parkedCarInfo.fMoney = -1f;
+            parkedCarInfo.fMoney = testMoney;
             parkedCarInfo.iParkedTime = 15;
             parkedCarInfo.iReturn = 0;
             parkedCarInfo.sCarLicense = "苏A12345";

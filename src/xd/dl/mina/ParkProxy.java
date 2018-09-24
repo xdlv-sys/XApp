@@ -97,7 +97,7 @@ public class ParkProxy extends ReversedProxy {
                 ParkedCarInfo parkedCarInfo = null;
                 if (StringUtils.isNotBlank(watchId)) {
                     parkedCarInfo = parkHandler.queryCarInfo(QUERY_CAR, watchId, carNumber);
-                } else if (dbLoad){
+                } else {
                     byte carType = (byte) msg.getNextValue(3);
                     byte carOrder = (byte) msg.getNextValue(4);
                     String dbId = (String) msg.getNextValue(5);

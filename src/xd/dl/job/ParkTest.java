@@ -32,9 +32,17 @@ public class ParkTest extends IoHandlerAdapter {
             TLVMessage enter = new TLVMessage((byte)1);
             enter.setNext("苏A12345").setNext("20160530163322");
             session.write(enter);
-        } else {
+        } else if ("2".equals(action)) {
             TLVMessage out = new TLVMessage((byte)2);
             out.setNext("苏A12345").setNext(1.0f).setNext("20160530163322").setNext("20160530163323");
+            session.write(out);
+        } else if ("20".equals(action)) {
+            // 20->苏A12388->20180911085135->20180911091302->0001->N1502000000101180911091300897253->TEST1->1->->20180911085135->20180911091302->1->0.1->0.1->0.0->0.0
+            TLVMessage out = new TLVMessage(20);
+            out.setNext("苏A12388").setNext("20180911085135").setNext("20180911091302").setNext("0001")
+                    .setNext("N1502000000101180911091300897253").setNext("a")
+                    .setNext(1).setNext("").setNext("20180911085135").setNext("20180911091302")
+                    .setNext(1).setNext(0.1f).setNext(0.1f).setNext(0f).setNext(0f);
             session.write(out);
         }
         synchronized (this){
@@ -68,8 +76,10 @@ public class ParkTest extends IoHandlerAdapter {
 
     public static void main(String[] args) throws Exception {
         //new ParkTest().sendDirectBuffer();
-        new ParkTest().testPark("localhost,48011,1");
+        //new ParkTest().testPark("localhost,48011,1");
 
-        new ParkTest().testPark("localhost,48011,2");
+        //new ParkTest().testPark("localhost,48011,2");
+
+        new ParkTest().testPark("localhost,48011,20");
     }
 }

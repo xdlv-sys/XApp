@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import xd.fw.HttpClientTpl;
 import xd.fw.action.BaseAction;
 
-import static xd.dl.action.DLBaseAction._convertCharset;
-import static xd.dl.action.DLBaseAction.convertUtf8;
-
 @Action("/cloud")
 public class CloudAction extends BaseAction {
     //Logger logger = LoggerFactory.getLogger(CloudAction.class);
@@ -28,7 +25,7 @@ public class CloudAction extends BaseAction {
 
     @Action("json")
     public String cloud() throws Exception{
-        JSONObject jsonObj = JSONObject.fromObject(_convertCharset(json, charset, "utf8"));
+        JSONObject jsonObj = JSONObject.fromObject(json);
         jsonObj.put("parkId", parkId);
 
         String json = HttpClientTpl.postJson(centerUrl + url, jsonObj.toString(), null);

@@ -17,23 +17,26 @@ public class CarOutProcess extends SendRequest {
 
     @Override
     protected String json(TLVMessage request) {
+        //>苏A12388->20180911085135->20180911091302->0001->N1502000000101180911091300897253->TEST1->1->->20180911085135->20180911091302->1->0.1->0.1->0.0->0.0
         int itemCount = request.getNextInt(5);
         JSONObject ret = new JSONObject();
-        JSONArray itemArray = new JSONArray();
-        ret.put("items", itemArray);
 
+        JSONArray itemArray = new JSONArray();
         int itemStart = 6;
         for (int i = 0; i< itemCount; i++ ) {
             JSONObject item = new JSONObject();
-            _putJson(item,new String[] {"items[" + i + "].orderId", request.getNextString(itemStart ++)});
-            _putJson(item,new String[] {"items[" + i + "].startTime", convertDate(request.getNextString(itemStart ++))});
-            _putJson(item,new String[] {"items[" + i + "].endTime", convertDate(request.getNextString(itemStart ++))});
-            _putJson(item,new String[] {"items[" + i + "].payType", request.getNextString(itemStart ++)});
-            _putJson(item,new String[] {"items[" + i + "].settleFee", request.getNextString(itemStart ++)});
-            _putJson(item,new String[] {"items[" + i + "].fee", request.getNextString(itemStart ++)});
-            _putJson(item,new String[] {"items[" + i + "].cashOff", request.getNextString(itemStart ++)});
-            _putJson(item,new String[] {"items[" + i + "].sysOff", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"orderId", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"startTime", convertDate(request.getNextString(itemStart ++))});
+            _putJson(item,new String[] {"endTime", convertDate(request.getNextString(itemStart ++))});
+            _putJson(item,new String[] {"payType", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"settleFee", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"fee", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"cashOff", request.getNextString(itemStart ++)});
+            _putJson(item,new String[] {"sysOff", request.getNextString(itemStart ++)});
+            itemArray.add(item);
         }
+        ret.put("items", itemArray);
+
         _putJson(ret,new String[] {"parkId", parkId});
         _putJson(ret,new String[] {"carNumber", (String)request.getValue()});
         _putJson(ret,new String[] {"enterTime", convertDate(request.getNextString(0))});

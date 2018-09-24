@@ -122,19 +122,7 @@ public class ParkHandler extends ReversedHandler {
         try {
             String requestJson = sendRequest.json(msg.getNext());
             if (requestJson != null) {
-                /*logger.info("before http {} json:{}", id, requestJson);
-                json = FwUtil.reTry(() -> {
-                    String ret = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson
-                            , new String[][]{
-                                    {"Token", sendRequest.token()}
-                            });
-                    if (JSONObject.fromObject(ret).getInt("code") != 200) {
-                        logger.error("failed:{}, try again", ret);
-                        enterProcess2.loginTo();
-                        throw new Exception("");
-                    }
-                    return ret;
-                }, 1);*/
+                logger.info("before json {}:{}", id, requestJson);
                 json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson, null);
             } else {
                 logger.info("before http {}:{}", id, ArrayUtils.toString(params));
