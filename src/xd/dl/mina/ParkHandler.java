@@ -43,6 +43,9 @@ public class ParkHandler extends ReversedHandler {
     ChargeStandard chargeStandard;
     @Autowired
     CarOutProcess carOutProcess;
+    @Autowired
+    PayYl payYl;
+
     @Value("${http-timeout:5000}")
     int httpTimeout;
 
@@ -100,6 +103,9 @@ public class ParkHandler extends ReversedHandler {
             case 20:
                 sendRequest = carOutProcess;
                 break;
+            case 21:
+                sendRequest = payYl;
+                break;
             default:
                 return false;
         }
@@ -123,7 +129,8 @@ public class ParkHandler extends ReversedHandler {
             String requestJson = sendRequest.json(msg.getNext());
             if (requestJson != null) {
                 logger.info("before json {}:{}", id, requestJson);
-                json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson, null);
+                json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson
+                        , sendRequest.heads());
             } else {
                 logger.info("before http {}:{}", id, ArrayUtils.toString(params));
                 json = HttpClientTpl.post(sendRequest.svrAddress(), params);

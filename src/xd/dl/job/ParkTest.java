@@ -45,6 +45,12 @@ public class ParkTest extends IoHandlerAdapter {
                     .setNext(1).setNext(0.1f).setNext(0.1f).setNext(0f).setNext(0f);
             session.write(out);
         }
+        else if ("21".equals(action)) {
+            // 21->orderId -> carNumber -> price
+            TLVMessage out = new TLVMessage(21);
+            out.setNext("N1502000000101180911091300897253").setNext("苏A12388").setNext(0.1f);
+            session.write(out);
+        }
         synchronized (this){
             wait(10000);
         }
@@ -80,6 +86,6 @@ public class ParkTest extends IoHandlerAdapter {
 
         //new ParkTest().testPark("localhost,48011,2");
 
-        new ParkTest().testPark("localhost,48011,20");
+        new ParkTest().testPark("localhost,48011,21");
     }
 }

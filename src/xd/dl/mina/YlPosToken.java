@@ -6,19 +6,31 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import xd.dl.job.IDongHui;
 import xd.fw.HttpClientTpl;
 import xd.fw.WxUtil;
 
+import javax.annotation.PostConstruct;
+
+import static xd.dl.mina.PayYl.sha1;
+
 @Service
-public class YlPosToken extends PayYl {
+public class YlPosToken implements IDongHui {
     @Value("${pos_token_url}")
     String tokenUrl;
 
-    String accessToken;
+    @Value("${app_id}")
+    String appId;
+
+    @Value("${app_key}")
+    String appKey;
+
+    volatile String accessToken;
 
     Logger logger = LoggerFactory.getLogger(YlPosToken.class);
 
-    @Scheduled(cron = "0 0/55 * * * ?")
+    @PostConstruct
+    @Scheduled(cron = "0 0 * * * ?")
     public void getToken() throws Exception {
 
         logger.info("start to get token");
@@ -35,5 +47,9 @@ public class YlPosToken extends PayYl {
         logger.info("token:{}", ret);
 
         accessToken = (String)JSONObject.fromObject(ret).get("accessToken");
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 }

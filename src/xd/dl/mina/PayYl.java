@@ -1,11 +1,13 @@
 package xd.dl.mina;
 
 import net.sf.json.JSONObject;
+import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
+@Service
 public class PayYl extends BaseYlRequest{
 
     @Override
@@ -19,13 +21,9 @@ public class PayYl extends BaseYlRequest{
         json.put("merchantRemark", request.getNextString(0));
         json.put("transactionAmount", request.getNextValue(1));
         json.put("payMode", "CODE_SCAN");
+        json.put("payCode", "");
 
         return json.toString();
-    }
-
-    @Override
-    protected String[][] heads() {
-        return null;
     }
 
     @Override
