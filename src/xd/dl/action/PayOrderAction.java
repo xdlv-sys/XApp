@@ -6,9 +6,6 @@ import xd.dl.job.IDongHui;
 import xd.dl.job.ParkNative;
 import xd.dl.mina.ParkHandler;
 import xd.dl.mina.ParkProxy;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 @Action("/dtkServer/payOrder")
 public class PayOrderAction extends DLBaseAction implements IDongHui {
 

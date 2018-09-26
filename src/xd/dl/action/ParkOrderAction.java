@@ -1,8 +1,6 @@
 package xd.dl.action;
 
 import org.apache.struts2.convention.annotation.Action;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import xd.dl.job.IDongHui;
 import xd.dl.job.ParkNative;
 import xd.dl.job.ParkedCarInfo;

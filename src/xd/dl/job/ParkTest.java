@@ -28,6 +28,13 @@ public class ParkTest extends IoHandlerAdapter {
         future.awaitUninterruptibly();
         IoSession session = future.getSession();
 
+        // registry 0001
+        TLVMessage reg = new TLVMessage(0);
+        reg.setNext("0001").setNext(100);
+        session.write(reg);
+        Thread.sleep(1000);
+
+
         if ("1".equals(action)){
             TLVMessage enter = new TLVMessage((byte)1);
             enter.setNext("苏A12345").setNext("20160530163322");
@@ -48,7 +55,7 @@ public class ParkTest extends IoHandlerAdapter {
         else if ("21".equals(action)) {
             // 21->orderId -> carNumber -> price
             TLVMessage out = new TLVMessage(21);
-            out.setNext("N1502000000101180911091300897253").setNext("苏A12388").setNext(0.1f);
+            out.setNext("N15020F0000010118031A091400G9725").setNext("苏A12388").setNext(0.1f).setNext("135079626040111111");
             session.write(out);
         }
         synchronized (this){

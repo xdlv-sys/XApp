@@ -2,6 +2,7 @@ package xd.dl.mina;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
@@ -16,7 +17,7 @@ public class CarOutProcess extends SendRequest {
     }
 
     @Override
-    protected String json(TLVMessage request) {
+    protected String json(TLVMessage request, IoSession session) {
         //>苏A12388->20180911085135->20180911091302->0001->N1502000000101180911091300897253->TEST1->1->->20180911085135->20180911091302->1->0.1->0.1->0.0->0.0
         int itemCount = request.getNextInt(5);
         JSONObject ret = new JSONObject();

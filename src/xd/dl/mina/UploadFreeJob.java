@@ -1,7 +1,6 @@
 package xd.dl.mina;
 
 import net.sf.json.JSONObject;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
 

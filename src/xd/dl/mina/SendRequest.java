@@ -1,6 +1,7 @@
 package xd.dl.mina;
 
 import net.sf.json.JSONObject;
+import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 import xd.dl.job.IDongHui;
 import xd.fw.mina.tlv.TLVMessage;
@@ -47,7 +48,7 @@ abstract class SendRequest implements IDongHui{
             return null;
         }
     }
-    protected String json(TLVMessage request){
+    protected String json(TLVMessage request, IoSession session){
         return null;
     }
     protected String token(){

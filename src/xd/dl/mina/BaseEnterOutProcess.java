@@ -1,6 +1,7 @@
 package xd.dl.mina;
 
 import net.sf.json.JSONObject;
+import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 import xd.fw.mina.tlv.TLVMessage;
 
@@ -45,7 +46,7 @@ public class BaseEnterOutProcess extends SendRequest {
     }
 
     @Override
-    protected String json(TLVMessage request) {
+    protected String json(TLVMessage request, IoSession session) {
         return json;
     }
     @Override

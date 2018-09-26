@@ -44,7 +44,11 @@ public class ParkHandler extends ReversedHandler {
     @Autowired
     CarOutProcess carOutProcess;
     @Autowired
-    PayYl payYl;
+    YlPay ylPay;
+    @Autowired
+    YlRefund ylRefund;
+    @Autowired
+    YlQuery ylQuery;
 
     @Value("${http-timeout:5000}")
     int httpTimeout;
@@ -104,7 +108,13 @@ public class ParkHandler extends ReversedHandler {
                 sendRequest = carOutProcess;
                 break;
             case 21:
-                sendRequest = payYl;
+                sendRequest = ylPay;
+                break;
+            case 22:
+                sendRequest = ylRefund;
+                break;
+            case 23:
+                sendRequest = ylQuery;
                 break;
             default:
                 return false;
@@ -126,7 +136,7 @@ public class ParkHandler extends ReversedHandler {
         JSONObject jsonObject;
         String json = null;
         try {
-            String requestJson = sendRequest.json(msg.getNext());
+            String requestJson = sendRequest.json(msg.getNext(), session);
             if (requestJson != null) {
                 logger.info("before json {}:{}", id, requestJson);
                 json = HttpClientTpl.postJson(sendRequest.svrAddress(), requestJson
