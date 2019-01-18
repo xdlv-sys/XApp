@@ -44,6 +44,18 @@ public class TLVMessage {
         return tmp;
     }
 
+    public TLVMessage append(Object value) {
+        return getTail().setNext(value);
+    }
+
+    public TLVMessage getTail() {
+        TLVMessage tmp = this;
+        while (tmp.next != null) {
+            tmp = tmp.next;
+        }
+        return tmp;
+    }
+
     public Object getNextValue(int index, Object v){
         Object ret = getNextValue(index);
         return ret == null ? v : ret;

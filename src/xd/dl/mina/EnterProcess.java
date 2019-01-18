@@ -1,6 +1,7 @@
 package xd.dl.mina;
 
 import net.sf.json.JSONObject;
+import org.apache.mina.core.session.IoSession;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
 
@@ -21,7 +22,7 @@ public class EnterProcess extends SendRequest{
     }
 
     @Override
-    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson, IoSession session) {
         float memberBalance = -10000.11f;
         if (retJson.has("memberBalance")){
             memberBalance = (int)getJson(retJson,"memberBalance",0) / 100f;

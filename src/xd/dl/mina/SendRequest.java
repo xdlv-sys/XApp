@@ -29,7 +29,7 @@ abstract class SendRequest implements IDongHui{
 
     abstract String svrAddress();
 
-    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson){
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson, IoSession session){
         return ret.setNext(Integer.parseInt(String.valueOf(getJson(retJson,"state", -1))));
     }
     Object getJson(JSONObject jsonObject, String key, Object dValue){

@@ -1,6 +1,7 @@
 package xd.dl.mina;
 
 import net.sf.json.JSONObject;
+import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
@@ -22,7 +23,7 @@ public class WatchProcess extends SendRequest {
     }
 
     @Override
-    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson, IoSession session) {
         return ret.setNext(getJson(retJson,"code", -1)
         ).setNext(getJson(retJson,"errorMsg","")).setNext(request.getNextValue(0)
         ).setNext(request.getNextValue(3));

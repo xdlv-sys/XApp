@@ -1,6 +1,7 @@
 package xd.dl.mina;
 
 import net.sf.json.JSONObject;
+import org.apache.mina.core.session.IoSession;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
 
@@ -14,8 +15,8 @@ public class ChargeStandard extends SendRequest{
         };
     }
     @Override
-    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
-        return super.constructMessage(ret,request,retJson)
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson, IoSession session) {
+        return super.constructMessage(ret,request,retJson, session)
                 .setNext(getJson(retJson,"msg",""));
     }
 

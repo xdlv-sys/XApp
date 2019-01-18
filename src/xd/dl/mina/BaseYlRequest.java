@@ -10,6 +10,7 @@ import static xd.fw.mina.tlv.IMinaConst.ID_KEY;
 
 public abstract class BaseYlRequest extends SendRequest {
 
+    final static String YL_SCAN_SUCCESS = "00", YL_SCAN_FAILED = "1111";
     @Value("${pos_url}")
     String posUrl;
 
@@ -29,7 +30,7 @@ public abstract class BaseYlRequest extends SendRequest {
     }
 
     @Override
-    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson, IoSession session) {
         return ret.setNext(retJson.getString("errCode")).setNext(retJson.getString("errInfo"));
     }
 

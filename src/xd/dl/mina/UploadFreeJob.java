@@ -1,6 +1,7 @@
 package xd.dl.mina;
 
 import net.sf.json.JSONObject;
+import org.apache.mina.core.session.IoSession;
 import org.springframework.stereotype.Service;
 import xd.fw.mina.tlv.TLVMessage;
 
@@ -20,7 +21,7 @@ public class UploadFreeJob extends SendRequest{
     }
 
     @Override
-    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson, IoSession session) {
         int retInt = Integer.parseInt(String.valueOf(getJson(retJson,"state", -1)));
         return ret.setNext(retInt).setNext(
                 retInt == 200 ? request.getValue() : getJson(retJson,"msg","error"));

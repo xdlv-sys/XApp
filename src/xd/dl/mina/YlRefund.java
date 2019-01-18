@@ -15,8 +15,8 @@ public class YlRefund extends BaseYlRequest{
         JSONObject json = new JSONObject();
         json.put("merchantCode", merchantCode);
         json.put("terminalCode", getTidBySession(session));
-        json.put("merchantOrderId", request.getValue());
-        json.put("refundRequestId", request.getValue() + WxUtil.getRandomStringByLength(12));
+        json.put("merchantOrderId", request.getNextValue(2));
+        json.put("refundRequestId", request.getNextValue(2) + WxUtil.getRandomStringByLength(12));
         json.put("transactionAmount", ((float)request.getNextValue(1)) * 100);
 
         return json.toString();
@@ -25,5 +25,11 @@ public class YlRefund extends BaseYlRequest{
     @Override
     protected String posType() {
         return "refund";
+    }
+
+    @Override
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson, IoSession session) {
+        return ret.setNext(YL_SCAN_SUCCESS.equals(retJson.getString("errCode")) ? 0 : 1)
+                .setNext(retJson.getString("errInfo")).setNext(request);
     }
 }

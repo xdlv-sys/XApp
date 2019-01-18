@@ -29,7 +29,7 @@ public class PayOrderAction extends DLBaseAction implements IDongHui {
             state = "1013";
             msg = fail;
         } else {
-            parkHandler.notifyWatchIdPayFee(ParkProxy.PAY_FEE_NOTIFY, carNumber,payFee/100.0f,orderNo,"",0);
+            parkHandler.notifyWatchIdPayFee(ParkProxy.PAY_FEE_NOTIFY, carNumber,payFee/100.0f,orderNo,"",0, 0);
         }
         return SUCCESS;
     }

@@ -39,7 +39,7 @@ public class BaseEnterOutProcess extends SendRequest {
     }
 
     @Override
-    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson) {
+    TLVMessage constructMessage(TLVMessage ret, TLVMessage request, JSONObject retJson, IoSession session) {
         return ret.setNext(getJson(retJson,"code", -1)
         ).setNext(getJson(retJson,"errorMsg","")).setNext(request.getValue()
         ).setNext(request.getNextValue(3) == null ? 0f : request.getNextValue(3));

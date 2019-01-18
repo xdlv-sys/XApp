@@ -3,32 +3,38 @@ public class ParkNative
 {
     public native static int initialized( String pDbIP,String pDbName,String pDbUserID,String pDbPwd );
     public native static int unitialized();
-    public synchronized native static ParkedCarInfo getParkedCarInfo(String pOrderNo, int iCarType, String pLicense, int iFreeTime, int iMatchMethod, int iCarOrder,
-                                                        String pSearchID, String pSearchInTime);
+    public synchronized native static ParkedCarInfo getParkedCarInfo(String pOrderNo, int iCarType, String pLicense, int iFreeTime, int iMatchMethod, int iCarOrder, 
+														String pSearchID, String pSearchInTime);
+    public synchronized native static ParkedCarInfoJy getParkedCarInfoJy(String pOrderNo, int iCarType, String pLicense, int iFreeTime, int iMatchMethod, int iCarOrder, 
+			String pSearchID, String pSearchInTime);
     public synchronized native static int payParkCarFee(String pOrderNo, int iCarType, String pCarLicese, String pPayTime, float fMoney, String pSearchID,
-                                           String pSearchInTime, int iPayMethod, String pPaySeq, String pInTime, String pStartTime, String pEndTime,
-                                           int iPayWay, float fPayFee, float fDiscount);
-    public native static LeftParkInfo[] getLeftParkInfo();
-    public native static ViewCarportRoomInfo[] getCarportInfo(String pLicense, String pCarportID, int iLicenseColor, int iMethod);
+										   String pSearchInTime, int iPayMethod, String pPaySeq, String pInTime, String pStartTime, String pEndTime,
+										   int iPayWay, float fPayFee, float fDiscount);
+    public synchronized native static int payParkCarFeeJy(String pOrderNo, int iCarType, String pCarLicese, String pPayTime, float fMoney, String pSearchID,
+            String pSearchInTime, int iPayMethod, String pPaySeq, String pInTime, String pStartTime, String pEndTime,
+            int iPayWay, float fPayFee, float fDiscount, String sShopNo,
+			int iDayTime, int iNightTime, float fDayMny, float fNightMny, String sOrderTime);
+ 	public synchronized native static LeftParkInfo[] getLeftParkInfo();
+    public synchronized native static ViewCarportRoomInfo[] getCarportInfo(String pLicense, String pCarportID, int iLicenseColor, int iMethod);
     public synchronized native static int payCarportRent(String pCarLicense, String pRoomNum, String pCarportNum, String[] aCarportNum, String pPayTime, String pSerialNumber,
                                             int iMonthCnt, float fMoney, boolean bPayAllCarport, int iLicenseColor, int iPayWay, float fPayFee, float fDiscount, int iMethod);
     public synchronized native static int updateAutoPayInfo(String pMemberCode, int iAutoLeave, float fBalance);
-    public native static AccountCheck getAccountCheck(String pStartTime, String pEndTime);
+    public synchronized native static AccountCheck getAccountCheck(String pStartTime, String pEndTime);
 
-    public native static ParkedCarInfo getCarInPark(String sOrderNo, String sCarLicense, int iMatchMethod, int iCarOrder, String sSearchID);
-    public native static ParkedCarInfo dispatchCoupon(String sOrderNo, String sCarLicense, String sCouID, String sCouName, int iCouType,
+    public synchronized native static ParkedCarInfo getCarInPark(String sOrderNo, String sCarLicense, int iMatchMethod, int iCarOrder, String sSearchID);
+    public synchronized native static ParkedCarInfo dispatchCoupon(String sOrderNo, String sCarLicense, String sCouID, String sCouName, int iCouType,
                                             int iCouTime, float fCouMny,String sStartDate, String sEndDate,String sCarportID, String sInID);
-
-    public native static String getCarInParkByName(String pLicence);
-
-    public static int getLeftCount() {
-        LeftParkInfo[] lefts = getLeftParkInfo();
-        int leftCount = 0;
-        for (LeftParkInfo l : lefts) {
-            leftCount += l.iLeftNum;
-        }
-        return leftCount;
-    }
+	public synchronized native static String	getCarInParkByName(String license);
+	public synchronized native static ParkedCarInfo dispatchShopCoupon(String sOrderNo, String sCarLicense, String sCouID, String sCouName, int iCouType, 
+											int iCouTime, float fCouMny,String sStartDate, String sEndDate,String sCarportID, String sInID,
+											String sCardNo, int iCardType, int iDisType, int iUseType);
+	public synchronized native static ShopCheckType getShopCheckType(String sOrderNo, String sCarLicense, String sInID);
+	
+	// 金鹰酒店-checkin
+	public synchronized native static int checkIn(String pOrderNo, String pLicense, String pRoomNo, String pName, int iCouTime, String pChkInTime, String pCarportID, String pInID);
+	// 金鹰酒店-checkout
+	public synchronized native static int checkOut(String pOrderNo, String pLicense, String pRoomNo, String pName, String pChkInTime, String pChkOutTime, 
+									int iOutCouTime, String pCarportID, String pInID);
 
     public static void main(String[] args) {
 
