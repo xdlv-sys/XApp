@@ -43,6 +43,12 @@ public class ParkHandler extends ReversedHandler {
     ChargeStandard chargeStandard;
     @Autowired
     CarOutProcess carOutProcess;
+    @Autowired
+    YlPay ylPay;
+    @Autowired
+    YlRefund ylRefund;
+    @Autowired
+    YlQuery ylQuery;
     /**
      * 金鹰停车场--岗亭支付接口①
      * 消息号：25(PROXY_JINYING_VIP_PAY)
@@ -138,6 +144,15 @@ public class ParkHandler extends ReversedHandler {
                 break;
             case 20:
                 sendRequest = carOutProcess;
+                break;
+            case 21:
+                sendRequest = ylPay;
+                break;
+            case 22:
+                sendRequest = ylRefund;
+                break;
+            case 23:
+                sendRequest = ylQuery;
                 break;
             /**
              * 金鹰停车场--岗亭支付接口①

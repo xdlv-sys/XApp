@@ -14,10 +14,6 @@ public abstract class BaseYlRequest extends SendRequest {
     @Value("${pos_url}")
     String posUrl;
 
-    @Value("${app_id}")
-    String appId;
-    @Value("${app_key}")
-    String appKey;
     @Value("${merchant_code}")
     String merchantCode;
 
