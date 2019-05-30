@@ -4,14 +4,32 @@ import net.sf.json.JSONObject;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import xd.fw.HttpClientTpl;
 import xd.fw.mina.tlv.TLVMessage;
+
+import java.text.SimpleDateFormat;
 
 @Service
 public class WatchProcess extends SendRequest {
     @Value("${watch_address}")
     String watchAddress;
 
-    public String[][] constructParams(TLVMessage request) throws Exception {
+    public String[][] constructParams(TLVMessage request) throws Exception{
+        if (cmbFlag) {
+            // 招行进场接口
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            String cmbRet = HttpClientTpl.post(cmbUrl + "Indata", new String[][] {
+                    {"park_code", parkId},
+                    {"in_code", "1"},
+                    {"vpl_number", request.getNextString(0)},
+                    {"record_id", "CMB" + request.getNextString(1)}, // startTime as order Id
+                    {"in_time", sdf.parse(request.getNextString(1)).getTime() / 1000d + ""},
+                    {"car_type", "1"},
+                    {"plate_color", "0"}
+            });
+            logger().info("cmb enter return: {}", cmbRet);
+        }
+
         return new String[][]{
                 {"watchId", (String) request.getValue()},
                 {"parkId", parkId},

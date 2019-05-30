@@ -29,10 +29,10 @@ public class ParkTest extends IoHandlerAdapter {
         IoSession session = future.getSession();
 
         // registry 0001
-        TLVMessage reg = new TLVMessage(0);
+        /*TLVMessage reg = new TLVMessage(0);
         reg.setNext("0001").setNext(100);
         session.write(reg);
-        Thread.sleep(1000);
+        Thread.sleep(1000);*/
 
 
         if ("1".equals(action)){
@@ -43,7 +43,12 @@ public class ParkTest extends IoHandlerAdapter {
             TLVMessage out = new TLVMessage((byte)2);
             out.setNext("苏A12345").setNext(1.0f).setNext("20160530163322").setNext("20160530163323");
             session.write(out);
-        } else if ("20".equals(action)) {
+        }  else if ("12".equals(action)) {
+            // 20->苏A12388->20180911085135->20180911091302->0001->N1502000000101180911091300897253->TEST1->1->->20180911085135->20180911091302->1->0.1->0.1->0.0->0.0
+            TLVMessage out = new TLVMessage(12);
+            out.setNext("HA12388").setNext("20180911085135").setNext("20180911091302");
+            session.write(out);
+        }else if ("20".equals(action)) {
             // 20->苏A12388->20180911085135->20180911091302->0001->N1502000000101180911091300897253->TEST1->1->->20180911085135->20180911091302->1->0.1->0.1->0.0->0.0
             TLVMessage out = new TLVMessage(20);
             out.setNext("苏A12388").setNext("20180911085135").setNext("20180911091302").setNext("0001")
@@ -93,6 +98,6 @@ public class ParkTest extends IoHandlerAdapter {
 
         //new ParkTest().testPark("localhost,48011,2");
 
-        new ParkTest().testPark("localhost,48011,21");
+        new ParkTest().testPark("localhost,48011,12");
     }
 }

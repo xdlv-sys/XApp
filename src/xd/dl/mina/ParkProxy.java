@@ -28,7 +28,7 @@ public class ParkProxy extends ReversedProxy {
     public static final int QUERY_CAR = 3, QUERY_CAR_JY = 23, PAY_FEE = 4, PAY_FEE_JY = 27, QUERY_CAR2 = 13, 
     		PAY_FEE_NOTIFY = 9, CHARGE_NOTIFY = 15, NO_CARD_ENTRY = 16, DISPATCH_COUPON = 17, 
     		SIMILAR_CAR_NUMBER = 18, PAY_FEE_NOTIFY_HJC = 19, PAY_RESULT_YL = 28, CHECK_IN_JY = 29, CHECK_OUT_JY = 30, YINLIAN_PAY_RESULT = 33,
-    		PROXY_JINYING_PRE_PAY_NOTICE = 37;
+    		PROXY_JINYING_PRE_PAY_NOTICE = 37, PASS_CAR = 43;
 
     @Autowired
     ParkNativeBean parkNativeBean;
@@ -507,6 +507,25 @@ public class ParkProxy extends ReversedProxy {
                 carNumber = (String) msg.getNextValue(1);
                 next.setNext(ParkNative.getCarInParkByName(carNumber));
                 //next.setNext(Arrays.stream(cars).filter(car -> car.contains(carNumber)).reduce("", (c1, c2) -> c1 + "," + c2));
+                response(msg);
+                break;
+
+            case PASS_CAR:
+                //String[] cars = new String[]{"苏A12345", "苏A12346", "苏A12347"};
+                carNumber = msg.getNextString(1);
+                String userName = msg.getNextString(2);
+                String remark = msg.getNextString(3);
+                Float price = (Float)msg.getNextValue(4);
+                String dbId = msg.getNextString(5);
+                int ret = ParkNative.dispatchVistor(null, carNumber
+                        , userName, userName, price, remark, this.parkId, dbId);
+                if (ret == 0) {
+                    next.setNext("OK");
+                    parkHandler.notifyWatchIdPassCar(PASS_CAR, carNumber, userName, price, remark, this.parkId, dbId);
+                } else {
+                    next.setNext("FAIL");
+                }
+
                 response(msg);
                 break;
             default:

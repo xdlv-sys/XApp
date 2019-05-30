@@ -14,6 +14,7 @@ public class ParkNative
             String pSearchInTime, int iPayMethod, String pPaySeq, String pInTime, String pStartTime, String pEndTime,
             int iPayWay, float fPayFee, float fDiscount, String sShopNo,
 			int iDayTime, int iNightTime, float fDayMny, float fNightMny, String sOrderTime);
+
  	public synchronized native static LeftParkInfo[] getLeftParkInfo();
     public synchronized native static ViewCarportRoomInfo[] getCarportInfo(String pLicense, String pCarportID, int iLicenseColor, int iMethod);
     public synchronized native static int payCarportRent(String pCarLicense, String pRoomNum, String pCarportNum, String[] aCarportNum, String pPayTime, String pSerialNumber,
@@ -25,10 +26,13 @@ public class ParkNative
     public synchronized native static ParkedCarInfo dispatchCoupon(String sOrderNo, String sCarLicense, String sCouID, String sCouName, int iCouType,
                                             int iCouTime, float fCouMny,String sStartDate, String sEndDate,String sCarportID, String sInID);
 	public synchronized native static String	getCarInParkByName(String license);
-	public synchronized native static ParkedCarInfo dispatchShopCoupon(String sOrderNo, String sCarLicense, String sCouID, String sCouName, int iCouType, 
+	public synchronized native static ParkedCarInfo dispatchShopCoupon(String sOrderNo, String sCarLicense, String sCouID, String sCouName, int iCouType,
 											int iCouTime, float fCouMny,String sStartDate, String sEndDate,String sCarportID, String sInID,
 											String sCardNo, int iCardType, int iDisType, int iUseType);
 	public synchronized native static ShopCheckType getShopCheckType(String sOrderNo, String sCarLicense, String sInID);
+
+    public native synchronized static int dispatchVistor(String sOrderNo, String sCarLicense, String sUserName, String sPassword,
+                                                         float fMoney, String sRemark, String sCarportID, String sInID);
 	
 	// 金鹰酒店-checkin
 	public synchronized native static int checkIn(String pOrderNo, String pLicense, String pRoomNo, String pName, int iCouTime, String pChkInTime, String pCarportID, String pInID);

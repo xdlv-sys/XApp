@@ -25,6 +25,11 @@ abstract class SendRequest implements IDongHui{
     @Value("${center_flg}")
     boolean centerFlag;
 
+    @Value("${cmb_flag:false}")
+    boolean cmbFlag;
+    @Value("${cmb_url}")
+    String cmbUrl;
+
     abstract String[][] constructParams(TLVMessage request) throws Exception;
 
     abstract String svrAddress();

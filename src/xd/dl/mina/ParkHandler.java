@@ -405,4 +405,10 @@ public class ParkHandler extends ReversedHandler {
         return true;
 //        return ret != null && 200 == (int) ret.getValue();
     }
+
+    @Async
+    public void notifyWatchIdPassCar(int code, String carNumber, String userName, float price, String remark, String parkId, String dbId) {
+        TLVMessage message = createRequest(code, 1, "", carNumber, userName, userName, price, remark, parkId, dbId);
+        notifyAllId(message);
+    }
 }

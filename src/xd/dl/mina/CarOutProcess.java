@@ -5,14 +5,50 @@ import net.sf.json.JSONObject;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import xd.fw.HttpClientTpl;
 import xd.fw.mina.tlv.TLVMessage;
+
+import java.text.SimpleDateFormat;
 
 @Service
 public class CarOutProcess extends SendRequest {
     @Value("${out_address}")
     String outAddress;
 
-    public String[][] constructParams(TLVMessage request) {
+    public String[][] constructParams(TLVMessage request) throws Exception {
+
+        if (cmbFlag) {
+            // 招行出场接口
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            int itemCount = request.getNextInt(5);
+            JSONArray itemArray = new JSONArray();
+            int itemStart = 6;
+            for (int i = 0; i< itemCount; i++ ) {
+                JSONObject item = new JSONObject();
+                _putJson(item,new String[] {"seq_num", request.getNextString(itemStart ++)});
+                itemStart ++;
+                _putJson(item,new String[] {"time", sdf.parse(request.getNextString(itemStart ++)).getTime() / 1000d + ""});
+                _putJson(item,new String[] {"pay_type", "7".equals(request.getNextString(itemStart ++)) ? "4" : "1"});
+                String fee = request.getNextString(itemStart ++);
+                _putJson(item,new String[] {"should_pay", fee});
+                _putJson(item,new String[] {"actual_pay", fee});
+                itemArray.add(item);
+            }
+
+            String cmbRet = HttpClientTpl.post(cmbUrl + "Outdata", new String[][] {
+                    {"park_code", parkId},
+                    {"in_code", "1"},
+                    {"out_code", "1"},
+                    {"vpl_number", (String)request.getValue()},
+                    {"record_id", "CMB" + request.getNextString(0)}, // startTime as order Id
+                    {"in_time", sdf.parse(request.getNextString(0)).getTime() / 1000d + ""},
+                    {"out_time", sdf.parse(request.getNextString(1)).getTime() / 1000d + ""},
+                    {"car_type", "1"},
+                    {"plate_color", "0"},
+                    {"charge_items", itemArray.toString()}
+            });
+            logger().info("cmb out return: {}", cmbRet);
+        }
         return null;
     }
 
