@@ -8,6 +8,7 @@ import xd.fw.HttpClientTpl;
 import xd.fw.mina.tlv.TLVMessage;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 @Service
 public class WatchProcess extends SendRequest {
@@ -18,15 +19,19 @@ public class WatchProcess extends SendRequest {
         if (cmbFlag) {
             // 招行进场接口
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-            String cmbRet = HttpClientTpl.post(cmbUrl + "Indata", new String[][] {
+            String[][] params = {
+                    {"appid", cmbAppId},
                     {"park_code", parkId},
                     {"in_code", "1"},
-                    {"vpl_number", request.getNextString(0)},
+                    {"vpl_number", (String)request.getValue()},
                     {"record_id", "CMB" + request.getNextString(1)}, // startTime as order Id
-                    {"in_time", sdf.parse(request.getNextString(1)).getTime() / 1000d + ""},
+                    {"in_time", sdf.parse(request.getNextString(1)).getTime() / 1000 + ""},
                     {"car_type", "1"},
-                    {"plate_color", "0"}
-            });
+                    {"plate_color", "0"},
+                    {"sign", ""}
+            };
+
+            String cmbRet = HttpClientTpl.post(cmbUrl + "Indata", cmbSign(params));
             logger().info("cmb enter return: {}", cmbRet);
         }
 

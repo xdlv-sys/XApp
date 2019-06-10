@@ -89,10 +89,10 @@ public class ParkNativeBean {
         public ParkedCarInfo getParkedCarInfo(String pOrderNo, int iCarType, String pLicense
                 , int iFreeTime, int iMatchMethod, int iCarOrder, String pSearchID, String pSearchInTime) {
             ParkedCarInfo parkedCarInfo = new ParkedCarInfo();
-            parkedCarInfo.fMoney = -1f;
+            parkedCarInfo.fMoney = 1f;
             parkedCarInfo.iParkedTime = 15;
             parkedCarInfo.iReturn = 0;
-            parkedCarInfo.sCarLicense = "苏A12345";
+            parkedCarInfo.sCarLicense = "苏A12366";
             parkedCarInfo.sEndTime = FwUtil.sdf.format(new Date());
             parkedCarInfo.sStartTime = FwUtil.sdf.format(new Date(System.currentTimeMillis() - 3600 * 1000));
             parkedCarInfo.sInTime = FwUtil.sdf.format(new Date(System.currentTimeMillis() - 3600 * 1000));

@@ -35,18 +35,20 @@ public class CarOutProcess extends SendRequest {
                 itemArray.add(item);
             }
 
-            String cmbRet = HttpClientTpl.post(cmbUrl + "Outdata", new String[][] {
+            String cmbRet = HttpClientTpl.post(cmbUrl + "Outdata", cmbSign(new String[][] {
+                    {"appid", cmbAppId},
                     {"park_code", parkId},
                     {"in_code", "1"},
                     {"out_code", "1"},
                     {"vpl_number", (String)request.getValue()},
                     {"record_id", "CMB" + request.getNextString(0)}, // startTime as order Id
-                    {"in_time", sdf.parse(request.getNextString(0)).getTime() / 1000d + ""},
-                    {"out_time", sdf.parse(request.getNextString(1)).getTime() / 1000d + ""},
+                    {"in_time", sdf.parse(request.getNextString(0)).getTime() / 1000 + ""},
+                    {"out_time", sdf.parse(request.getNextString(1)).getTime() / 1000 + ""},
                     {"car_type", "1"},
                     {"plate_color", "0"},
-                    {"charge_items", itemArray.toString()}
-            });
+                    {"charge_items", itemArray.toString()},
+                    {"sign", null}
+            }));
             logger().info("cmb out return: {}", cmbRet);
         }
         return null;

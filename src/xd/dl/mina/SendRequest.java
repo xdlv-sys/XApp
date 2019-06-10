@@ -1,13 +1,17 @@
 package xd.dl.mina;
 
 import net.sf.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.session.IoSession;
 import org.springframework.beans.factory.annotation.Value;
 import xd.dl.job.IDongHui;
+import xd.fw.MD5;
 import xd.fw.mina.tlv.TLVMessage;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 
 abstract class SendRequest implements IDongHui{
 
@@ -29,6 +33,11 @@ abstract class SendRequest implements IDongHui{
     boolean cmbFlag;
     @Value("${cmb_url}")
     String cmbUrl;
+
+    @Value("${cmb_app_id}")
+    String cmbAppId;
+    @Value("${cmb_app_appsecret}")
+    String cmbAppSecret;
 
     abstract String[][] constructParams(TLVMessage request) throws Exception;
 
@@ -66,5 +75,34 @@ abstract class SendRequest implements IDongHui{
 
     protected boolean run() {
         return dongHuiFlag;
+    }
+
+    String[][] cmbSign(String[][] params) {
+        Arrays.sort(params, Comparator.comparing(t -> t[0]));
+        StringBuilder sb = new StringBuilder();
+        Arrays.stream(params).forEach(p -> {
+            if (StringUtils.isNotBlank(p[1])) {
+                sb.append(p[0]).append("=").append(p[1]).append("&");
+            }
+        });
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(cmbAppSecret);
+
+        Arrays.stream(params).forEach(p -> {
+            if (p[0].equals("sign")) {
+                p[1] = MD5.MD5Encode(sb.toString());
+            }
+        });
+
+        /*JSONObject ret = new JSONObject();
+        Arrays.stream(params).forEach(p -> {
+            if (p[0].equals("sign")) {
+                p[1] = MD5.MD5Encode(sb.toString());
+            }
+            ret.put(p[0], p[1]);
+        });
+
+        return ret.toString();*/
+        return params;
     }
 }

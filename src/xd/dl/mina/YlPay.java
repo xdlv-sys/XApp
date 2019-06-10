@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import xd.fw.HttpClientTpl;
 import xd.fw.mina.tlv.TLVMessage;
 
+import java.util.Arrays;
+
 @Service
 public class YlPay extends BaseYlRequest{
 
@@ -51,6 +53,7 @@ public class YlPay extends BaseYlRequest{
             // query yl scan result _json(merchantCode, getTidBySession(session), String.valueOf(request.getValue()));
             String json = ylQuery._json(merchantCode, getTidBySession(session), ylOrderId);
             try {
+                logger().info("start yl query: {} , {}, {}", ylQuery.svrAddress(), json, Arrays.toString(heads()[0]));
                 httpRetJson = JSONObject.fromObject(HttpClientTpl.postJson(ylQuery.svrAddress(), json, heads()));
                 if (YL_SCAN_SUCCESS.equals(httpRetJson.getString("errCode"))
                         && "0".equals(httpRetJson.getString("queryResCode"))) {

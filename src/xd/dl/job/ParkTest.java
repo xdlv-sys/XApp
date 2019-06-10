@@ -11,6 +11,8 @@ import xd.fw.mina.tlv.TLVCodecFactory;
 import xd.fw.mina.tlv.TLVMessage;
 
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ParkTest extends IoHandlerAdapter {
 
@@ -21,7 +23,7 @@ public class ParkTest extends IoHandlerAdapter {
 
         SocketConnector connector = new NioSocketConnector();
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(
-                new TLVCodecFactory("UTF-8")));
+                new TLVCodecFactory("gb2312")));
         connector.setHandler(this);
 
         ConnectFuture future = connector.connect(new InetSocketAddress(host, Integer.parseInt(port)));
@@ -29,10 +31,10 @@ public class ParkTest extends IoHandlerAdapter {
         IoSession session = future.getSession();
 
         // registry 0001
-        /*TLVMessage reg = new TLVMessage(0);
+        TLVMessage reg = new TLVMessage(0);
         reg.setNext("0001").setNext(100);
         session.write(reg);
-        Thread.sleep(1000);*/
+        Thread.sleep(1000);
 
 
         if ("1".equals(action)){
@@ -46,7 +48,9 @@ public class ParkTest extends IoHandlerAdapter {
         }  else if ("12".equals(action)) {
             // 20->苏A12388->20180911085135->20180911091302->0001->N1502000000101180911091300897253->TEST1->1->->20180911085135->20180911091302->1->0.1->0.1->0.0->0.0
             TLVMessage out = new TLVMessage(12);
-            out.setNext("HA12388").setNext("20180911085135").setNext("20180911091302");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            out.setNext("苏A12366").setNext(sdf.format(new Date(System.currentTimeMillis() - 3600 * 1000)))
+                    .setNext(sdf.format(new Date()));
             session.write(out);
         }else if ("20".equals(action)) {
             // 20->苏A12388->20180911085135->20180911091302->0001->N1502000000101180911091300897253->TEST1->1->->20180911085135->20180911091302->1->0.1->0.1->0.0->0.0
@@ -60,7 +64,7 @@ public class ParkTest extends IoHandlerAdapter {
         else if ("21".equals(action)) {
             // 21->orderId -> carNumber -> price
             TLVMessage out = new TLVMessage(21);
-            out.setNext("N15020F0000010118031A091400G9725").setNext("苏A12388").setNext(0.1f).setNext("135079626040111111");
+            out.setNext("N15020F0000010118031A091400G9725").setNext("苏A12388").setNext(0.1f).setNext("135997259419955403");
             session.write(out);
         }
         synchronized (this){
@@ -98,6 +102,6 @@ public class ParkTest extends IoHandlerAdapter {
 
         //new ParkTest().testPark("localhost,48011,2");
 
-        new ParkTest().testPark("localhost,48011,12");
+        new ParkTest().testPark("localhost,48011,21");
     }
 }
