@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.InetSocketAddress;
+import java.util.zip.GZIPOutputStream;
 
 @Service
 public abstract class ReversedProxy implements IMinaConst {
@@ -118,10 +119,22 @@ public abstract class ReversedProxy implements IMinaConst {
                 response(msg);
                 break;
             case ZIP_FILE:
-                File file = new File((String)next.getNextValue(0));
-                taskExecutor.submit(() -> {
+                directory = (String) next.getNextValue(0);
+                name = (String) next.getNextValue(1);
+                File dirFile = new File(directory);
 
-                });
+                try(GZIPOutputStream gzip = new GZIPOutputStream(
+                        new FileOutputStream(new File(dirFile, name + ".zip")))) {
+                    try(FileInputStream ins = new FileInputStream(new File(dirFile, name))) {
+                        buffer = new byte[1024 * 100];
+                        int size;
+                        while ((size = ins.read(buffer)) > 0) {
+                            gzip.write(buffer, 0 , size);
+                        }
+                        gzip.finish();
+                    }
+                }
+
                 next.setNext("OK");
                 response(msg);
                 break;
